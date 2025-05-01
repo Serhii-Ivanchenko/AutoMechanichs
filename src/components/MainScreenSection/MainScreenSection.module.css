@@ -1,3 +1,23 @@
 .topPart {
   display: flex;
+  gap: 11px;
+
+  margin-bottom: 32px;
+}
+
+.mechNameBox {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+}
+
+.name {
+  color: var(--CRM-modal-LightGray, #d8e1ff);
+  font-variant-numeric: lining-nums proportional-nums;
+  font-family: Roboto;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  font-variant: small-caps;
 }

@@ -11,9 +11,9 @@ export default function MainScreenSection() {
   return (
     <div>
       <div className={css.topPart}>
-        <div>
-          <p>Блудов О.А.</p>
-          <p>Механік</p>
+        <div className={css.mechNameBox}>
+          <p className={css.name}>Блудов О.А.</p>
+          <p className={css.paleText}>Механік</p>
         </div>
         <div>
           <div>
