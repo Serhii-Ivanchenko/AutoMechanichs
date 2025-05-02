@@ -94,9 +94,12 @@
   width: 100%;
   padding-top: 19px;
 
-  display: flex;
+  /* display: flex;
+  justify-content: space-between; */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
-  justify-content: space-between;
+  place-items: center;
 
   border-top: 1px dashed var(--main-gray);
 }
