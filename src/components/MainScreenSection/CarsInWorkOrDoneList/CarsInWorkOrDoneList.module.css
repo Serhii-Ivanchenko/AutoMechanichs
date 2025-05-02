@@ -1,0 +1,108 @@
+.list {
+  height: 212px;
+  width: 100%;
+  padding-right: 18px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  overflow: auto;
+
+  margin-bottom: 40px;
+}
+
+.listDone {
+  margin-bottom: 25px;
+}
+
+.list::-webkit-scrollbar {
+  /* width: clamp(5px, min(0.432vw, 0.741vh), 8px); */
+  width: 8px;
+}
+
+.list::-webkit-scrollbar-track {
+  border-radius: 4px;
+  background-color: var(--bg);
+}
+
+.list::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: var(--main-gray);
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  height: 35px;
+  /* justify-content: space-between; */
+}
+
+.time,
+.car {
+  color: var(--light-gray);
+  font-variant-numeric: lining-nums proportional-nums;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  font-variant: small-caps;
+}
+
+.time {
+  margin-right: 20px;
+}
+
+.iconBox {
+  width: 39px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-right: 20px;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  fill: var(--green);
+}
+
+.problem {
+  color: var(--input-text);
+  font-variant-numeric: lining-nums proportional-nums;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  font-variant: small-caps;
+}
+
+.carWrapper {
+  margin-right: auto;
+}
+
+.stick {
+  width: 4px;
+  height: 35px;
+  border-radius: 6px;
+  background-color: var(--status-repair);
+
+  margin-right: 8px;
+}
+
+.stickDone {
+  background-color: var(--green);
+}
+
+.salary {
+  color: #ffff8c;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.salaryDone {
+  color: var(--green);
+}

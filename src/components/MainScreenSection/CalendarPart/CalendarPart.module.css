@@ -1,0 +1,50 @@
+.calendarBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  height: 26px;
+
+  margin-bottom: 30px;
+}
+
+.btnArrow {
+  width: 20px;
+  height: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--main-gray);
+  border: none;
+  border-radius: 50%;
+}
+
+.icon {
+  fill: var(--light-gray);
+}
+
+.dayBox {
+  display: flex;
+  width: 52px;
+  height: 27px;
+  padding: 3px 22px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  border-radius: 5px;
+  background: var(--orange);
+}
+
+.month {
+  color: var(--light-gray);
+  font-variant-numeric: lining-nums proportional-nums;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  font-variant: small-caps;
+}
