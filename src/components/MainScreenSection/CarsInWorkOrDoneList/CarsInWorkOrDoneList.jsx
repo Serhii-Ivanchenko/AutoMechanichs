@@ -2,14 +2,14 @@ import { Link } from 'react-router-dom';
 import css from './CarsInWorkOrDoneList.module.css';
 import { BsPatchExclamationFill } from 'react-icons/bs';
 
-export default function CarsInWorkOrDoneList({ done, list, setDiagOpen }) {
+export default function CarsInWorkOrDoneList({ done, list }) {
   return (
     <>
       <ul className={`${css.list} ${done && css.listDone}`}>
         {list?.map((item, index) => (
           <li
             key={index}
-            onClick={() => setDiagOpen(true)}
+            // onClick={() => setDiagOpen(true)}
             // className={css.listItem}
           >
             <Link to="/car/:carId/diagnostics">

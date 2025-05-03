@@ -7,6 +7,7 @@ import Layout from '../Layout/Layout.jsx';
 import css from './App.module.css';
 import TopPart from '../topPart/topPart.jsx';
 import CalendarPart from '../MainScreenSection/CalendarPart/CalendarPart.jsx';
+import SubcategoriesPart from '../DiagnosticScreen/SubcategoriesPart/SubcategoriesPart.jsx';
 
 const array1 = [
   {
@@ -127,7 +128,13 @@ export default function App() {
           element={<MainPage array1={array1} array2={array2} wage={wage} />}
         />
         <Route path="/car/:carId/photos" element={<PhotoCapturePage />} />
-        <Route path="/car/:carId/diagnostics" element={<DiagnosticPage />} />
+        <Route path="/car/:carId/diagnostics" element={<DiagnosticPage />}>
+          {/* <Route
+            path="diagnostics-subcategories"
+            element={<SubcategoriesPart />}
+          />
+          <Route path="diagnostics-spares" element={''} /> */}
+        </Route>
       </Routes>
     </Layout>
   );

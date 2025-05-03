@@ -1,0 +1,30 @@
+.list {
+  width: 350px;
+  height: 353px;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 31px;
+  padding-top: 5px;
+
+  margin-left: auto;
+  margin-right: auto;
+
+  margin-bottom: 30px;
+}
+
+.list::-webkit-scrollbar {
+  width: clamp(5px, min(0.432vw, 0.741vh), 8px);
+  /* width: 8px; */
+}
+
+.list::-webkit-scrollbar-track {
+  border-radius: 4px;
+  background-color: var(--bg);
+}
+
+.list::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: var(--main-gray);
+}
