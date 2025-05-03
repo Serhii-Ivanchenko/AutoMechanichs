@@ -22,7 +22,7 @@ export default function CalendarPart() {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
-  const [day, setDay] = useState(1);
+  const [day, setDay] = useState(today.getDate());
 
   const getDaysInMonth = (year, month) =>
     new Date(year, month + 1, 0).getDate();
@@ -45,7 +45,7 @@ export default function CalendarPart() {
       const newYear = month === 11 ? year + 1 : year;
       setYear(newYear);
       setMonth(nextMonth);
-      setDay(1);
+      setDay(today.getDate());
     } else {
       setDay(newDay);
     }

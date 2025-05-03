@@ -5,17 +5,130 @@ import MainPage from '../../pages/MainPage/MainPage.jsx';
 import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage.jsx';
 import Layout from '../Layout/Layout.jsx';
 import css from './App.module.css';
+import TopPart from '../topPart/topPart.jsx';
+import CalendarPart from '../MainScreenSection/CalendarPart/CalendarPart.jsx';
+
+const array1 = [
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2020 VW Passat',
+    problem: 'Стукає сперeду справа',
+    salary: '35000',
+  },
+  {
+    time: '12:00',
+    carModel: '2020 VW Passat',
+    problem: 'Стукає сперeду справа',
+    salary: '3000',
+  },
+  {
+    time: '12:00',
+    carModel: '2020 VW Polo',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2020 VW Polo',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '8482',
+  },
+];
+
+const array2 = [
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+  {
+    time: '12:00',
+    carModel: '2001 HONDA CIVIC',
+    problem: 'Стукає сперeду справа',
+    salary: '400',
+  },
+];
 
 export default function App() {
+  const wage = array2.reduce((sum, i) => sum + Number(i.salary || 0), 0);
+  const possibleSum = array1.reduce((sum, i) => sum + Number(i.salary || 0), 0);
+  const amountPossible = wage + possibleSum;
+
   return (
     <Layout>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/main" element={<MainPage />} />
-          <Route path="/car/:carId/photos" element={<PhotoCapturePage />} />
-          <Route path="/car/:carId/diagnostics" element={<DiagnosticPage />} />
-        </Routes>
+      <TopPart wage={wage} amountPossible={amountPossible} />
+      <CalendarPart />
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/main"
+          element={<MainPage array1={array1} array2={array2} wage={wage} />}
+        />
+        <Route path="/car/:carId/photos" element={<PhotoCapturePage />} />
+        <Route path="/car/:carId/diagnostics" element={<DiagnosticPage />} />
+      </Routes>
     </Layout>
   );
 }
