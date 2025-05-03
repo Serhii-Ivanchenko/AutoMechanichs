@@ -29,13 +29,13 @@ export default function BottomPart({
 
       {buttonSpares ? (
         <>
-          <div>
+          <div className={css.greyCircle}>
             <BsFillMicFill />
           </div>
-          <div>
+          <div className={css.greyCircle}>
             <BsCameraFill />
           </div>
-          <div>
+          <div className={css.greyCircle}>
             <BiSolidMessageDetail />
           </div>
         </>

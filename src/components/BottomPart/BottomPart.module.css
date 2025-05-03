@@ -2,6 +2,7 @@
   position: absolute;
   bottom: 12px;
   left: 6px;
+  right: 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -10,7 +11,10 @@
   padding-top: 5px;
 
   border-top: 1px dashed var(--main-gray);
-  width: 100%;
+  height: 74px;
+  /* width: 100%; */
+
+  /* place-items: center; */
 
   /* margin-bottom: auto; */
 }
@@ -25,6 +29,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  cursor: pointer;
 }
 
 .cancel {
@@ -42,4 +48,19 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+}
+
+.greyCircle {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+
+  border-radius: 34px;
+  background: var(--input-text);
+  cursor: pointer;
 }
