@@ -1,8 +1,11 @@
 .btnsBox {
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   gap: 42px;
+
+  padding-right: 25px;
+  padding-left: 25px;
 
   margin-bottom: 33px;
 }
@@ -25,6 +28,10 @@
   line-height: normal;
 
   cursor: pointer;
+}
+
+.buttonsActive {
+  border: 1px solid var(--light-gray);
 }
 
 .indicator {

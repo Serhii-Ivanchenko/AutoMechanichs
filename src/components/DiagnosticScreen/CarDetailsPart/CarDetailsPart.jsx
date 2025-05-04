@@ -19,7 +19,7 @@ export default function CarDetailsPart() {
         </div>
         <p className={css.carRegNumber}>{'- - - - -'}</p>
       </div>
-      <BiSolidMessageDetail />
+      <BiSolidMessageDetail className={css.iconM} />
     </div>
   );
 }

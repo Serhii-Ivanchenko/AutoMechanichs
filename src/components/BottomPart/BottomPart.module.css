@@ -31,6 +31,7 @@
   justify-content: center;
 
   cursor: pointer;
+  color: var(--bg-secondary);
 }
 
 .cancel {
@@ -63,4 +64,10 @@
   border-radius: 34px;
   background: var(--input-text);
   cursor: pointer;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  fill: var(--bg-secondary);
 }

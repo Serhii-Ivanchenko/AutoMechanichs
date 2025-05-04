@@ -32,7 +32,7 @@ export default function DiagnosticScreen() {
   return (
     <div>
       <CarDetailsPart />
-      <WorksSwitcher />
+      <WorksSwitcher subcatOpen={subcatOpen} />
 
       {subcatOpen ? (
         <ul className={css.list}>
