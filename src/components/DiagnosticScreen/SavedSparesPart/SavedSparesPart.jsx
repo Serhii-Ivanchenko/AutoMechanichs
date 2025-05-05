@@ -1,0 +1,36 @@
+import { BsCheckLg } from 'react-icons/bs';
+import { BsFillMicFill } from 'react-icons/bs';
+import { BsCameraFill } from 'react-icons/bs';
+import css from './SavedSparesPart.module.css';
+
+export default function SavedSparesPart({ nodes }) {
+  return (
+    <div>
+      <ul className={css.SavedSparesList}>
+        {nodes.map((node, index) => (
+          <li key={index}>
+            <p className={css.nodeName}>{node.node_name}</p>
+            <ul className={css.subcatList}>
+              {node.node_subcat.map((item, index) => (
+                <li key={index} className={css.subcatListItem}>
+                  <p className={css.subcatName}>{item.name}</p>
+                  <div className={css.btnBox}>
+                    <div className={css.circle}>
+                      <BsCheckLg className={css.iconCheck} />
+                    </div>
+                    <div className={css.circle}>
+                      <BsFillMicFill className={css.icon} />
+                    </div>
+                    <div className={css.circle}>
+                      <BsCameraFill className={css.icon} />
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

@@ -45,7 +45,7 @@ export default function BottomPart({
 
       {categ ? (
         <div style={{ width: '41px' }}></div>
-      ) : button || btnToggle ? (
+      ) : button || btnToggle || buttonSpares ? (
         <div onClick={() => setNext(true)} className={css.confirm}>
           <BsCheckLg className={css.icon} />
         </div>

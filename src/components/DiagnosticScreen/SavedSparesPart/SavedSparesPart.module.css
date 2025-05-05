@@ -1,0 +1,89 @@
+.SavedSparesList {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding-right: 25px;
+  padding-left: 25px;
+
+  height: 353px;
+  overflow-y: auto;
+}
+
+.SavedSparesList::-webkit-scrollbar {
+  width: clamp(5px, min(0.432vw, 0.741vh), 8px);
+  /* width: 8px; */
+}
+
+.SavedSparesList::-webkit-scrollbar-track {
+  border-radius: 4px;
+  background-color: var(--bg);
+}
+
+.SavedSparesList::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: var(--main-gray);
+}
+
+.nodeName,
+.subcatName {
+  color: var(--light-gray);
+  font-variant-numeric: lining-nums proportional-nums;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  font-variant: small-caps;
+}
+.nodeName {
+  margin-bottom: 10px;
+}
+
+.subcatList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.subcatListItem {
+  display: flex;
+  width: 318px;
+  padding: 10px 16px;
+  justify-content: space-between;
+  align-items: center;
+
+  border-radius: 6px;
+  background: var(--download-pdf-btn-bg);
+
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.btnBox {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.iconCheck,
+.icon {
+  width: 18px;
+  height: 18px;
+}
+
+.iconCheck {
+  fill: var(--download-pdf-btn-bg);
+}
+
+.icon {
+  fill: var(--light-gray);
+}
+
+.circle {
+  display: flex;
+  width: 28px;
+  height: 28px;
+  justify-content: center;
+  align-items: center;
+  /* gap: 10px; */
+  border-radius: 34px;
+  background: var(--input-text);
+}

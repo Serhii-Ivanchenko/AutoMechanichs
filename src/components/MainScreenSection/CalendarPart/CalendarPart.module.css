@@ -20,6 +20,8 @@
   background-color: var(--main-gray);
   border: none;
   border-radius: 50%;
+
+  cursor: pointer;
 }
 
 .icon {

@@ -12,6 +12,7 @@ export default function SparesPart({
   setSpares,
   openDetails,
   setOpenDetails,
+  setSavedSparesPartOpen,
 }) {
   useEffect(() => {
     if (spares.length === 0 && togglePoints.length > 0) {
@@ -434,7 +435,14 @@ export default function SparesPart({
         )}
       </ul>
 
-      <BottomPart back={() => setOpenDetails(false)} buttonSpares={true} />
+      <BottomPart
+        back={() => setOpenDetails(false)}
+        buttonSpares={true}
+        setNext={() => {
+          setOpenDetails(false);
+          setSavedSparesPartOpen(true);
+        }}
+      />
     </div>
   );
 }
