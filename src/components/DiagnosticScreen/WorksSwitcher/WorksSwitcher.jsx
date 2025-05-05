@@ -34,8 +34,8 @@ export default function WorksSwitcher({ subcatOpen }) {
           onClick={() => setIsActive('repair')}
         >
           Ремонт{' '}
-          <div>
-            <BsWrench className={css.indicator} />
+          <div className={css.indicator}>
+            <BsWrench />
           </div>
         </button>
       )}

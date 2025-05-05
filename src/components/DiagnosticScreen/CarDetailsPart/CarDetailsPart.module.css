@@ -31,10 +31,11 @@
   gap: 12px;
   width: 139px;
   height: 33px;
-  border-radius: 6px;
+  border-radius: 5px;
+  border: 2px solid #000;
   background-color: #d9d9d9;
 
-  margin-right: 21px;
+  margin-right: 17px;
 }
 
 .carRegCountry {
@@ -43,11 +44,11 @@
   flex-direction: column;
   gap: 4px;
 
-  width: 11px;
+  width: 13px;
   height: 100%;
 
   background-color: #00349a;
-  border-radius: 6px 0 0 6px;
+  border-radius: 4px 0 0 4px;
 }
 
 .carRegFlag {

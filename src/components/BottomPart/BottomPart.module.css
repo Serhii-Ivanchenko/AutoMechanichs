@@ -1,18 +1,18 @@
 .wrapper {
-  position: absolute;
+  /* position: absolute;
   bottom: 12px;
   left: 6px;
-  right: 6px;
+  right: 6px; */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-right: 9px;
-  padding-left: 9px;
-  padding-top: 5px;
+  height: 75px;
+  width: 100%;
+  padding-right: 23px;
+  padding-left: 23px;
+  padding-top: 4px;
 
   border-top: 1px dashed var(--main-gray);
-  height: 74px;
-  /* width: 100%; */
 
   /* place-items: center; */
 
@@ -43,7 +43,7 @@
 }
 
 .money {
-  color: var(--CRM-modal-StatusNew, #ebd534);
+  color: var(--status-new);
   text-align: center;
   font-size: 64px;
   font-style: normal;
@@ -58,7 +58,7 @@
   padding: 10px;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  /* gap: 10px; */
   flex-shrink: 0;
 
   border-radius: 34px;
@@ -66,8 +66,12 @@
   cursor: pointer;
 }
 
+.greyCircle .icon {
+  fill: var(--light-gray);
+}
+
 .icon {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   fill: var(--bg-secondary);
 }
