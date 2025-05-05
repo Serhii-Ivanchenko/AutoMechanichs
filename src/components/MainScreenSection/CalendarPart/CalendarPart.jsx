@@ -45,7 +45,7 @@ export default function CalendarPart() {
       const newYear = month === 11 ? year + 1 : year;
       setYear(newYear);
       setMonth(nextMonth);
-      setDay(today.getDate());
+      setDay(1);
     } else {
       setDay(newDay);
     }
