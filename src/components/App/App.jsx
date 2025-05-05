@@ -8,15 +8,15 @@ import SubcategoriesPart from '../DiagnosticScreen/SubcategoriesPart/Subcategori
 const array1 = [
   {
     time: '12:00',
-    carModel: '2001 HONDA CIVIC',
+    carModel: '2001 MITSUBISHI OUTLANDER',
     problem: 'Стукає сперeду справа',
-    salary: '400',
+    salary: '123456',
   },
   {
     time: '12:00',
-    carModel: '2001 HONDA CIVIC',
+    carModel: '2001 MITSUBISHI OUTLANDER',
     problem: 'Стукає сперeду справа',
-    salary: '400',
+    salary: '1234',
   },
   {
     time: '12:00',
@@ -59,14 +59,14 @@ const array1 = [
 const array2 = [
   {
     time: '12:00',
-    carModel: '2001 HONDA CIVIC',
+    carModel: '2001 VOLKSWAGEN PASSAT',
     problem: 'Стукає сперeду справа',
-    salary: '400',
+    salary: '12400',
   },
   {
     time: '12:00',
-    carModel: '2001 HONDA CIVIC',
-    problem: 'Стукає сперeду справа',
+    carModel: '2001 MITSUBISHI OUTLANDER',
+    problem: 'Проблеми з автоматичною коробкою передач',
     salary: '400',
   },
   {

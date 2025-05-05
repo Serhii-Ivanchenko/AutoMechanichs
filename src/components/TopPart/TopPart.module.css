@@ -1,19 +1,21 @@
 .topPart {
   display: flex;
-  gap: 11px;
-
-  margin-bottom: 32px;
+  /* gap: 11px; */
+  justify-content: space-between;
+  padding: 0 9px;
+  margin-bottom: 29px;
 }
 
 .mechNameBox {
   display: flex;
   flex-direction: column;
-  gap: 19px;
+  justify-content: space-between;
+  max-width: 162px;
+  /* gap: 19px; */
 }
 
 .name {
   color: var(--light-gray);
-  font-variant-numeric: lining-nums proportional-nums;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
@@ -23,7 +25,6 @@
 
 .paleText {
   color: var(--input-text);
-  font-variant-numeric: lining-nums proportional-nums;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -32,12 +33,12 @@
 }
 
 .salaryInfoBox {
-  width: 238px;
+  width: 187px;
 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 5px;
+  /* gap: 5px; */
 }
 
 .salaryPoint {
@@ -51,7 +52,7 @@
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
-  line-height: normal;
+  line-height: 1.1875em;
 }
 
 .amountPossible {

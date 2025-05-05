@@ -2,8 +2,7 @@ import CalendarPart from './CalendarPart/CalendarPart';
 import CarsInWorkOrDoneList from './CarsInWorkOrDoneList/CarsInWorkOrDoneList';
 import { IoCarSport } from 'react-icons/io5';
 import { BsPlusCircleDotted } from 'react-icons/bs';
-import { BsCameraFill } from 'react-icons/bs';
-import { IoExitOutline } from 'react-icons/io5';
+import { BsCameraFill, BsBoxArrowLeft } from 'react-icons/bs';
 import { BiSolidMessageDetail } from 'react-icons/bi';
 import css from './MainScreenSection.module.css';
 import { useState } from 'react';
@@ -58,7 +57,7 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
       <div className={css.bottomPart}>
         <div className={css.exitBox}>
-          <IoExitOutline className={css.iconExit} />
+          <BsBoxArrowLeft className={css.iconExit} />
         </div>
         <BiSolidMessageDetail className={css.iconMessage} />
         <p className={css.wage}>{'+' + wage}</p>

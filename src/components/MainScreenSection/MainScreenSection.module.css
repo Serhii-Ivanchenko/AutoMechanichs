@@ -1,5 +1,6 @@
 .sectionWrapper {
   width: 100%;
+  padding: 0 9px;
 }
 
 /* .topPart {
@@ -92,15 +93,16 @@
 }
 
 .bottomPart {
-  width: 100%;
-  padding-top: 19px;
-
-  /* display: flex;
-  justify-content: space-between; */
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  place-items: center;
+  padding: 19px 9px 0;
+  width: 100%;
+  /* padding-top: 19px; */
+
+  /* display: grid;
+  grid-template-columns: 1fr 1fr 1fr; */
+  /* place-items: center; */
 
   border-top: 1px dashed var(--main-gray);
 }
