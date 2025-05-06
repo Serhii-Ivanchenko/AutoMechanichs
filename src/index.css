@@ -365,3 +365,7 @@ button {
   padding: 0;
   box-shadow: none;
 }
+
+a {
+  text-decoration: none;
+}

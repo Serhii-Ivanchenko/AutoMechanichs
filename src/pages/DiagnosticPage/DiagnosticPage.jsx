@@ -1,3 +1,9 @@
+import DiagnosticScreen from '../../components/DiagnosticScreen/DiagnosticScreen';
+
 export default function DiagnosticPage() {
-  return <div>Діагностика вузлів для авто</div>;
+  return (
+    <div>
+      <DiagnosticScreen />
+    </div>
+  );
 }
