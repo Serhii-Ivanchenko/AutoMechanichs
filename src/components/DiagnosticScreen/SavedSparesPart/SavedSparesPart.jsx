@@ -15,7 +15,11 @@ export default function SavedSparesPart({ nodes }) {
                 <li key={index} className={css.subcatListItem}>
                   <p className={css.subcatName}>{item.name}</p>
                   <div className={css.btnBox}>
-                    <div className={css.circle}>
+                    <div
+                      className={`${css.circle} ${
+                        item.parts.length > 0 ? css.circleFilled : ''
+                      }`}
+                    >
                       <BsCheckLg className={css.iconCheck} />
                     </div>
                     <div className={css.circle}>

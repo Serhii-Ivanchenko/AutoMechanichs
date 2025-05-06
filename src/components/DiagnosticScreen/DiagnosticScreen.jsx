@@ -27,7 +27,6 @@ export default function DiagnosticScreen() {
 
   console.log('chosenSpares', chosenSpares);
   console.log('spares', spares);
-  console.log('openDetails', openDetails);
 
   const handleCheckboxChange = (event, id, label) => {
     setChosenPoints(prevPoints => {
@@ -133,62 +132,71 @@ export default function DiagnosticScreen() {
 
   return (
     <div>
-      {openDetails ? (
-        <SparesPart
-          title={categoryForDetailsPart}
-          togglePoints={togglePoints}
-          setChosenSpares={setChosenSpares}
-          chosenSpares={chosenSpares}
-          spares={spares}
-          setSpares={setSpares}
-          openDetails={openDetails}
-          setOpenDetails={setOpenDetails}
-          setSavedSparesPartOpen={setSavedSparesPartOpen}
-        />
-      ) : (
-        <>
-          <CarDetailsPart />
-          <WorksSwitcher subcatOpen={subcatOpen} />
+      <CarDetailsPart />
+      <WorksSwitcher subcatOpen={subcatOpen} />
 
-          {savedSparesPartOpen ? (
-            <SavedSparesPart nodes={nodes} />
-          ) : subcatOpen ? (
-            <ul className={css.list}>
-              {chosenPoints?.map(point => (
-                <SubcategoriesPart
-                  key={point.id}
-                  point={point}
-                  setCategoryForDetailsPart={setCategoryForDetailsPart}
-                  chosenPoints={chosenPoints}
-                  togglePoints={togglePoints}
-                  setOpenDetails={setOpenDetails}
-                  openDetails={openDetails}
-                />
-              ))}
-            </ul>
-          ) : (
-            <TogglePoints
-              togglePoints={togglePoints}
-              handleCheckboxChange={handleCheckboxChange}
+      {savedSparesPartOpen ? (
+        <SavedSparesPart nodes={nodes} />
+      ) : subcatOpen ? (
+        <ul className={css.list}>
+          {chosenPoints?.map(point => (
+            <SubcategoriesPart
+              key={point.id}
+              point={point}
+              setCategoryForDetailsPart={setCategoryForDetailsPart}
               chosenPoints={chosenPoints}
+              togglePoints={togglePoints}
+              setOpenDetails={setOpenDetails}
+              openDetails={openDetails}
+              categoryForDetailsPart={categoryForDetailsPart}
+              spares={spares}
+              setSpares={setSpares}
+              setChosenSpares={setChosenSpares}
+              chosenSpares={chosenSpares}
             />
-          )}
+          ))}
+        </ul>
+      ) : (
+        <TogglePoints
+          togglePoints={togglePoints}
+          handleCheckboxChange={handleCheckboxChange}
+          chosenPoints={chosenPoints}
+        />
 
-          <BottomPart
-            back={
-              subcatOpen
-                ? () => setSubcatOpen(false)
-                : savedSparesPartOpen
-                ? handleCloseSavedScreen()
-                : '/main'
-            }
-            button={subcatOpen}
-            btnToggle={true}
-            categ={subcatOpen && !savedSparesPartOpen}
-            setNext={setSubcatOpen}
-          />
-        </>
+        // <Outlet />
       )}
+
+      {/* {savedSparesPartOpen && <SavedSparesPart nodes={nodes} />} */}
+
+      <BottomPart
+        back={
+          subcatOpen
+            ? () => setSubcatOpen(false)
+            : savedSparesPartOpen
+            ? handleCloseSavedScreen()
+            : '/main'
+        }
+        button={subcatOpen}
+        btnToggle={true}
+        // next="diagnostics-subcategories"
+        categ={subcatOpen && !savedSparesPartOpen}
+        next={
+          !subcatOpen
+            ? () => setSubcatOpen(true)
+            : () => setSavedSparesPartOpen(true)
+        }
+        chosenPoints={chosenPoints}
+      />
+
+      {/* <BottomPart
+        // back={() => setOpenDetails(false)}
+        // buttonSpares={true}
+        setNext={() => {
+          setOpenDetails(false);
+          setSavedSparesPartOpen(true);
+        }}
+      /> */}
+      {/* <Link to="/main">back</Link> */}
     </div>
   );
 }
