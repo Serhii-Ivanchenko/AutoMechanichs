@@ -133,36 +133,7 @@ export default function DiagnosticScreen() {
 
   return (
     <div>
-      <CarDetailsPart />
-      <WorksSwitcher subcatOpen={subcatOpen} />
-
-      {savedSparesPartOpen ? (
-        <SavedSparesPart nodes={nodes} />
-      ) : subcatOpen ? (
-        <ul className={css.list}>
-          {chosenPoints?.map(point => (
-            <SubcategoriesPart
-              key={point.id}
-              point={point}
-              setCategoryForDetailsPart={setCategoryForDetailsPart}
-              chosenPoints={chosenPoints}
-              togglePoints={togglePoints}
-              setOpenDetails={setOpenDetails}
-              openDetails={openDetails}
-            />
-          ))}
-        </ul>
-      ) : (
-        <TogglePoints
-          togglePoints={togglePoints}
-          handleCheckboxChange={handleCheckboxChange}
-          chosenPoints={chosenPoints}
-        />
-
-        // <Outlet />
-      )}
-
-      {openDetails && (
+      {openDetails ? (
         <SparesPart
           title={categoryForDetailsPart}
           togglePoints={togglePoints}
@@ -174,85 +145,50 @@ export default function DiagnosticScreen() {
           setOpenDetails={setOpenDetails}
           setSavedSparesPartOpen={setSavedSparesPartOpen}
         />
+      ) : (
+        <>
+          <CarDetailsPart />
+          <WorksSwitcher subcatOpen={subcatOpen} />
+
+          {savedSparesPartOpen ? (
+            <SavedSparesPart nodes={nodes} />
+          ) : subcatOpen ? (
+            <ul className={css.list}>
+              {chosenPoints?.map(point => (
+                <SubcategoriesPart
+                  key={point.id}
+                  point={point}
+                  setCategoryForDetailsPart={setCategoryForDetailsPart}
+                  chosenPoints={chosenPoints}
+                  togglePoints={togglePoints}
+                  setOpenDetails={setOpenDetails}
+                  openDetails={openDetails}
+                />
+              ))}
+            </ul>
+          ) : (
+            <TogglePoints
+              togglePoints={togglePoints}
+              handleCheckboxChange={handleCheckboxChange}
+              chosenPoints={chosenPoints}
+            />
+          )}
+
+          <BottomPart
+            back={
+              subcatOpen
+                ? () => setSubcatOpen(false)
+                : savedSparesPartOpen
+                ? handleCloseSavedScreen()
+                : '/main'
+            }
+            button={subcatOpen}
+            btnToggle={true}
+            categ={subcatOpen && !savedSparesPartOpen}
+            setNext={setSubcatOpen}
+          />
+        </>
       )}
-
-      {/* {savedSparesPartOpen && <SavedSparesPart nodes={nodes} />} */}
-
-      <BottomPart
-        back={
-          subcatOpen
-            ? () => setSubcatOpen(false)
-            : savedSparesPartOpen
-            ? handleCloseSavedScreen()
-            : '/main'
-        }
-        button={subcatOpen}
-        btnToggle={true}
-        // next="diagnostics-subcategories"
-        categ={subcatOpen && !savedSparesPartOpen}
-        setNext={setSubcatOpen}
-      />
-      {/* <Link to="/main">back</Link> */}
     </div>
   );
-  // return (
-  //   <div>
-  //     {openDetails ? (
-  //       <SparesPart
-  //         title={categoryForDetailsPart}
-  //         togglePoints={togglePoints}
-  //         setChosenSpares={setChosenSpares}
-  //         chosenSpares={chosenSpares}
-  //         spares={spares}
-  //         setSpares={setSpares}
-  //         openDetails={openDetails}
-  //         setOpenDetails={setOpenDetails}
-  //         setSavedSparesPartOpen={setSavedSparesPartOpen}
-  //       />
-  //     ) : (
-  //       <>
-  //         <CarDetailsPart />
-  //         <WorksSwitcher subcatOpen={subcatOpen} />
-
-  //         {savedSparesPartOpen ? (
-  //           <SavedSparesPart nodes={nodes} />
-  //         ) : subcatOpen ? (
-  //           <ul className={css.list}>
-  //             {chosenPoints?.map(point => (
-  //               <SubcategoriesPart
-  //                 key={point.id}
-  //                 point={point}
-  //                 setCategoryForDetailsPart={setCategoryForDetailsPart}
-  //                 chosenPoints={chosenPoints}
-  //                 togglePoints={togglePoints}
-  //                 setOpenDetails={setOpenDetails}
-  //                 openDetails={openDetails}
-  //               />
-  //             ))}
-  //           </ul>
-  //         ) : (
-  //           <TogglePoints
-  //             togglePoints={togglePoints}
-  //             handleCheckboxChange={handleCheckboxChange}
-  //             chosenPoints={chosenPoints}
-  //           />
-  //         )}
-
-  //         <BottomPart
-  //           back={
-  //             subcatOpen
-  //               ? () => setSubcatOpen(false)
-  //               : savedSparesPartOpen
-  //               ? handleCloseSavedScreen()
-  //               : '/main'
-  //           }
-  //           button={subcatOpen}
-  //           btnToggle={true}
-  //           categ={subcatOpen && !savedSparesPartOpen}
-  //           setNext={setSubcatOpen}
-  //         />
-  //       </>
-  //     )}
-  //   </div>
-  // );
 }

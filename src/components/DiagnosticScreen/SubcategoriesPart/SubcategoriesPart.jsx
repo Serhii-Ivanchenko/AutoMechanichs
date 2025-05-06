@@ -13,30 +13,37 @@ export default function SubcategoriesPart({
   const matchedPoint = togglePoints.find(cat => cat.name === point.label);
   // console.log("matched", matchedPoint);
 
-  const showDetails = id => {
-    setOpenDetails(prevId => (prevId === id ? null : id));
+  // const showDetails = id => {
+  //   setOpenDetails(prevId => (prevId === id ? null : id));
+  //   if (openDetails === null) {
+  //     return;
+  //   }
+
+  //   // Перевіряємо серед підкатегорій
+  //   const allNodes = togglePoints.flatMap(cat => cat.nodes || []);
+  //   const chosenCategory = allNodes.find(node => node.id === openDetails);
+
+  //   if (chosenCategory) {
+  //     setCategoryForDetailsPart(chosenCategory.name);
+  //     return;
+  //   }
+
+  //   // Якщо не знайдено серед підкатегорій, шукаємо серед головних категорій
+  //   const mainCategory = togglePoints.find(cat => cat.id === openDetails);
+  //   if (mainCategory) {
+  //     setCategoryForDetailsPart(mainCategory.name);
+  //   }
+  // };
+
+  const showDetails = (id, name) => {
+    const isSame = openDetails === id;
+    setOpenDetails(isSame ? null : id);
+    setCategoryForDetailsPart(isSame ? '' : name); // Якщо закриваєш, очищаєш
   };
 
-  useEffect(() => {
-    if (openDetails === null) {
-      return;
-    }
+  // useEffect(() => {
 
-    // Перевіряємо серед підкатегорій
-    const allNodes = togglePoints.flatMap(cat => cat.nodes || []);
-    const chosenCategory = allNodes.find(node => node.id === openDetails);
-
-    if (chosenCategory) {
-      setCategoryForDetailsPart(chosenCategory.name);
-      return;
-    }
-
-    // Якщо не знайдено серед підкатегорій, шукаємо серед головних категорій
-    const mainCategory = togglePoints.find(cat => cat.id === openDetails);
-    if (mainCategory) {
-      setCategoryForDetailsPart(mainCategory.name);
-    }
-  }, [openDetails, togglePoints, setCategoryForDetailsPart]);
+  // }, [openDetails, togglePoints, setCategoryForDetailsPart]);
 
   useEffect(() => {
     // console.log("openDetails", openDetails);
@@ -44,50 +51,50 @@ export default function SubcategoriesPart({
 
   return (
     // <ul>
-      <li>
-        <p className={css.categoryName}>{point.label}</p>
+    <li>
+      <p className={css.categoryName}>{point.label}</p>
 
-        {matchedPoint?.nodes?.length > 0 ? (
-          <ul className={css.subcategoriesList}>
-            {matchedPoint.nodes.map(node => (
-              <li
-                key={node.id}
-                className={css.subcategoriesListItem}
-                onClick={() => showDetails(node.id)}
-              >
-                <p className={css.subCategory}>{node.name || 'lala'}</p>
-                <div className={css.divForShadow}>
-                  <span
-                    className={`${css.iconBox} ${
-                      openDetails === node.id ? css.rotated : ''
-                    }`}
-                  >
-                    <BsFillCaretDownFill className={css.icon} />
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <ul className={css.subcategoriesList}>
+      {matchedPoint?.nodes?.length > 0 ? (
+        <ul className={css.subcategoriesList}>
+          {matchedPoint.nodes.map(node => (
             <li
+              key={node.id}
               className={css.subcategoriesListItem}
-              onClick={() => showDetails(point.id)}
+              onClick={() => showDetails(node.id, node.name)}
             >
-              <p className={css.subCategory}>{point.label}</p>
+              <p className={css.subCategory}>{node.name || 'lala'}</p>
               <div className={css.divForShadow}>
                 <span
                   className={`${css.iconBox} ${
-                    openDetails === point.id && css.rotated
+                    openDetails === node.id ? css.rotated : ''
                   }`}
                 >
                   <BsFillCaretDownFill className={css.icon} />
                 </span>
               </div>
             </li>
-          </ul>
-        )}
-      </li>
+          ))}
+        </ul>
+      ) : (
+        <ul className={css.subcategoriesList}>
+          <li
+            className={css.subcategoriesListItem}
+            onClick={() => showDetails(point.id, point.label)}
+          >
+            <p className={css.subCategory}>{point.label}</p>
+            <div className={css.divForShadow}>
+              <span
+                className={`${css.iconBox} ${
+                  openDetails === point.id && css.rotated
+                }`}
+              >
+                <BsFillCaretDownFill className={css.icon} />
+              </span>
+            </div>
+          </li>
+        </ul>
+      )}
+    </li>
     // </ul>
   );
 }
