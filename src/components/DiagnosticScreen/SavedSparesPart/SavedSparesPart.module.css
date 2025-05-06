@@ -5,7 +5,8 @@
   padding-right: 25px;
   padding-left: 25px;
 
-  height: 353px;
+  height: 371px;
+  margin-bottom: 30px;
   overflow-y: auto;
 }
 
@@ -26,8 +27,9 @@
 
 .nodeName,
 .subcatName {
+  padding-left: 2px;
+
   color: var(--light-gray);
-  font-variant-numeric: lining-nums proportional-nums;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;

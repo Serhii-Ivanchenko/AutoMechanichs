@@ -1,12 +1,13 @@
 .list {
   width: 350px;
-  height: 353px;
+  height: 371px;
   overflow-y: auto;
 
   display: flex;
   flex-direction: column;
-  gap: 31px;
-  padding-top: 5px;
+  gap: 30px;
+  /* padding-top: 5px; */
+  padding: 0 9px;
 
   margin-left: auto;
   margin-right: auto;
@@ -15,8 +16,7 @@
 }
 
 .list::-webkit-scrollbar {
-  width: clamp(5px, min(0.432vw, 0.741vh), 8px);
-  /* width: 8px; */
+  width: 8px;
 }
 
 .list::-webkit-scrollbar-track {

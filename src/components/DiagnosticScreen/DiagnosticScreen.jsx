@@ -27,6 +27,7 @@ export default function DiagnosticScreen() {
 
   console.log('chosenSpares', chosenSpares);
   console.log('spares', spares);
+  console.log('openDetails', openDetails);
 
   const handleCheckboxChange = (event, id, label) => {
     setChosenPoints(prevPoints => {
@@ -194,4 +195,64 @@ export default function DiagnosticScreen() {
       {/* <Link to="/main">back</Link> */}
     </div>
   );
+  // return (
+  //   <div>
+  //     {openDetails ? (
+  //       <SparesPart
+  //         title={categoryForDetailsPart}
+  //         togglePoints={togglePoints}
+  //         setChosenSpares={setChosenSpares}
+  //         chosenSpares={chosenSpares}
+  //         spares={spares}
+  //         setSpares={setSpares}
+  //         openDetails={openDetails}
+  //         setOpenDetails={setOpenDetails}
+  //         setSavedSparesPartOpen={setSavedSparesPartOpen}
+  //       />
+  //     ) : (
+  //       <>
+  //         <CarDetailsPart />
+  //         <WorksSwitcher subcatOpen={subcatOpen} />
+
+  //         {savedSparesPartOpen ? (
+  //           <SavedSparesPart nodes={nodes} />
+  //         ) : subcatOpen ? (
+  //           <ul className={css.list}>
+  //             {chosenPoints?.map(point => (
+  //               <SubcategoriesPart
+  //                 key={point.id}
+  //                 point={point}
+  //                 setCategoryForDetailsPart={setCategoryForDetailsPart}
+  //                 chosenPoints={chosenPoints}
+  //                 togglePoints={togglePoints}
+  //                 setOpenDetails={setOpenDetails}
+  //                 openDetails={openDetails}
+  //               />
+  //             ))}
+  //           </ul>
+  //         ) : (
+  //           <TogglePoints
+  //             togglePoints={togglePoints}
+  //             handleCheckboxChange={handleCheckboxChange}
+  //             chosenPoints={chosenPoints}
+  //           />
+  //         )}
+
+  //         <BottomPart
+  //           back={
+  //             subcatOpen
+  //               ? () => setSubcatOpen(false)
+  //               : savedSparesPartOpen
+  //               ? handleCloseSavedScreen()
+  //               : '/main'
+  //           }
+  //           button={subcatOpen}
+  //           btnToggle={true}
+  //           categ={subcatOpen && !savedSparesPartOpen}
+  //           setNext={setSubcatOpen}
+  //         />
+  //       </>
+  //     )}
+  //   </div>
+  // );
 }

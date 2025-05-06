@@ -43,7 +43,7 @@ export default function SubcategoriesPart({
   }, [openDetails]);
 
   return (
-    <ul>
+    // <ul>
       <li>
         <p className={css.categoryName}>{point.label}</p>
 
@@ -88,6 +88,6 @@ export default function SubcategoriesPart({
           </ul>
         )}
       </li>
-    </ul>
+    // </ul>
   );
 }

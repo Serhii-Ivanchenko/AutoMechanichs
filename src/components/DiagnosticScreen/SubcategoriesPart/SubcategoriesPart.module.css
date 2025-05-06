@@ -1,18 +1,16 @@
 .categoryName {
   color: var(--light-gray);
-  font-variant-numeric: lining-nums proportional-nums;
   font-size: 20px;
 
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   font-variant: small-caps;
-  /* margin-bottom: 10px; */
   margin-bottom: 10px;
 
   background-color: var(--bg-secondary);
-  /* padding: 10px; */
-  padding: 10px;
+
+  padding: 5px 2px;
 
   position: sticky;
   top: -6px;
@@ -21,9 +19,9 @@
 .subcategoriesList {
   display: flex;
   flex-direction: column;
-  gap: 31px;
+  gap: 24px;
 
-  margin-bottom: 40px;
+  /* margin-bottom: 40px; */
 }
 
 .subcategoriesListItem {

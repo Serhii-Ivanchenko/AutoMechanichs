@@ -1,12 +1,12 @@
 .list {
   width: 350px;
-  height: 353px;
+  height: 371px;
   overflow-y: auto;
 
   display: flex;
   flex-direction: column;
   gap: 31px;
-  padding-top: 5px;
+  padding: 5px 9px 0;
 
   margin-left: auto;
   margin-right: auto;
@@ -15,8 +15,7 @@
 }
 
 .list::-webkit-scrollbar {
-  width: clamp(5px, min(0.432vw, 0.741vh), 8px);
-  /* width: 8px; */
+  width: 8px;
 }
 
 .list::-webkit-scrollbar-track {
@@ -40,8 +39,6 @@
 
 .label {
   color: var(--light-gray);
-  font-variant-numeric: lining-nums proportional-nums;
-  /* font-size: 20px; */
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
@@ -52,20 +49,10 @@
   /* width: 193px; */
 }
 
-.statusToggle {
-  color: var(--light-gray);
-  font-family: 'Roboto', sans-serif;
-  /* font-size: 16px; */
-  font-size: 16px;
-  font-weight: 300;
-  /* margin-top: -4px; */
-  margin-top: -4px;
-}
-
 .toggleSwitch {
   position: relative;
   display: inline-block;
-  width: 34px;
+  width: 42px;
 }
 
 .toggleSwitch input {
@@ -76,11 +63,11 @@
 
 .slider {
   position: absolute;
-  top: 0;
+  top: 3px;
   left: 0;
   right: 0;
   bottom: 0;
-  width: 38px;
+  width: 42px;
   height: 15px;
   background-color: var(--light-gray-table);
   border-radius: 25px;
@@ -98,8 +85,8 @@
   height: 25px;
   width: 25px;
 
-  left: -5px;
-  bottom: -6px;
+  left: 0px;
+  bottom: -5px;
   background-color: var(--white);
   border-radius: 50%;
   transition: 0.4s;
@@ -110,5 +97,5 @@ input:checked + .slider {
 }
 
 input:checked + .slider::before {
-  transform: translateX(25px);
+  transform: translateX(18px);
 }

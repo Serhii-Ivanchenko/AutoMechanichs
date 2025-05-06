@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Layout from '../Layout/Layout.jsx';
 import css from './App.module.css';
 import TopPart from '../topPart/topPart.jsx';
@@ -124,6 +124,7 @@ const NotFoundPage = lazy(() =>
 );
 
 export default function App() {
+  const location = useLocation();
   const wage = array2.reduce((sum, i) => sum + Number(i.salary || 0), 0);
   const possibleSum = array1.reduce((sum, i) => sum + Number(i.salary || 0), 0);
   const amountPossible = wage + possibleSum;
@@ -131,8 +132,12 @@ export default function App() {
   return (
     <Layout>
       <Suspense fallback={<div>Loading...</div>}>
-        <TopPart wage={wage} amountPossible={amountPossible} />
-        <CalendarPart />
+        {location.pathname !== '/login' && location.pathname !== '/' && (
+          <TopPart wage={wage} amountPossible={amountPossible} />
+        )}
+        {location.pathname !== '/login' && location.pathname !== '/' && (
+          <CalendarPart />
+        )}
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage />} />
