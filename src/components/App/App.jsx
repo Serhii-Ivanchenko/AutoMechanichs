@@ -116,6 +116,7 @@ const array2 = [
 ];
 
 import { lazy, Suspense } from 'react';
+import LoaderSvg from '../Loader/LoaderSvg.jsx';
 
 const LoginPage = lazy(() => import('../../pages/LoginPage/LoginPage.jsx'));
 const MainPage = lazy(() => import('../../pages/MainPage/MainPage.jsx'));
@@ -139,7 +140,7 @@ export default function App() {
 
   return (
     <Layout>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<LoaderSvg/>}>
         {location.pathname !== '/login' && location.pathname !== '/' && (
           <TopPart wage={wage} amountPossible={amountPossible} />
         )}
