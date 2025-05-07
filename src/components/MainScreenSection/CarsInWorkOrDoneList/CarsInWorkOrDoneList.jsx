@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import css from './CarsInWorkOrDoneList.module.css';
 import { BsPatchExclamationFill } from 'react-icons/bs';
+import { BsCheckCircleFill } from 'react-icons/bs';
 
 export default function CarsInWorkOrDoneList({ done, list }) {
   return (
@@ -26,7 +27,20 @@ export default function CarsInWorkOrDoneList({ done, list }) {
                 ></div>
                 <div className={css.carWrapper}>
                   <p className={css.car}>{item.carModel}</p>
-                  <p className={css.problem}>{item.problem}</p>
+                  <div className={css.problemAndSpares}>
+                    <p className={css.problem}>{item.problem}</p>
+                    {item.sparesStatus ? (
+                      <BsCheckCircleFill
+                        className={`${css.iconTick} ${
+                          item.sparesStatus === 'received' && css.iconTickOK
+                        } ${
+                          item.sparesStatus === 'ordered' && css.iconTickWait
+                        }`}
+                      />
+                    ) : (
+                      ''
+                    )}
+                  </div>
                 </div>
                 <p className={`${css.salary} ${done ? css.salaryDone : ''}`}>
                   {item.salary}

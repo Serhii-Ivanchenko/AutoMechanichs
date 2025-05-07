@@ -186,6 +186,7 @@ export default function DiagnosticScreen() {
             : () => setSavedSparesPartOpen(true)
         }
         chosenPoints={chosenPoints}
+        savedPartBottom={savedSparesPartOpen}
       />
 
       {/* <BottomPart

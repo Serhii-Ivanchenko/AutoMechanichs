@@ -17,6 +17,7 @@ export default function BottomPart({
   btnToggle,
   buttonSpares,
   chosenPoints,
+  savedPartBottom,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -63,7 +64,11 @@ export default function BottomPart({
           className={`${css.confirm} ${isDisabled && css.confirmDisabled}`}
           disabled={isDisabled}
         >
-          <FaArrowRight className={css.icon} />
+          {savedPartBottom ? (
+            <BsCheckLg className={css.icon} />
+          ) : (
+            <FaArrowRight className={css.icon} />
+          )}
         </button>
       ) : (
         <NavLink to={next} className={css.confirm}>
