@@ -77,6 +77,7 @@
   font-weight: 400;
   line-height: 1.1875em;
   font-variant: small-caps;
+  width: 182px;
 }
 
 .carWrapper {
@@ -107,4 +108,23 @@
 
 .salaryDone {
   color: var(--green);
+}
+
+.iconTick {
+  width: 13px;
+  height: 13px;
+}
+
+.iconTickOK {
+  fill: var(--green-btn-normal);
+}
+
+.iconTickWait {
+  fill: var(--status-new);
+}
+
+.problemAndSpares {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }

@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import css from './SubcategoriesPart.module.css';
 import { BsFillCaretDownFill } from 'react-icons/bs';
+import SparesPart from '../SparesPart/SparesPart';
+import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 
 export default function SubcategoriesPart({
   setCategoryForDetailsPart,
@@ -9,34 +11,53 @@ export default function SubcategoriesPart({
   togglePoints,
   openDetails,
   setOpenDetails,
+  categoryForDetailsPart,
+  spares,
+  setSpares,
+  chosenSpares,
+  setChosenSpares,
 }) {
   const matchedPoint = togglePoints.find(cat => cat.name === point.label);
+
+  const [expandedMap, setExpandedMap] = useState({});
+
+  const handleAccordionToggle =
+    (categoryId, nodeId, name) => (event, isExpanded) => {
+      setExpandedMap(prev => ({
+        ...prev,
+        [categoryId]: isExpanded ? nodeId : null,
+      }));
+
+      setOpenDetails(isExpanded ? nodeId : null);
+      setCategoryForDetailsPart(isExpanded ? name : '');
+    };
   // console.log("matched", matchedPoint);
 
-  const showDetails = id => {
-    setOpenDetails(prevId => (prevId === id ? null : id));
-  };
+  // const showDetails = id => {
+  //   setOpenDetails(prevId => (prevId === id ? null : id));
+  //   if (openDetails === null) {
+  //     return;
+  //   }
 
-  useEffect(() => {
-    if (openDetails === null) {
-      return;
-    }
+  //   // Перевіряємо серед підкатегорій
+  //   const allNodes = togglePoints.flatMap(cat => cat.nodes || []);
+  //   const chosenCategory = allNodes.find(node => node.id === openDetails);
 
-    // Перевіряємо серед підкатегорій
-    const allNodes = togglePoints.flatMap(cat => cat.nodes || []);
-    const chosenCategory = allNodes.find(node => node.id === openDetails);
+  //   if (chosenCategory) {
+  //     setCategoryForDetailsPart(chosenCategory.name);
+  //     return;
+  //   }
 
-    if (chosenCategory) {
-      setCategoryForDetailsPart(chosenCategory.name);
-      return;
-    }
+  //   // Якщо не знайдено серед підкатегорій, шукаємо серед головних категорій
+  //   const mainCategory = togglePoints.find(cat => cat.id === openDetails);
+  //   if (mainCategory) {
+  //     setCategoryForDetailsPart(mainCategory.name);
+  //   }
+  // };
 
-    // Якщо не знайдено серед підкатегорій, шукаємо серед головних категорій
-    const mainCategory = togglePoints.find(cat => cat.id === openDetails);
-    if (mainCategory) {
-      setCategoryForDetailsPart(mainCategory.name);
-    }
-  }, [openDetails, togglePoints, setCategoryForDetailsPart]);
+  // useEffect(() => {
+
+  // }, [openDetails, togglePoints, setCategoryForDetailsPart]);
 
   useEffect(() => {
     // console.log("openDetails", openDetails);
@@ -44,50 +65,90 @@ export default function SubcategoriesPart({
 
   return (
     // <ul>
-      <li>
-        <p className={css.categoryName}>{point.label}</p>
+    <li>
+      <p className={css.categoryName}>{point.label}</p>
 
-        {matchedPoint?.nodes?.length > 0 ? (
-          <ul className={css.subcategoriesList}>
-            {matchedPoint.nodes.map(node => (
-              <li
-                key={node.id}
-                className={css.subcategoriesListItem}
-                onClick={() => showDetails(node.id)}
+      {matchedPoint?.nodes?.length > 0 ? (
+        <ul className={css.subcategoriesList}>
+          {matchedPoint.nodes.map(node => (
+            <li key={node.id}>
+              <Accordion
+                className={css.accordion}
+                expanded={expandedMap[node.id] === node.id}
+                onChange={handleAccordionToggle(node.id, node.id, node.name)}
               >
-                <p className={css.subCategory}>{node.name || 'lala'}</p>
+                <AccordionSummary className={css.subcategoriesListItem}>
+                  <p className={css.subCategory}>{node.name || 'lala'}</p>
+                  <div className={css.divForShadow}>
+                    <span className={`${css.iconBox}`}>
+                      <BsFillCaretDownFill
+                        className={`${css.icon} ${
+                          expandedMap[node.id] === node.id ? css.rotated : ''
+                        }`}
+                      />
+                    </span>
+                  </div>
+                </AccordionSummary>
+
+                {/* {openDetails && ( */}
+                <AccordionDetails className={css.details}>
+                  <SparesPart
+                    title={node.name}
+                    togglePoints={togglePoints}
+                    setChosenSpares={setChosenSpares}
+                    chosenSpares={chosenSpares}
+                    spares={spares}
+                    setSpares={setSpares}
+                    openDetails={openDetails}
+                    setOpenDetails={setOpenDetails}
+                    // setSavedSparesPartOpen={setSavedSparesPartOpen}
+                    setCategoryForDetailsPart={setCategoryForDetailsPart}
+                  />
+                </AccordionDetails>
+              </Accordion>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul className={css.subcategoriesList}>
+          <li>
+            <Accordion
+              className={css.accordion}
+              expanded={expandedMap[point.id] === point.id}
+              onChange={handleAccordionToggle(point.id, point.id, point.label)}
+            >
+              <AccordionSummary className={css.subcategoriesListItem}>
+                <p className={css.subCategory}>{point.label}</p>
                 <div className={css.divForShadow}>
-                  <span
-                    className={`${css.iconBox} ${
-                      openDetails === node.id ? css.rotated : ''
-                    }`}
-                  >
-                    <BsFillCaretDownFill className={css.icon} />
+                  <span className={`${css.iconBox} `}>
+                    <BsFillCaretDownFill
+                      className={`${css.icon} ${
+                        expandedMap[point.id] === point.id && css.rotated
+                      }`}
+                    />
                   </span>
                 </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <ul className={css.subcategoriesList}>
-            <li
-              className={css.subcategoriesListItem}
-              onClick={() => showDetails(point.id)}
-            >
-              <p className={css.subCategory}>{point.label}</p>
-              <div className={css.divForShadow}>
-                <span
-                  className={`${css.iconBox} ${
-                    openDetails === point.id && css.rotated
-                  }`}
-                >
-                  <BsFillCaretDownFill className={css.icon} />
-                </span>
-              </div>
-            </li>
-          </ul>
-        )}
-      </li>
+              </AccordionSummary>
+
+              <AccordionDetails>
+                <SparesPart
+                  title={point.label}
+                  togglePoints={togglePoints}
+                  setChosenSpares={setChosenSpares}
+                  chosenSpares={chosenSpares}
+                  spares={spares}
+                  setSpares={setSpares}
+                  openDetails={openDetails}
+                  setOpenDetails={setOpenDetails}
+                  // setSavedSparesPartOpen={setSavedSparesPartOpen}
+                  setCategoryForDetailsPart={setCategoryForDetailsPart}
+                />
+              </AccordionDetails>
+            </Accordion>
+          </li>
+        </ul>
+      )}
+    </li>
     // </ul>
   );
 }
