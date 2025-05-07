@@ -7,14 +7,14 @@ import SubcategoriesPart from '../DiagnosticScreen/SubcategoriesPart/Subcategori
 
 const array1 = [
   {
-    time: '12:00',
+    time: '00:10',
     carModel: '2001 MITSUBISHI OUTLANDER',
     problem: 'Стукає сперeду справа',
     salary: '123456',
     sparesStatus: '',
   },
   {
-    time: '12:00',
+    time: '00:20',
     carModel: '2001 MITSUBISHI OUTLANDER',
     problem: 'Стукає сперeду справа',
     salary: '1234',
