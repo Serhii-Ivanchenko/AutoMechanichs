@@ -19,15 +19,18 @@ export default function SubcategoriesPart({
 }) {
   const matchedPoint = togglePoints.find(cat => cat.name === point.label);
 
-  const [expandedId, setExpandedId] = useState(null);
+  const [expandedMap, setExpandedMap] = useState({});
 
-  const handleAccordionToggle = (id, name) => (event, isExpanded) => {
-    setExpandedId(isExpanded ? id : null);
-    if (isExpanded) {
-      setCategoryForDetailsPart(name);
-      setOpenDetails(id); // якщо потрібно для іншого
-    }
-  };
+  const handleAccordionToggle =
+    (categoryId, nodeId, name) => (event, isExpanded) => {
+      setExpandedMap(prev => ({
+        ...prev,
+        [categoryId]: isExpanded ? nodeId : null,
+      }));
+
+      setOpenDetails(isExpanded ? nodeId : null);
+      setCategoryForDetailsPart(isExpanded ? name : '');
+    };
   // console.log("matched", matchedPoint);
 
   // const showDetails = id => {
@@ -52,12 +55,6 @@ export default function SubcategoriesPart({
   //   }
   // };
 
-  const showDetails = (id, name) => {
-    const isSame = openDetails === id;
-    setOpenDetails(isSame ? null : id);
-    setCategoryForDetailsPart(isSame ? '' : name); // Якщо закриваєш, очищаєш
-  };
-
   // useEffect(() => {
 
   // }, [openDetails, togglePoints, setCategoryForDetailsPart]);
@@ -74,11 +71,11 @@ export default function SubcategoriesPart({
       {matchedPoint?.nodes?.length > 0 ? (
         <ul className={css.subcategoriesList}>
           {matchedPoint.nodes.map(node => (
-            <li key={node.id} onClick={() => showDetails(node.id, node.name)}>
+            <li key={node.id}>
               <Accordion
                 className={css.accordion}
-                expanded={expandedId === node.id}
-                onChange={handleAccordionToggle(node.id, node.name)}
+                expanded={expandedMap[node.id] === node.id}
+                onChange={handleAccordionToggle(node.id, node.id, node.name)}
               >
                 <AccordionSummary className={css.subcategoriesListItem}>
                   <p className={css.subCategory}>{node.name || 'lala'}</p>
@@ -86,7 +83,7 @@ export default function SubcategoriesPart({
                     <span className={`${css.iconBox}`}>
                       <BsFillCaretDownFill
                         className={`${css.icon} ${
-                          expandedId === node.id ? css.rotated : ''
+                          expandedMap[node.id] === node.id ? css.rotated : ''
                         }`}
                       />
                     </span>
@@ -117,8 +114,8 @@ export default function SubcategoriesPart({
           <li>
             <Accordion
               className={css.accordion}
-              expanded={expandedId === point.id}
-              onChange={handleAccordionToggle(point.id, point.label)}
+              expanded={expandedMap[point.id] === point.id}
+              onChange={handleAccordionToggle(point.id, point.id, point.label)}
             >
               <AccordionSummary className={css.subcategoriesListItem}>
                 <p className={css.subCategory}>{point.label}</p>
@@ -126,7 +123,7 @@ export default function SubcategoriesPart({
                   <span className={`${css.iconBox} `}>
                     <BsFillCaretDownFill
                       className={`${css.icon} ${
-                        expandedId === point.id && css.rotated
+                        expandedMap[point.id] === point.id && css.rotated
                       }`}
                     />
                   </span>
