@@ -47,7 +47,8 @@
   font-weight: 500;
   font-size: 11px;
   font-style: normal;
-  line-height: normal;
+  line-height: 1.1818em;
+  color: #E9E9E9;
 }
 
 .inputWithIconWrapper {
@@ -70,15 +71,20 @@
   border: none;
   font-family: 'Roboto', sans-serif;
   font-weight: 400;
-  font-size: 14px;
+  font-size: 10px;
   font-style: normal;
-  line-height: 1.142em;
-  color: var(--white);
+  line-height: 1.2em;
+  color: #E9E9E9;
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 40px;
   width: 100%;
   padding-right: 25px;
+}
+
+.input:focus {
+  outline: 1px solid #E9E9E9;
+  border: none;
 }
 
 .input::placeholder {
@@ -113,6 +119,7 @@
   position: absolute;
   top: 100%;
   left: 0;
+  margin-top: 1px;
 }
 
 .eyeIcon {
@@ -150,4 +157,8 @@
   outline: none;
   border: none;
   cursor: pointer;
+}
+
+.submitBtn:hover {
+  background-color: #00799b;
 }
