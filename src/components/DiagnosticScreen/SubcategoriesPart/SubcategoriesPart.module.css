@@ -25,6 +25,27 @@
   /* margin-bottom: 40px; */
 }
 
+.accordion {
+  box-shadow: none !important;
+  background-color: transparent !important;
+  width: 318px !important;
+}
+
+.accordion span {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+}
+
+.details {
+  width: 318px !important;
+}
+
+.divForShadow {
+  display: flex;
+  align-items: center;
+}
+
 .subcategoriesListItem {
   display: flex !important;
   flex-direction: column !important;
@@ -49,14 +70,14 @@
 
 .subCategory {
   color: var(--light-gray);
-  font-variant-numeric: lining-nums proportional-nums;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   font-variant: small-caps;
 
-  width: 252px;
+  /* width: 252px; */
+  width: 205px;
 }
 
 .iconBox {
@@ -80,19 +101,4 @@
 
 .rotated {
   transform: rotate(-180deg);
-}
-
-.accordion {
-  box-shadow: none !important;
-  background-color: transparent !important;
-  width: 318px !important;
-}
-
-.details {
-  width: 318px !important;
-}
-
-.divForShadow {
-  display: flex;
-  align-items: center;
 }

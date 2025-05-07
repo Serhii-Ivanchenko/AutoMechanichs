@@ -77,16 +77,16 @@ export default function SubcategoriesPart({
                 expanded={expandedMap[node.id] === node.id}
                 onChange={handleAccordionToggle(node.id, node.id, node.name)}
               >
-                <AccordionSummary className={css.subcategoriesListItem}>
+                <AccordionSummary className={css.subcategoriesListItem} >
                   <p className={css.subCategory}>{node.name || 'lala'}</p>
                   <div className={css.divForShadow}>
-                    <span className={`${css.iconBox}`}>
+                    <div className={`${css.iconBox}`}>
                       <BsFillCaretDownFill
                         className={`${css.icon} ${
                           expandedMap[node.id] === node.id ? css.rotated : ''
                         }`}
                       />
-                    </span>
+                    </div>
                   </div>
                 </AccordionSummary>
 
@@ -120,13 +120,13 @@ export default function SubcategoriesPart({
               <AccordionSummary className={css.subcategoriesListItem}>
                 <p className={css.subCategory}>{point.label}</p>
                 <div className={css.divForShadow}>
-                  <span className={`${css.iconBox} `}>
+                  <div className={`${css.iconBox} `}>
                     <BsFillCaretDownFill
                       className={`${css.icon} ${
                         expandedMap[point.id] === point.id && css.rotated
                       }`}
                     />
-                  </span>
+                  </div>
                 </div>
               </AccordionSummary>
 
