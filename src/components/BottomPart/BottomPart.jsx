@@ -5,30 +5,39 @@ import { NavLink } from 'react-router-dom';
 import { BsFillMicFill } from 'react-icons/bs';
 import { BsCameraFill } from 'react-icons/bs';
 import { BiSolidMessageDetail } from 'react-icons/bi';
+import { FaArrowLeft } from 'react-icons/fa';
+import { FaArrowRight } from 'react-icons/fa';
+import { TiHome } from 'react-icons/ti';
 
 export default function BottomPart({
   back,
   next,
-  setNext,
   button,
   categ,
   btnToggle,
   buttonSpares,
+  chosenPoints,
+  savedPartBottom,
 }) {
+  const isDisabled = chosenPoints?.length === 0;
+
   return (
     <div className={css.wrapper}>
       {button || buttonSpares ? (
-        <div onClick={back} className={css.cancel}>
-          <RxCross1 className={css.icon} />
-        </div>
+        <button type="button" onClick={back} className={css.cancel}>
+          <FaArrowLeft className={css.icon} />
+        </button>
       ) : (
         <NavLink to={back} className={css.cancel}>
-          <RxCross1 className={css.icon} />
+          <FaArrowLeft className={css.icon} />
         </NavLink>
       )}
 
-      {buttonSpares ? (
+      {categ ? (
         <>
+          <NavLink to="/main" className={css.home}>
+            <TiHome className={css.icon} />
+          </NavLink>
           <div className={css.greyCircle}>
             <BsFillMicFill className={css.icon} />
           </div>
@@ -40,18 +49,30 @@ export default function BottomPart({
           </div>
         </>
       ) : (
-        <p className={css.money}>0</p>
+        <NavLink to="/main" className={css.home}>
+          <TiHome className={css.icon} />
+        </NavLink>
       )}
-
-      {categ ? (
+      {/* 
+      categ ? (
         <div style={{ width: '41px' }}></div>
-      ) : button || btnToggle || buttonSpares ? (
-        <div onClick={() => setNext(true)} className={css.confirm}>
-          <BsCheckLg className={css.icon} />
-        </div>
+      ) : */}
+      {button || btnToggle || buttonSpares ? (
+        <button
+          type="button"
+          onClick={next}
+          className={`${css.confirm} ${isDisabled && css.confirmDisabled}`}
+          disabled={isDisabled}
+        >
+          {savedPartBottom ? (
+            <BsCheckLg className={css.icon} />
+          ) : (
+            <FaArrowRight className={css.icon} />
+          )}
+        </button>
       ) : (
         <NavLink to={next} className={css.confirm}>
-          <BsCheckLg className={css.icon} />
+          <FaArrowRight className={css.icon} />
         </NavLink>
       )}
 

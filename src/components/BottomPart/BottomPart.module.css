@@ -20,7 +20,8 @@
 }
 
 .cancel,
-.confirm {
+.confirm,
+.home {
   width: 41px;
   height: 41px;
   flex-shrink: 0;
@@ -32,6 +33,8 @@
 
   cursor: pointer;
   color: var(--bg-secondary);
+
+  border: none;
 }
 
 .cancel {
@@ -40,6 +43,15 @@
 
 .confirm {
   background-color: var(--green);
+}
+
+.confirmDisabled {
+  background-color: var(--main-gray);
+  cursor: default;
+}
+
+.home {
+  background-color: var(--input-text);
 }
 
 .money {
@@ -66,7 +78,8 @@
   cursor: pointer;
 }
 
-.greyCircle .icon {
+.greyCircle .icon,
+.home .icon {
   fill: var(--light-gray);
 }
 

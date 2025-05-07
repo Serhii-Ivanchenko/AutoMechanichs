@@ -14,6 +14,7 @@
 
   position: sticky;
   top: -6px;
+  z-index: 999;
 }
 
 .subcategoriesList {
@@ -24,32 +25,59 @@
   /* margin-bottom: 40px; */
 }
 
-.subcategoriesListItem {
+.accordion {
+  box-shadow: none !important;
+  background-color: transparent !important;
+  width: 318px !important;
+}
+
+.accordion span {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+}
+
+.details {
+  width: 318px !important;
+}
+
+.divForShadow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+}
 
-  width: 318px;
-  padding: 10px 16px;
+.subcategoriesListItem {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
 
-  border-radius: 6px;
-  background: #313540;
+  width: 318px !important;
+  height: fit-content !important;
+  /* padding: 10px 16px !important; */
 
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 6px !important;
+  background: var(--download-pdf-btn-bg) !important;
+
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) !important;
 
   cursor: pointer;
+
+  position: sticky !important;
+  top: 27px;
+  z-index: 998;
 }
 
 .subCategory {
   color: var(--light-gray);
-  font-variant-numeric: lining-nums proportional-nums;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   font-variant: small-caps;
 
-  width: 252px;
+  /* width: 252px; */
+  width: 205px;
 }
 
 .iconBox {
@@ -68,8 +96,9 @@
 
 .icon {
   fill: var(--icon-gray);
+  transition: transform 0.3s ease-in-out;
 }
 
 .rotated {
-  transform: rotate(-90deg);
+  transform: rotate(-180deg);
 }

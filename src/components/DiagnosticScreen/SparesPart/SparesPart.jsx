@@ -158,21 +158,15 @@ export default function SparesPart({
 
   return (
     <div className={`${css.wrapper} ${openDetails && css.wrapperIsOpen}`}>
-      <div className={css.title}>
+      {/* <div className={css.title}>
         <p
           className={`${css.name}
          `}
-          // ${!twoBtns && css.onlyName}
         >
           {title}
         </p>
-        {/* {twoBtns && (
-          <>
-            <p className={`${css.sides} ${css.sideL}`}>Л</p>
-            <p className={css.sides}>П</p>
-          </>
-        )} */}
-      </div>
+       
+      </div> */}
 
       <ul className={css.detailsList}>
         {spares?.flatMap(cat =>
@@ -435,14 +429,14 @@ export default function SparesPart({
         )}
       </ul>
 
-      <BottomPart
+      {/* <BottomPart
         back={() => setOpenDetails(false)}
         buttonSpares={true}
         setNext={() => {
           setOpenDetails(false);
           setSavedSparesPartOpen(true);
         }}
-      />
+      /> */}
     </div>
   );
 }
