@@ -16,6 +16,7 @@ export default function SubcategoriesPart({
   setSpares,
   chosenSpares,
   setChosenSpares,
+  repair,
 }) {
   const matchedPoint = togglePoints.find(cat => cat.name === point.label);
 
@@ -103,6 +104,7 @@ export default function SubcategoriesPart({
                     setOpenDetails={setOpenDetails}
                     // setSavedSparesPartOpen={setSavedSparesPartOpen}
                     setCategoryForDetailsPart={setCategoryForDetailsPart}
+                    repair={repair}
                   />
                 </AccordionDetails>
               </Accordion>
@@ -142,6 +144,7 @@ export default function SubcategoriesPart({
                   setOpenDetails={setOpenDetails}
                   // setSavedSparesPartOpen={setSavedSparesPartOpen}
                   setCategoryForDetailsPart={setCategoryForDetailsPart}
+                  repair={repair}
                 />
               </AccordionDetails>
             </Accordion>

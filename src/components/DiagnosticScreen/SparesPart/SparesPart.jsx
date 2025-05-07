@@ -13,6 +13,7 @@ export default function SparesPart({
   openDetails,
   setOpenDetails,
   setSavedSparesPartOpen,
+  repair,
 }) {
   useEffect(() => {
     if (spares.length === 0 && togglePoints.length > 0) {
@@ -220,7 +221,11 @@ export default function SparesPart({
                                           <button
                                             type="button"
                                             className={`${css.btn} ${
-                                              part.isChosenLeft && css.btnRed
+                                              part.isChosenLeft
+                                                ? repair
+                                                  ? css.btnGreen
+                                                  : css.btnRed
+                                                : ''
                                             }`}
                                             onClick={() =>
                                               toggleSpareSelection(
@@ -237,7 +242,11 @@ export default function SparesPart({
                                           <button
                                             type="button"
                                             className={`${css.btn} ${
-                                              part.isChosenRight && css.btnRed
+                                              part.isChosenRight
+                                                ? repair
+                                                  ? css.btnGreen
+                                                  : css.btnRed
+                                                : ''
                                             }`}
                                             onClick={() =>
                                               toggleSpareSelection(
@@ -256,7 +265,11 @@ export default function SparesPart({
                                         <button
                                           type="button"
                                           className={`${css.btn} ${
-                                            part.isChosen && css.btnRed
+                                            part.isChosen
+                                              ? repair
+                                                ? css.btnGreen
+                                                : css.btnRed
+                                              : ''
                                           }`}
                                           onClick={() =>
                                             toggleSpareSelection(
@@ -308,7 +321,11 @@ export default function SparesPart({
                                     <button
                                       type="button"
                                       className={`${css.btn} ${
-                                        part.isChosenLeft && css.btnRed
+                                        part.isChosenLeft
+                                          ? repair
+                                            ? css.btnGreen
+                                            : css.btnRed
+                                          : ''
                                       }`}
                                       onClick={() =>
                                         toggleSpareSelection(
@@ -344,7 +361,11 @@ export default function SparesPart({
                                   <button
                                     type="button"
                                     className={`${css.btn} ${
-                                      part.isChosen && css.btnRed
+                                      part.isChosen
+                                        ? repair
+                                          ? css.btnGreen
+                                          : css.btnRed
+                                        : ''
                                     }`}
                                     onClick={() =>
                                       toggleSpareSelection(part.id, 'isChosen')
@@ -388,7 +409,11 @@ export default function SparesPart({
                           <button
                             type="button"
                             className={`${css.btn} ${
-                              part.isChosenLeft && css.btnRed
+                              part.isChosenLeft
+                                ? repair
+                                  ? css.btnGreen
+                                  : css.btnRed
+                                : ''
                             }`}
                             onClick={() =>
                               toggleSpareSelection(part.id, 'isChosenLeft')
@@ -399,7 +424,11 @@ export default function SparesPart({
                           <button
                             type="button"
                             className={`${css.btn} ${
-                              part.isChosenRight && css.btnRed
+                              part.isChosenRight
+                                ? repair
+                                  ? css.btnGreen
+                                  : css.btnRed
+                                : ''
                             }`}
                             onClick={() =>
                               toggleSpareSelection(part.id, 'isChosenRight')
@@ -412,7 +441,11 @@ export default function SparesPart({
                         <button
                           type="button"
                           className={`${css.btn} ${
-                            part.isChosen && css.btnRed
+                            part.isChosen
+                              ? repair
+                                ? css.btnGreen
+                                : css.btnRed
+                              : ''
                           }`}
                           onClick={() =>
                             toggleSpareSelection(part.id, 'isChosen')

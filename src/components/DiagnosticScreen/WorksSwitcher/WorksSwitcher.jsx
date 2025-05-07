@@ -8,25 +8,27 @@ import {
 } from 'react-icons/bs';
 import { NavLink } from 'react-router-dom';
 
-export default function WorksSwitcher({ subcatOpen }) {
+export default function WorksSwitcher({ subcatOpen, subcatRepairOpen }) {
   // const [isActive, setIsActive] = useState('diag');
 
   return (
     <div className={css.btnsBox}>
-      <NavLink
-        to="/car/:carId/diagnostics"
-        className={({ isActive }) =>
-          `${css.buttons} ${isActive ? css.buttonsActive : ''}`
-        }
-        // onClick={() => {
-        //   setIsActive('diag');
-        // }}
-      >
-        Діагностика
-        <div className={css.indicator}>
-          <BsUiRadiosGrid />
-        </div>
-      </NavLink>
+      {!subcatRepairOpen && (
+        <NavLink
+          to="/car/:carId/diagnostics"
+          className={({ isActive }) =>
+            `${css.buttons} ${isActive ? css.buttonsActive : ''}`
+          }
+          // onClick={() => {
+          //   setIsActive('diag');
+          // }}
+        >
+          Діагностика
+          <div className={css.indicator}>
+            <BsUiRadiosGrid />
+          </div>
+        </NavLink>
+      )}
 
       {!subcatOpen && (
         <NavLink

@@ -163,10 +163,8 @@ export default function DiagnosticScreen() {
           chosenPoints={chosenPoints}
         />
 
-        // <Outlet />
       )}
 
-      {/* {savedSparesPartOpen && <SavedSparesPart nodes={nodes} />} */}
 
       <BottomPart
         back={
@@ -188,16 +186,6 @@ export default function DiagnosticScreen() {
         chosenPoints={chosenPoints}
         savedPartBottom={savedSparesPartOpen}
       />
-
-      {/* <BottomPart
-        // back={() => setOpenDetails(false)}
-        // buttonSpares={true}
-        setNext={() => {
-          setOpenDetails(false);
-          setSavedSparesPartOpen(true);
-        }}
-      /> */}
-      {/* <Link to="/main">back</Link> */}
     </div>
   );
 }
