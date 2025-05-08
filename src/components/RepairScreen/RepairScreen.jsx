@@ -1,16 +1,14 @@
-import { Link, Outlet } from 'react-router-dom';
-import CarDetailsPart from './CarDetailsPart/CarDetailsPart';
-import WorksSwitcher from './WorksSwitcher/WorksSwitcher';
-import newTree from '../../utils/tree.json';
-import TogglePoints from './TogglePoints/TogglePoints';
 import BottomPart from '../BottomPart/BottomPart';
-import { useEffect, useRef, useState } from 'react';
-import SubcategoriesPart from './SubcategoriesPart/SubcategoriesPart';
-import SparesPart from './SparesPart/SparesPart';
-import css from './DiagnosticScreen.module.css';
-import SavedSparesPart from './savedSparesPart/savedSparesPart';
+import CarDetailsPart from '../DiagnosticScreen/CarDetailsPart/CarDetailsPart';
+import TogglePoints from '../DiagnosticScreen/TogglePoints/TogglePoints';
+import WorksSwitcher from '../DiagnosticScreen/WorksSwitcher/WorksSwitcher';
+import newTree from '../../utils/tree.json';
+import { useRef, useState } from 'react';
+import SavedSparesPart from '../DiagnosticScreen/savedSparesPart/savedSparesPart';
+import SubcategoriesPart from '../DiagnosticScreen/SubcategoriesPart/SubcategoriesPart';
+import css from './RepairScreen.module.css';
 
-export default function DiagnosticScreen() {
+export default function RepairScreen() {
   const togglePoints = newTree?.nodes;
   const [chosenPoints, setChosenPoints] = useState([]);
   const [categoryForDetailsPart, setCategoryForDetailsPart] = useState('');
@@ -134,12 +132,12 @@ export default function DiagnosticScreen() {
   return (
     <div>
       <CarDetailsPart />
-      <WorksSwitcher subcatOpen={subcatOpen} />
+      <WorksSwitcher subcatRepairOpen={subcatOpen} />
 
       {savedSparesPartOpen ? (
         <SavedSparesPart nodes={nodes} />
       ) : subcatOpen ? (
-        <ul className={css.list} ref={containerRef}>
+        <ul className={css.list}>
           {chosenPoints?.map(point => (
             <SubcategoriesPart
               key={point.id}
@@ -155,6 +153,7 @@ export default function DiagnosticScreen() {
               setChosenSpares={setChosenSpares}
               chosenSpares={chosenSpares}
               containerRef={containerRef}
+              repair={true}
             />
           ))}
         </ul>

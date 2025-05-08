@@ -13,6 +13,8 @@ export default function SparesPart({
   openDetails,
   setOpenDetails,
   setSavedSparesPartOpen,
+  repair,
+  chosenPoints,
 }) {
   useEffect(() => {
     if (spares.length === 0 && togglePoints.length > 0) {
@@ -20,63 +22,113 @@ export default function SparesPart({
         prevSpares.length > 0
           ? prevSpares
           : togglePoints.map(spare => {
-              if (spare?.nodes?.map(node => node.nodes)) {
-                // First check for 3rd level
-                return {
-                  ...spare,
-                  nodes: spare?.nodes?.map(part => ({
-                    ...part,
-                    nodes: part?.nodes?.map(subPart => ({
-                      ...subPart,
-                      spareParts: subPart?.spareParts?.map(sparePart =>
-                        sparePart.tag === 'one_side'
-                          ? { ...sparePart, isChosen: false }
-                          : {
-                              ...sparePart,
-                              isChosenLeft: false,
-                              isChosenRight: false,
-                            }
-                      ),
-                    })),
-                  })),
-                };
-              } else if (spare.nodes) {
-                // Second check for 2nd level
-                return {
-                  ...spare,
-                  nodes: spare.nodes.map(part => {
-                    return {
-                      ...part,
-                      spareParts: part.spareParts?.map(sparePart =>
-                        sparePart.tag === 'one_side'
-                          ? { ...sparePart, isChosen: false }
-                          : {
-                              ...sparePart,
-                              isChosenLeft: false,
-                              isChosenRight: false,
-                            }
-                      ),
-                    };
-                  }),
-                };
-              } else {
-                return {
-                  ...spare,
-                  spareParts: spare.spareParts?.map(sparePart =>
+              const updatedSpare = { ...spare };
+
+              // 1-й рівень
+              if (updatedSpare.spareParts) {
+                updatedSpare.spareParts = updatedSpare.spareParts.map(
+                  sparePart =>
                     sparePart.tag === 'one_side'
-                      ? { ...sparePart, isChosen: false }
+                      ? {
+                          ...sparePart,
+                          isChosen: false,
+                          categoryId: spare.id,
+                        }
                       : {
                           ...sparePart,
                           isChosenLeft: false,
                           isChosenRight: false,
+                          categoryId: spare.id,
                         }
-                  ),
-                };
+                );
               }
+
+              // 2-й рівень
+              if (updatedSpare.nodes) {
+                updatedSpare.nodes = updatedSpare.nodes.map(node => {
+                  const newNode = { ...node };
+
+                  if (newNode.spareParts) {
+                    newNode.spareParts = newNode.spareParts.map(sparePart =>
+                      sparePart.tag === 'one_side'
+                        ? {
+                            ...sparePart,
+                            isChosen: false,
+                            categoryId: spare.id,
+                          }
+                        : {
+                            ...sparePart,
+                            isChosenLeft: false,
+                            isChosenRight: false,
+                            categoryId: spare.id,
+                          }
+                    );
+                  }
+
+                  // 3-й рівень
+                  if (newNode.nodes) {
+                    newNode.nodes = newNode.nodes.map(subNode => {
+                      const newSubNode = { ...subNode };
+
+                      if (newSubNode.spareParts) {
+                        newSubNode.spareParts = newSubNode.spareParts.map(
+                          sparePart =>
+                            sparePart.tag === 'one_side'
+                              ? {
+                                  ...sparePart,
+                                  isChosen: false,
+                                  categoryId: spare.id,
+                                }
+                              : {
+                                  ...sparePart,
+                                  isChosenLeft: false,
+                                  isChosenRight: false,
+                                  categoryId: spare.id,
+                                }
+                        );
+                      }
+
+                      return newSubNode;
+                    });
+                  }
+
+                  return newNode;
+                });
+              }
+
+              return updatedSpare;
             })
       );
     }
   }, [togglePoints]);
+
+  useEffect(() => {
+    setSpares(prev =>
+      prev.map(category => {
+        const isActive = chosenPoints.some(p => p.id === category.id);
+
+        const resetFlags = part => ({
+          ...part,
+          isChosen: isActive ? part.isChosen : false,
+          isChosenLeft: isActive ? part.isChosenLeft : false,
+          isChosenRight: isActive ? part.isChosenRight : false,
+        });
+
+        const updateNodeTree = nodes =>
+          nodes.map(node => ({
+            ...node,
+            spareParts: node.spareParts?.map(resetFlags),
+            nodes: node.nodes ? updateNodeTree(node.nodes) : [],
+          }));
+
+        return {
+          ...category,
+          spareParts: category.spareParts?.map(resetFlags),
+          nodes: category.nodes ? updateNodeTree(category.nodes) : [],
+        };
+      })
+    );
+  }, [chosenPoints]);
 
   const updateNodes = (nodes, id, side) => {
     return nodes.map(node => ({
@@ -220,7 +272,11 @@ export default function SparesPart({
                                           <button
                                             type="button"
                                             className={`${css.btn} ${
-                                              part.isChosenLeft && css.btnRed
+                                              part.isChosenLeft
+                                                ? repair
+                                                  ? css.btnGreen
+                                                  : css.btnRed
+                                                : ''
                                             }`}
                                             onClick={() =>
                                               toggleSpareSelection(
@@ -237,7 +293,11 @@ export default function SparesPart({
                                           <button
                                             type="button"
                                             className={`${css.btn} ${
-                                              part.isChosenRight && css.btnRed
+                                              part.isChosenRight
+                                                ? repair
+                                                  ? css.btnGreen
+                                                  : css.btnRed
+                                                : ''
                                             }`}
                                             onClick={() =>
                                               toggleSpareSelection(
@@ -256,7 +316,11 @@ export default function SparesPart({
                                         <button
                                           type="button"
                                           className={`${css.btn} ${
-                                            part.isChosen && css.btnRed
+                                            part.isChosen
+                                              ? repair
+                                                ? css.btnGreen
+                                                : css.btnRed
+                                              : ''
                                           }`}
                                           onClick={() =>
                                             toggleSpareSelection(
@@ -308,7 +372,11 @@ export default function SparesPart({
                                     <button
                                       type="button"
                                       className={`${css.btn} ${
-                                        part.isChosenLeft && css.btnRed
+                                        part.isChosenLeft
+                                          ? repair
+                                            ? css.btnGreen
+                                            : css.btnRed
+                                          : ''
                                       }`}
                                       onClick={() =>
                                         toggleSpareSelection(
@@ -344,7 +412,11 @@ export default function SparesPart({
                                   <button
                                     type="button"
                                     className={`${css.btn} ${
-                                      part.isChosen && css.btnRed
+                                      part.isChosen
+                                        ? repair
+                                          ? css.btnGreen
+                                          : css.btnRed
+                                        : ''
                                     }`}
                                     onClick={() =>
                                       toggleSpareSelection(part.id, 'isChosen')
@@ -388,7 +460,11 @@ export default function SparesPart({
                           <button
                             type="button"
                             className={`${css.btn} ${
-                              part.isChosenLeft && css.btnRed
+                              part.isChosenLeft
+                                ? repair
+                                  ? css.btnGreen
+                                  : css.btnRed
+                                : ''
                             }`}
                             onClick={() =>
                               toggleSpareSelection(part.id, 'isChosenLeft')
@@ -399,7 +475,11 @@ export default function SparesPart({
                           <button
                             type="button"
                             className={`${css.btn} ${
-                              part.isChosenRight && css.btnRed
+                              part.isChosenRight
+                                ? repair
+                                  ? css.btnGreen
+                                  : css.btnRed
+                                : ''
                             }`}
                             onClick={() =>
                               toggleSpareSelection(part.id, 'isChosenRight')
@@ -412,7 +492,11 @@ export default function SparesPart({
                         <button
                           type="button"
                           className={`${css.btn} ${
-                            part.isChosen && css.btnRed
+                            part.isChosen
+                              ? repair
+                                ? css.btnGreen
+                                : css.btnRed
+                              : ''
                           }`}
                           onClick={() =>
                             toggleSpareSelection(part.id, 'isChosen')
