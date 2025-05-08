@@ -3,7 +3,7 @@ import CarDetailsPart from '../DiagnosticScreen/CarDetailsPart/CarDetailsPart';
 import TogglePoints from '../DiagnosticScreen/TogglePoints/TogglePoints';
 import WorksSwitcher from '../DiagnosticScreen/WorksSwitcher/WorksSwitcher';
 import newTree from '../../utils/tree.json';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import SavedSparesPart from '../DiagnosticScreen/savedSparesPart/savedSparesPart';
 import SubcategoriesPart from '../DiagnosticScreen/SubcategoriesPart/SubcategoriesPart';
 import css from './RepairScreen.module.css';
@@ -17,6 +17,7 @@ export default function RepairScreen() {
   const [chosenSpares, setChosenSpares] = useState([]);
   const [spares, setSpares] = useState([]);
   const [savedSparesPartOpen, setSavedSparesPartOpen] = useState(false);
+  const containerRef = useRef(null);
 
   const handleCloseSavedScreen = () => {
     setSavedSparesPartOpen(false);
@@ -151,6 +152,7 @@ export default function RepairScreen() {
               setSpares={setSpares}
               setChosenSpares={setChosenSpares}
               chosenSpares={chosenSpares}
+              containerRef={containerRef}
               repair={true}
             />
           ))}

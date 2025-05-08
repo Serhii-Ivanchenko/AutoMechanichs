@@ -51,18 +51,17 @@
 }
 
 .time {
-  min-width: 60px;
-
-  /* margin-right: 20px; */
+  min-width: 50px;
+  margin-right: 10px;
+  text-align: center;
 }
 
 .iconBox {
-  min-width: 60px;
+  min-width: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* margin-right: 20px; */
+  margin-right: 10px;
 }
 
 .icon {

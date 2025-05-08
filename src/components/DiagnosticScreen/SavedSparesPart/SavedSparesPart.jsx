@@ -8,7 +8,7 @@ export default function SavedSparesPart({ nodes }) {
     <div>
       <ul className={css.SavedSparesList}>
         {nodes.length === 0 ? (
-          <p className={css.noProblems}>Проблем не виявлено</p>
+          <p className={css.noProblems}>Після проведення діагностики проблем з автомобілем не виявлено</p>
         ) : (
           nodes.map((node, index) => (
             <li key={index}>
