@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import css from './SubcategoriesPart.module.css';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import SparesPart from '../SparesPart/SparesPart';
@@ -17,13 +17,24 @@ export default function SubcategoriesPart({
   chosenSpares,
   setChosenSpares,
   repair,
+  containerRef,
 }) {
   const matchedPoint = togglePoints.find(cat => cat.name === point.label);
 
   const [expandedMap, setExpandedMap] = useState({});
 
+  const summaryRefs = useRef({});
+
+  const scrollTopRef = useRef({}); // Реф для збереження прокрутки кожного акордеону
+
   const handleAccordionToggle =
     (categoryId, nodeId, name) => (event, isExpanded) => {
+      // Зберігаємо поточну позицію прокрутки контейнера перед закриттям акордеону
+      if (!isExpanded && containerRef.current) {
+        scrollTopRef.current[nodeId] = containerRef.current.scrollTop;
+      }
+
+      // Оновлюємо стан для розширених акордеонів
       setExpandedMap(prev => ({
         ...prev,
         [categoryId]: isExpanded ? nodeId : null,
@@ -31,7 +42,16 @@ export default function SubcategoriesPart({
 
       setOpenDetails(isExpanded ? nodeId : null);
       setCategoryForDetailsPart(isExpanded ? name : '');
+
+      // Після закриття акордеону, відновлюємо позицію прокрутки
+      if (!isExpanded && containerRef.current) {
+        setTimeout(() => {
+          const savedScrollTop = scrollTopRef.current[nodeId] || 0;
+          containerRef.current.scrollTop = savedScrollTop; // Відновлюємо прокрутку
+        }, 200); // Затримка для стабільності
+      }
     };
+
   // console.log("matched", matchedPoint);
 
   // const showDetails = id => {
@@ -78,7 +98,16 @@ export default function SubcategoriesPart({
                 expanded={expandedMap[node.id] === node.id}
                 onChange={handleAccordionToggle(node.id, node.id, node.name)}
               >
-                <AccordionSummary className={css.subcategoriesListItem} >
+                <AccordionSummary
+                  className={css.subcategoriesListItem}
+                  sx={{
+                    '&.Mui-expanded': { minHeight: 'unset' },
+                    minHeight: 'unset',
+                  }}
+                  ref={el => {
+                    if (el) summaryRefs.current[node.id] = el;
+                  }}
+                >
                   <p className={css.subCategory}>{node.name || 'lala'}</p>
                   <div className={css.divForShadow}>
                     <div className={`${css.iconBox}`}>
@@ -105,6 +134,7 @@ export default function SubcategoriesPart({
                     // setSavedSparesPartOpen={setSavedSparesPartOpen}
                     setCategoryForDetailsPart={setCategoryForDetailsPart}
                     repair={repair}
+                    chosenPoints={chosenPoints}
                   />
                 </AccordionDetails>
               </Accordion>
@@ -119,7 +149,13 @@ export default function SubcategoriesPart({
               expanded={expandedMap[point.id] === point.id}
               onChange={handleAccordionToggle(point.id, point.id, point.label)}
             >
-              <AccordionSummary className={css.subcategoriesListItem}>
+              <AccordionSummary
+                className={css.subcategoriesListItem}
+                sx={{
+                  '&.Mui-expanded': { minHeight: 'unset' },
+                  minHeight: 'unset',
+                }}
+              >
                 <p className={css.subCategory}>{point.label}</p>
                 <div className={css.divForShadow}>
                   <div className={`${css.iconBox} `}>
@@ -145,6 +181,7 @@ export default function SubcategoriesPart({
                   // setSavedSparesPartOpen={setSavedSparesPartOpen}
                   setCategoryForDetailsPart={setCategoryForDetailsPart}
                   repair={repair}
+                  chosenPoints={chosenPoints}
                 />
               </AccordionDetails>
             </Accordion>

@@ -93,3 +93,14 @@
 .circleFilled {
   background-color: var(--green-btn-normal);
 }
+
+.noProblems {
+  color: var(--light-gray);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}

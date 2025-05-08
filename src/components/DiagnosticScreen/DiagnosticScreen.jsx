@@ -4,7 +4,7 @@ import WorksSwitcher from './WorksSwitcher/WorksSwitcher';
 import newTree from '../../utils/tree.json';
 import TogglePoints from './TogglePoints/TogglePoints';
 import BottomPart from '../BottomPart/BottomPart';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SubcategoriesPart from './SubcategoriesPart/SubcategoriesPart';
 import SparesPart from './SparesPart/SparesPart';
 import css from './DiagnosticScreen.module.css';
@@ -19,6 +19,7 @@ export default function DiagnosticScreen() {
   const [chosenSpares, setChosenSpares] = useState([]);
   const [spares, setSpares] = useState([]);
   const [savedSparesPartOpen, setSavedSparesPartOpen] = useState(false);
+  const containerRef = useRef(null);
 
   const handleCloseSavedScreen = () => {
     setSavedSparesPartOpen(false);
@@ -138,7 +139,7 @@ export default function DiagnosticScreen() {
       {savedSparesPartOpen ? (
         <SavedSparesPart nodes={nodes} />
       ) : subcatOpen ? (
-        <ul className={css.list}>
+        <ul className={css.list} ref={containerRef}>
           {chosenPoints?.map(point => (
             <SubcategoriesPart
               key={point.id}
@@ -153,6 +154,7 @@ export default function DiagnosticScreen() {
               setSpares={setSpares}
               setChosenSpares={setChosenSpares}
               chosenSpares={chosenSpares}
+              containerRef={containerRef}
             />
           ))}
         </ul>
@@ -162,9 +164,7 @@ export default function DiagnosticScreen() {
           handleCheckboxChange={handleCheckboxChange}
           chosenPoints={chosenPoints}
         />
-
       )}
-
 
       <BottomPart
         back={
