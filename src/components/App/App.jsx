@@ -12,6 +12,7 @@ const array1 = [
     problem: 'Стукає сперeду справа',
     salary: '123456',
     sparesStatus: '',
+    status: 'diagnostic',
   },
   {
     time: '00:20',
@@ -19,6 +20,7 @@ const array1 = [
     problem: 'Стукає сперeду справа',
     salary: '1234',
     sparesStatus: 'received',
+    status: 'repair',
   },
   {
     time: '18:00',
@@ -26,6 +28,7 @@ const array1 = [
     problem: 'Стукає сперeду справа',
     salary: '35000',
     sparesStatus: 'ordered',
+    status: 'repair',
   },
   {
     time: '20:00',
@@ -33,6 +36,7 @@ const array1 = [
     problem: 'Стукає сперeду справа',
     salary: '3000',
     sparesStatus: 'ordered',
+    status: 'diagnostic',
   },
   {
     time: '21:00',
@@ -40,6 +44,7 @@ const array1 = [
     problem: 'Стукає сперeду справа',
     salary: '400',
     sparesStatus: '',
+    status: 'diagnostic',
   },
   {
     time: '09:00',
@@ -47,6 +52,7 @@ const array1 = [
     problem: 'Стукає сперeду справа',
     salary: '400',
     sparesStatus: 'received',
+    status: 'diagnostic',
   },
   {
     time: '08:00',
@@ -54,6 +60,7 @@ const array1 = [
     problem: 'Стукає сперeду справа',
     salary: '400',
     sparesStatus: 'ordered',
+    status: 'repair',
   },
   {
     time: '12:00',
@@ -61,6 +68,7 @@ const array1 = [
     problem: 'Стукає сперeду справа',
     salary: '8482',
     sparesStatus: 'received',
+    status: 'diagnostic',
   },
 ];
 
@@ -140,7 +148,7 @@ export default function App() {
 
   return (
     <Layout>
-      <Suspense fallback={<LoaderSvg/>}>
+      <Suspense fallback={<LoaderSvg />}>
         {location.pathname !== '/login' && location.pathname !== '/' && (
           <TopPart wage={wage} amountPossible={amountPossible} />
         )}

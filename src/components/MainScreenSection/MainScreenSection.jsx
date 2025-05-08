@@ -7,10 +7,21 @@ import { BiSolidMessageDetail } from 'react-icons/bi';
 import css from './MainScreenSection.module.css';
 import { useState } from 'react';
 import DiagnosticScreen from '../DiagnosticScreen/DiagnosticScreen';
+import { useDispatch, useSelector } from 'react-redux';
+import { logOut } from '../../redux/auth/operations';
+import { selectCars } from '../../redux/cars/selectors';
 
 export default function MainScreenSection({ array1, array2, wage }) {
   // const [car, setCar] = useState('');
   // const [diagOpen, setDiagOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleLogOut = () => {
+    dispatch(logOut());
+  };
+
+  const cars = useSelector(selectCars);
+  console.log('cars', cars);
 
   return (
     <div className={css.sectionWrapper}>
@@ -41,7 +52,7 @@ export default function MainScreenSection({ array1, array2, wage }) {
         <DiagnosticScreen setDiagOpen={setDiagOpen} />
       ) : (
         <> */}
-      <CarsInWorkOrDoneList list={array1} />
+      <CarsInWorkOrDoneList list={cars} />
 
       <button className={css.btnAddPhoto}>
         <IoCarSport className={css.icon} />
@@ -56,9 +67,9 @@ export default function MainScreenSection({ array1, array2, wage }) {
       />
 
       <div className={css.bottomPart}>
-        <div className={css.exitBox}>
+        <button className={css.exitBox} onClick={() => handleLogOut()}>
           <BsBoxArrowLeft className={css.iconExit} />
-        </div>
+        </button>
         <BiSolidMessageDetail className={css.iconMessage} />
         <p className={css.wage}>{'+' + wage}</p>
       </div>
