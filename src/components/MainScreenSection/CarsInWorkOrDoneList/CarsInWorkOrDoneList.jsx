@@ -33,20 +33,20 @@ export default function CarsInWorkOrDoneList({ done, list }) {
                     <span className={css.iconBox}>
                       <BsPatchExclamationFill className={css.icon} />
                     </span>
-                  ) : !checkTime(item.time_rec || item.time) ? (
+                  ) : !checkTime(item?.time_rec || item.time) ? (
                     <span className={css.iconBox}>
                       <BsPatchExclamationFill
                         className={`${css.icon} ${css.iconRed}`}
                       />
                     </span>
                   ) : (
-                    <p className={css.time}>{item.time_rec || item.time}</p>
+                    <p className={css.time}>{item?.time_rec || item.time}</p>
                   )}
                   <div
                     className={`${css.stick} ${done ? css.stickDone : ''} ${
-                      item.status === 'diagnostic'
+                      item?.status === 'diagnostic'
                         ? css.stickDiag
-                        : item.status === 'repair'
+                        : item?.status === 'repair'
                         ? css.stickRepair
                         : ''
                     }`}
@@ -54,7 +54,7 @@ export default function CarsInWorkOrDoneList({ done, list }) {
                   <div className={css.carWrapper}>
                     <p className={css.car}>
                       {item.make && item.model
-                        ? `${`${item.make} ${item.model}`}`
+                        ? `${`${item?.make} ${item?.model}`}`
                         : item.carModel}
                     </p>
                     <div className={css.problemAndSpares}>
