@@ -1,3 +1,9 @@
+import RepairScreen from '../../components/RepairScreen/RepairScreen';
+
 export default function RepairPage() {
-    return <div>RepairPage</div>
-};
+  return (
+    <div>
+      <RepairScreen />
+    </div>
+  );
+}

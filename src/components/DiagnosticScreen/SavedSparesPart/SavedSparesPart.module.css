@@ -2,10 +2,10 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
-  padding-right: 25px;
-  padding-left: 25px;
+  padding-right: 23px;
+  padding-left: 23px;
 
-  height: 371px;
+  height: 429px;
   margin-bottom: 30px;
   overflow-y: auto;
 }
@@ -27,7 +27,7 @@
 
 .nodeName,
 .subcatName {
-  padding-left: 2px;
+  /* padding-left: 2px; */
 
   color: var(--light-gray);
   font-size: 20px;
@@ -37,6 +37,7 @@
   font-variant: small-caps;
 }
 .nodeName {
+  padding: 5px 2px;
   margin-bottom: 10px;
 }
 
@@ -92,4 +93,15 @@
 
 .circleFilled {
   background-color: var(--green-btn-normal);
+}
+
+.noProblems {
+  color: var(--light-gray);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
 }

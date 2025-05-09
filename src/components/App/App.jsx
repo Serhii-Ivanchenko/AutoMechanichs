@@ -4,52 +4,54 @@ import css from './App.module.css';
 import TopPart from '../topPart/topPart.jsx';
 import CalendarPart from '../MainScreenSection/CalendarPart/CalendarPart.jsx';
 import SubcategoriesPart from '../DiagnosticScreen/SubcategoriesPart/SubcategoriesPart.jsx';
+import { lazy, Suspense } from 'react';
+import LoaderSvg from '../Loader/LoaderSvg.jsx';
 
 const array1 = [
   {
-    time: '12:00',
+    time: '00:10',
     carModel: '2001 MITSUBISHI OUTLANDER',
     problem: 'Стукає сперeду справа',
     salary: '123456',
     sparesStatus: '',
   },
   {
-    time: '12:00',
+    time: '00:20',
     carModel: '2001 MITSUBISHI OUTLANDER',
     problem: 'Стукає сперeду справа',
     salary: '1234',
     sparesStatus: 'received',
   },
   {
-    time: '12:00',
+    time: '18:00',
     carModel: '2020 VW Passat',
     problem: 'Стукає сперeду справа',
     salary: '35000',
     sparesStatus: 'ordered',
   },
   {
-    time: '12:00',
+    time: '20:00',
     carModel: '2020 VW Passat',
     problem: 'Стукає сперeду справа',
     salary: '3000',
     sparesStatus: 'ordered',
   },
   {
-    time: '12:00',
+    time: '21:00',
     carModel: '2020 VW Polo',
     problem: 'Стукає сперeду справа',
     salary: '400',
     sparesStatus: '',
   },
   {
-    time: '12:00',
+    time: '09:00',
     carModel: '2020 VW Polo',
     problem: 'Стукає сперeду справа',
     salary: '400',
     sparesStatus: 'received',
   },
   {
-    time: '12:00',
+    time: '08:00',
     carModel: '2001 HONDA CIVIC',
     problem: 'Стукає сперeду справа',
     salary: '400',
@@ -115,8 +117,7 @@ const array2 = [
   },
 ];
 
-import { lazy, Suspense } from 'react';
-import LoaderSvg from '../Loader/LoaderSvg.jsx';
+
 
 const LoginPage = lazy(() => import('../../pages/LoginPage/LoginPage.jsx'));
 const MainPage = lazy(() => import('../../pages/MainPage/MainPage.jsx'));
@@ -144,7 +145,7 @@ export default function App() {
         {location.pathname !== '/login' && location.pathname !== '/' && (
           <TopPart wage={wage} amountPossible={amountPossible} />
         )}
-        {location.pathname !== '/login' && location.pathname !== '/' && (
+        {location.pathname === '/main' && (
           <CalendarPart />
         )}
         <Routes>

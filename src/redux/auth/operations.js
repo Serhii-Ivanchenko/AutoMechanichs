@@ -56,18 +56,44 @@ export const getUserData = createAsyncThunk(
   }
 );
 
+//Get mechanic balance data
+export const getMechanicBalance = createAsyncThunk(
+  'auth/getMechanicBalance',
+  async (mechanic_id, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const response = await axiosInstance.get(
+        `/mb/mechanics/${mechanic_id}/get_balance`,
+        {
+          headers: {
+            'company-id': serviceId,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
 // Refresh
 export const refreshUser = createAsyncThunk(
   'auth/refresh',
   async (_, thunkAPI) => {
     try {
-        const apiKey = localStorage.getItem('X-Api-Key');
-        
+      const apiKey = localStorage.getItem('X-Api-Key');
+
       if (!apiKey) {
         return thunkAPI.rejectWithValue('Token not found');
       }
 
-      setAuthHeader(apiKey); 
+      setAuthHeader(apiKey);
       const response = await axiosInstance.get('/auth/user_info/');
       return { ...response.data, api_key: apiKey };
     } catch (error) {

@@ -12,3 +12,5 @@ export const selectError = state => state.auth.error;
 
 export const selectSelectedServiceId = state =>
   state.auth.userData.selectedServiceId;
+
+export const selectBalance = state => state.auth.balance;

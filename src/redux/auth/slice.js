@@ -1,6 +1,6 @@
 import { initialState } from '../initialState.js';
 import { createSlice } from '@reduxjs/toolkit';
-import { getUserData, logIn, logOut, refreshUser } from './operations.js';
+import { getMechanicBalance, getUserData, logIn, logOut, refreshUser } from './operations.js';
 
 const handlePending = state => {
   state.isLoading = true;
@@ -64,6 +64,14 @@ const authSlice = createSlice({
       })
       .addCase(getUserData.rejected, handleRejected)
 
+      //Get mechanic balance data
+      .addCase(getMechanicBalance.pending, handlePending)
+      .addCase(getMechanicBalance.fulfilled, (state, action) => {
+        state.balance = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(getMechanicBalance.rejected, handleRejected)
+
       //Refresh
       .addCase(refreshUser.pending, state => {
         state.isRefreshing = true;
@@ -92,7 +100,7 @@ const authSlice = createSlice({
         }
 
         state.isLoggedIn = true;
-        state.isRefreshing = false; 
+        state.isRefreshing = false;
         state.apiKey = action.payload.api_key;
       })
 
