@@ -2,22 +2,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import css from './topPart.module.css';
 import { useEffect } from 'react';
 import { getMechanicBalance } from '../../redux/auth/operations';
-import { selectBalance } from '../../redux/auth/selectors';
+import { selectBalance, selectUser } from '../../redux/auth/selectors';
 
 export default function TopPart({ wage, amountPossible }) {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getMechanicBalance(1));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getMechanicBalance(1));
+  // }, [dispatch]);
 
   const balance = useSelector(selectBalance);
+  const user = useSelector(selectUser);
   console.log('balance', balance);
+  console.log('user', user);
+
+  // const nameToDisplay = 
 
   return (
     <div className={css.topPart}>
       <div className={css.mechNameBox}>
-        <p className={css.name}>Макаренковчук О.А.</p>
+        <p className={css.name}>{(`${user?.first_name} ${user?.last_name}`) }</p>
         <p className={css.paleText}>Механік</p>
       </div>
       <div className={css.salaryInfoBox}>
