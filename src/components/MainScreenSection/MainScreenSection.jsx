@@ -14,13 +14,13 @@ import { selectCars } from '../../redux/cars/selectors';
 export default function MainScreenSection({ array1, array2, wage }) {
   // const [car, setCar] = useState('');
   // const [diagOpen, setDiagOpen] = useState(false);
+  const cars = useSelector(selectCars);
   const dispatch = useDispatch();
 
   const handleLogOut = () => {
     dispatch(logOut());
   };
 
-  const cars = useSelector(selectCars);
   console.log('cars', cars);
 
   return (

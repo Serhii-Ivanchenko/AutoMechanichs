@@ -143,6 +143,7 @@
 }
 
 .noRecords {
+  padding-left: 18px;
   color: var(--light-gray);
   text-align: center;
   margin-top: auto;

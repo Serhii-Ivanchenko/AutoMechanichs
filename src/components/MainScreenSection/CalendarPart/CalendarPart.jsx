@@ -25,8 +25,8 @@ export default function CalendarPart() {
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [day, setDay] = useState(today.getDate());
-  console.log('today', today);
-  console.log('month', today.getMonth());
+  // console.log('today', today);
+  // console.log('month', today.getMonth());
 
   const getDaysInMonth = (year, month) =>
     new Date(year, month + 1, 0).getDate();
