@@ -4,6 +4,17 @@ import { BsPatchExclamationFill } from 'react-icons/bs';
 import { BsCheckCircleFill } from 'react-icons/bs';
 
 export default function CarsInWorkOrDoneList({ done, list }) {
+  const checkTime = time => {
+    const currentTime = new Date();
+    const timeOfRecord = time;
+
+    const [hours, minutes] = timeOfRecord.split(':').map(Number);
+    const dateOfRecord = new Date();
+    dateOfRecord.setHours(hours, minutes, 0, 0);
+
+    return dateOfRecord > currentTime;
+  };
+
   return (
     <>
       <ul className={`${css.list} ${done ? css.listDone : ''}`}>
@@ -18,6 +29,12 @@ export default function CarsInWorkOrDoneList({ done, list }) {
                 {done ? (
                   <span className={css.iconBox}>
                     <BsPatchExclamationFill className={css.icon} />
+                  </span>
+                ) : !checkTime(item.time) ? (
+                  <span className={css.iconBox}>
+                    <BsPatchExclamationFill
+                      className={`${css.icon} ${css.iconRed}`}
+                    />
                   </span>
                 ) : (
                   <p className={css.time}>{item.time}</p>

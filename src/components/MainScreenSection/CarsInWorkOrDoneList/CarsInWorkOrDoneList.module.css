@@ -51,22 +51,27 @@
 }
 
 .time {
-  margin-right: 20px;
+  min-width: 50px;
+  margin-right: 10px;
+  text-align: center;
 }
 
 .iconBox {
-  width: 39px;
+  min-width: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  margin-right: 20px;
+  margin-right: 10px;
 }
 
 .icon {
   width: 18px;
   height: 18px;
   fill: var(--green);
+}
+
+.iconRed {
+  fill: var(--red);
 }
 
 .problem {
@@ -86,7 +91,7 @@
 }
 
 .stick {
-  width: 4px;
+  min-width: 4px;
   height: 100%;
   border-radius: 6px;
   background-color: var(--status-repair);

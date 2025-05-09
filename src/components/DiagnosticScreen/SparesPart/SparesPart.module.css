@@ -147,6 +147,10 @@
   background-color: var(--red);
 }
 
+.btnGreen {
+  background-color: var(--green-btn-normal);
+}
+
 .subcategoryName {
   color: var(--light-gray);
   font-variant-numeric: lining-nums proportional-nums;

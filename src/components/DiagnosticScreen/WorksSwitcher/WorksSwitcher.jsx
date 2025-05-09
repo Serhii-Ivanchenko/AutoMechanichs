@@ -6,38 +6,43 @@ import {
   // BsCurrencyDollar,
   BsWrench,
 } from 'react-icons/bs';
+import { NavLink } from 'react-router-dom';
 
-export default function WorksSwitcher({ subcatOpen }) {
-  const [isActive, setIsActive] = useState('diag');
+export default function WorksSwitcher({ subcatOpen, subcatRepairOpen }) {
+  // const [isActive, setIsActive] = useState('diag');
 
   return (
     <div className={css.btnsBox}>
-      <button
-        type="button"
-        className={`${css.buttons} ${isActive === 'diag' && css.buttonsActive}`}
-        onClick={() => {
-          setIsActive('diag');
-        }}
-      >
-        Діагностика
-        <div className={css.indicator}>
-          <BsUiRadiosGrid />
-        </div>
-      </button>
+      {!subcatRepairOpen && (
+        <NavLink
+          to="/car/:carId/diagnostics"
+          className={({ isActive }) =>
+            `${css.buttons} ${isActive ? css.buttonsActive : ''}`
+          }
+          // onClick={() => {
+          //   setIsActive('diag');
+          // }}
+        >
+          Діагностика
+          <div className={css.indicator}>
+            <BsUiRadiosGrid />
+          </div>
+        </NavLink>
+      )}
 
       {!subcatOpen && (
-        <button
-          type="button"
-          className={`${css.buttons} ${
-            isActive === 'repair' && css.buttonsActive
-          }`}
-          onClick={() => setIsActive('repair')}
+        <NavLink
+          to="/car/:carId/repair"
+          className={({ isActive }) =>
+            `${css.buttons} ${isActive ? css.buttonsActive : ''}`
+          }
+          // onClick={() => setIsActive('repair')}
         >
           Ремонт{' '}
           <div className={css.indicator}>
             <BsWrench />
           </div>
-        </button>
+        </NavLink>
       )}
     </div>
   );
