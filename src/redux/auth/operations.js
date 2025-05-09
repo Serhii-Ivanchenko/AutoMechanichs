@@ -67,6 +67,7 @@ export const getMechanicBalance = createAsyncThunk(
         `/mb/mechanics/${mechanic_id}/get_balance`,
         {
           headers: {
+            "X-Api-Key": "YA7NxysJ",
             'company-id': serviceId,
           },
         }
