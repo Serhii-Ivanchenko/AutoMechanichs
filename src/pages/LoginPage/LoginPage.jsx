@@ -48,17 +48,17 @@ export default function LoginPage() {
         dispatch(getUserData())
           .unwrap()
           .then(() => {
-            // dispatch(getMechanicBalance(mechanicId));
-            // dispatch(
-            //   getAllCars({ date: formattedDate, mechanic_id: mechanicId })
-            // );
-            dispatch(getMechanicBalance(1));
+            dispatch(getMechanicBalance(mechanicId));
             dispatch(
-              getAllCars({
-                date: '2025-05-06',
-                mechanic_id: 1,
-              })
+              getAllCars({ date: formattedDate, mechanic_id: mechanicId })
             );
+            // dispatch(getMechanicBalance(1));
+            // dispatch(
+            //   getAllCars({
+            //     date: '2025-05-06',
+            //     mechanic_id: 1,
+            //   })
+            // );
             toast.success('Welcome to CRMMech', {
               position: 'top-center',
               duration: 3000,
