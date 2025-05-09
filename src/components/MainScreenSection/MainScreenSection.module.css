@@ -117,12 +117,15 @@
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+  border: none;
 
   border-radius: 13.5px;
   background: var(--main-gray);
 
   grid-column: 1;
   justify-self: start;
+
+  cursor: pointer;
 }
 
 .iconExit {

@@ -94,9 +94,17 @@
   min-width: 4px;
   height: 100%;
   border-radius: 6px;
-  background-color: var(--status-repair);
+  background-color: white;
 
   margin-right: 8px;
+}
+
+.stickDiag {
+  background-color: var(--status-diag);
+}
+
+.stickRepair {
+  background-color: var(--status-repair);
 }
 
 .stickDone {
@@ -132,4 +140,14 @@
   display: flex;
   align-items: center;
   gap: 5px;
+}
+
+.noRecords {
+  padding-left: 18px;
+  color: var(--light-gray);
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: 20px;
+  font-weight: 400;
 }
