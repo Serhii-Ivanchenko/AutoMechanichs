@@ -29,12 +29,16 @@ export default function SubcategoriesPart({
 
   const handleAccordionToggle =
     (categoryId, nodeId, name) => (event, isExpanded) => {
-      // Зберігаємо поточну позицію прокрутки контейнера перед закриттям акордеону
-      if (!isExpanded && containerRef.current) {
-        scrollTopRef.current[nodeId] = containerRef.current.scrollTop;
+      let prevTopInContainer = null;
+
+      // 1. ЗБЕРЕЖЕННЯ ПОЗИЦІЇ summary елемента ВІДНОСНО СКРОЛ-КОНТЕЙНЕРА
+      if (!isExpanded && summaryRefs.current[nodeId] && containerRef.current) {
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const summaryRect = summaryRefs.current[nodeId].getBoundingClientRect();
+        prevTopInContainer = summaryRect.top - containerRect.top;
       }
 
-      // Оновлюємо стан для розширених акордеонів
+      // 2. ЗМІНА СТАНУ АКОРДЕОНА
       setExpandedMap(prev => ({
         ...prev,
         [categoryId]: isExpanded ? nodeId : null,
@@ -43,12 +47,25 @@ export default function SubcategoriesPart({
       setOpenDetails(isExpanded ? nodeId : null);
       setCategoryForDetailsPart(isExpanded ? name : '');
 
-      // Після закриття акордеону, відновлюємо позицію прокрутки
-      if (!isExpanded && containerRef.current) {
+      // 3. КОМПЕНСАЦІЯ СКРОЛУ ПІСЛЯ ЗАКРИТТЯ
+      if (!isExpanded) {
         setTimeout(() => {
-          const savedScrollTop = scrollTopRef.current[nodeId] || 0;
-          containerRef.current.scrollTop = savedScrollTop; // Відновлюємо прокрутку
-        }, 200); // Затримка для стабільності
+          if (
+            summaryRefs.current[nodeId] &&
+            containerRef.current &&
+            prevTopInContainer !== null
+          ) {
+            const containerRect = containerRef.current.getBoundingClientRect();
+            const summaryRect =
+              summaryRefs.current[nodeId].getBoundingClientRect();
+            const newTopInContainer = summaryRect.top - containerRect.top;
+
+            const delta = newTopInContainer - prevTopInContainer;
+
+            // Компенсуємо зсув скролом
+            containerRef.current.scrollTop += delta;
+          }
+        }, 500); // Мінімальна затримка — після DOM оновлення
       }
     };
 
@@ -154,6 +171,9 @@ export default function SubcategoriesPart({
                 sx={{
                   '&.Mui-expanded': { minHeight: 'unset' },
                   minHeight: 'unset',
+                }}
+                ref={el => {
+                  if (el) summaryRefs.current[point.id] = el;
                 }}
               >
                 <p className={css.subCategory}>{point.label}</p>
