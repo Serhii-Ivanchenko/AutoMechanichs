@@ -11,6 +11,9 @@
   outline: none;
   max-height: 100vh;
   max-width: 390px;
+  /* max-width: 100vw; */
+  display: flex;
+  justify-content: center;
 }
 
 .modal::-webkit-scrollbar {
