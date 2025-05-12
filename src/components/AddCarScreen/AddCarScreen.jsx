@@ -1,5 +1,5 @@
 import css from './AddCarScreen.module.css';
-import autoPhoto from '../../assets/images/autoPhoto.webp';
+import autoPhoto from '../../assets/images/absentAutoImg.webp';
 import flag from '../../assets/images/flagUa.webp';
 import {
   BsFillCpuFill,
