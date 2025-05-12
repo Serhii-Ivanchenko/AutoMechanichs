@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import SubcategoriesPart from './SubcategoriesPart/SubcategoriesPart';
 import SparesPart from './SparesPart/SparesPart';
 import css from './DiagnosticScreen.module.css';
-import SavedSparesPart from './savedSparesPart/savedSparesPart';
+import SavedSparesPart from './SavedSparesPart/SavedSparesPart';
 
 export default function DiagnosticScreen() {
   const togglePoints = newTree?.nodes;
