@@ -1,5 +1,5 @@
 import css from './AddCarScreen.module.css';
-import autoPhoto from '../../assets/images/autoPhoto.png';
+import autoPhoto from '../../assets/images/autoPhoto.webp';
 import flag from '../../assets/images/flagUa.webp';
 import {
   BsFillCpuFill,
@@ -81,7 +81,7 @@ export default function AddCarScreen({ photo }) {
 
   return (
     <div className={css.wrapper}>
-      <img src={photo} alt="car photo" className={css.carPhoto} />
+      <img src={autoPhoto} alt="car photo" className={css.carPhoto} />
       <div className={css.topWrapper}>
         <div className={css.carNumberWrapper}>
           <div className={css.numberWrapper}>
