@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Layout from '../Layout/Layout.jsx';
 import css from './App.module.css';
-import TopPart from '../topPart/topPart.jsx';
+import TopPart from '../TopPart/TopPart.jsx';
 import CalendarPart from '../MainScreenSection/CalendarPart/CalendarPart.jsx';
 import SubcategoriesPart from '../DiagnosticScreen/SubcategoriesPart/SubcategoriesPart.jsx';
 import { lazy, Suspense, useEffect, useState } from 'react';
