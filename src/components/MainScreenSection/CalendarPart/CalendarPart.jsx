@@ -1,7 +1,9 @@
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
 import css from './CalendarPart.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { getAllCars } from '../../../redux/cars/operations';
 
 export default function CalendarPart() {
   const months = [
@@ -18,11 +20,13 @@ export default function CalendarPart() {
     'Листопад',
     'Грудень',
   ];
-
+  const dispatch = useDispatch();
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [day, setDay] = useState(today.getDate());
+  // console.log('today', today);
+  // console.log('month', today.getMonth());
 
   const getDaysInMonth = (year, month) =>
     new Date(year, month + 1, 0).getDate();
@@ -50,6 +54,34 @@ export default function CalendarPart() {
       setDay(newDay);
     }
   };
+
+  // useEffect(() => {
+  //   const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(
+  //     day
+  //   ).padStart(2, '0')}`;
+
+  //   const data = {
+  //     date,
+  //     mechanic_id: 1,
+  //   };
+
+  //   dispatch(getAllCars(data));
+  // }, [year, month, day, dispatch]);
+
+  // const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(
+  //   day
+  // ).padStart(2, '0')}`;
+
+  // console.log('date', date);
+
+  // const getCarsByDate = () => {
+  //   const data = {
+  //     date: date,
+  //     mechanic_id: 1,
+  //   };
+
+  //   dispatch(getAllCars(data));
+  // };
 
   return (
     <div className={css.calendarBox}>

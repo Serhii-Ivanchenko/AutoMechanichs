@@ -1,6 +1,12 @@
 import { initialState } from '../initialState.js';
 import { createSlice } from '@reduxjs/toolkit';
-import { getMechanicBalance, getUserData, logIn, logOut, refreshUser } from './operations.js';
+import {
+  getMechanicBalance,
+  getUserData,
+  logIn,
+  logOut,
+  refreshUser,
+} from './operations.js';
 
 const handlePending = state => {
   state.isLoading = true;
@@ -98,7 +104,7 @@ const authSlice = createSlice({
           state.userData.selectedServiceId =
             action.payload.services?.[0]?.id || null;
         }
-
+        state.isLoading = false;
         state.isLoggedIn = true;
         state.isRefreshing = false;
         state.apiKey = action.payload.api_key;

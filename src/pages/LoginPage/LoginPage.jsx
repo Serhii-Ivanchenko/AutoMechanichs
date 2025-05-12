@@ -2,42 +2,91 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import css from './LoginPage.module.css';
 import { BsFillPersonFill, BsKeyFill } from 'react-icons/bs';
 import { ImEye, ImEyeBlocked } from 'react-icons/im';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoginSchema } from '../../validationSchemas/LoginSchema';
 import ForgotPasswordModal from './ForgotPasswordModal/ForgotPasswordModal';
 import Modal from '../../components/Modal/Modal';
-import { useDispatch } from 'react-redux';
-import { getUserData, logIn } from '../../redux/auth/operations';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getMechanicBalance,
+  getUserData,
+  logIn,
+} from '../../redux/auth/operations';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { selectUser } from '../../redux/auth/selectors';
+import { getAllCars } from '../../redux/cars/operations';
 
 export default function LoginPage() {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] =
     useState(false);
-  // const navigate = useNavigate();
+  const userData = useSelector(selectUser);
+  const formattedDate = new Date().toISOString().split('T')[0];
+
+  const [mechanicId, setMechanicId] = useState();
+
+  console.log('userData', userData);
+  console.log('formattedDate', formattedDate);
+  console.log('mechanicId', mechanicId);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setMechanicId(userData?.id);
+  }, [userData]);
 
   const onButtonEyeClick = () => {
     setIsPasswordShown(!isPasswordShown);
   };
 
   const handleSubmitLogin = (values, actions) => {
-    console.log('values', values);
+    // console.log('values', values);
 
     dispatch(logIn(values))
       .unwrap()
       .then(() => {
-        dispatch(getUserData());
-        toast.success('Welcome to CRMMech', {
-          position: 'top-center',
-          duration: 3000,
-          style: {
-            background: 'var(--bg-input)',
-            color: 'var(--white)FFF',
-          },
-        });
+        dispatch(getUserData())
+          .unwrap()
+          .then(() => {
+            // dispatch(getMechanicBalance(mechanicId));
+            // dispatch(
+            //   getAllCars({ date: formattedDate, mechanic_id: mechanicId })
+            // );
+            dispatch(getMechanicBalance(1));
+            dispatch(
+              getAllCars({
+                date: '2025-05-06',
+                mechanic_id: 1,
+              })
+            );
+            toast.success('Welcome to CRMMech', {
+              position: 'top-center',
+              duration: 3000,
+              style: {
+                background: 'var(--bg-input)',
+                color: 'var(--white)FFF',
+              },
+            });
+          })
+          .catch(err => {
+            console.log('err', err);
+
+            toast.error('Щось сталося, спробуйте ще раз', {
+              position: 'top-center',
+              style: {
+                background: 'var(--bg-input)',
+                color: 'var(--white)FFF',
+              },
+            });
+          });
+        // toast.success('Welcome to CRMMech', {
+        //   position: 'top-center',
+        //   duration: 3000,
+        //   style: {
+        //     background: 'var(--bg-input)',
+        //     color: 'var(--white)FFF',
+        //   },
+        // });
         // navigate({ DiagnosticPage });
       })
       .catch(err => {
