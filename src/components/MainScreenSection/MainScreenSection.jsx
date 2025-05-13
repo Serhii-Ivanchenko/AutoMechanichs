@@ -10,6 +10,7 @@ import DiagnosticScreen from '../DiagnosticScreen/DiagnosticScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { logOut } from '../../redux/auth/operations';
 import { selectCars } from '../../redux/cars/selectors';
+import { Link } from 'react-router-dom';
 
 export default function MainScreenSection({ array1, array2, wage }) {
   // const [car, setCar] = useState('');
@@ -54,11 +55,11 @@ export default function MainScreenSection({ array1, array2, wage }) {
         <> */}
       <CarsInWorkOrDoneList list={cars} />
 
-      <button className={css.btnAddPhoto}>
+      <Link to='/add-car' className={css.btnAddPhoto}>
         <IoCarSport className={css.icon} />
         <BsPlusCircleDotted className={css.icon} />
         <BsCameraFill className={css.icon} />
-      </button>
+      </Link>
 
       <CarsInWorkOrDoneList
         done={true}
