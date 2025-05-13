@@ -49,7 +49,7 @@ export default function SubcategoriesPart({
 
       // 3. КОМПЕНСАЦІЯ СКРОЛУ ПІСЛЯ ЗАКРИТТЯ
       if (!isExpanded) {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           if (
             summaryRefs.current[nodeId] &&
             containerRef.current &&
@@ -62,10 +62,9 @@ export default function SubcategoriesPart({
 
             const delta = newTopInContainer - prevTopInContainer;
 
-            // Компенсуємо зсув скролом
             containerRef.current.scrollTop += delta;
           }
-        }, 500); // Мінімальна затримка — після DOM оновлення
+        });
       }
     };
 
@@ -118,6 +117,10 @@ export default function SubcategoriesPart({
                 <AccordionSummary
                   className={css.subcategoriesListItem}
                   sx={{
+                    position:
+                      expandedMap[node.id] === node.id ? 'sticky' : 'static',
+                    top: '27px',
+                    overflowAnchor: 'none',
                     '&.Mui-expanded': { minHeight: 'unset' },
                     minHeight: 'unset',
                   }}
@@ -169,6 +172,10 @@ export default function SubcategoriesPart({
               <AccordionSummary
                 className={css.subcategoriesListItem}
                 sx={{
+                  position:
+                    expandedMap[point.id] === point.id ? 'sticky' : 'static',
+                  top: '27px',
+                  overflowAnchor: 'none',
                   '&.Mui-expanded': { minHeight: 'unset' },
                   minHeight: 'unset',
                 }}
