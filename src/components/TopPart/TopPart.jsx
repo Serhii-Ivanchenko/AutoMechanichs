@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import css from './topPart.module.css';
+import css from './TopPart.module.css';
 import { useEffect } from 'react';
 import { getMechanicBalance } from '../../redux/auth/operations';
 import { selectBalance, selectUser } from '../../redux/auth/selectors';

@@ -4,9 +4,10 @@ import TogglePoints from '../DiagnosticScreen/TogglePoints/TogglePoints';
 import WorksSwitcher from '../DiagnosticScreen/WorksSwitcher/WorksSwitcher';
 import newTree from '../../utils/tree.json';
 import { useRef, useState } from 'react';
-import SavedSparesPart from '../DiagnosticScreen/savedSparesPart/savedSparesPart';
+
 import SubcategoriesPart from '../DiagnosticScreen/SubcategoriesPart/SubcategoriesPart';
 import css from './RepairScreen.module.css';
+import SavedSparesPart from '../DiagnosticScreen/SavedSparesPart/SavedSparesPart.jsx';
 
 export default function RepairScreen() {
   const togglePoints = newTree?.nodes;
