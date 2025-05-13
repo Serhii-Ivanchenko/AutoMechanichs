@@ -24,6 +24,11 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
   console.log('cars', cars);
 
+  const carsInWork = cars.filter(car => !car?.complete_date);
+  const carsDone = cars.filter(car => car?.complete_date);
+  console.log('carsInWork', carsInWork);
+  console.log('carsDone', carsDone);
+
   return (
     <div className={css.sectionWrapper}>
       {/* //   <div className={css.topPart}>
@@ -53,9 +58,9 @@ export default function MainScreenSection({ array1, array2, wage }) {
         <DiagnosticScreen setDiagOpen={setDiagOpen} />
       ) : (
         <> */}
-      <CarsInWorkOrDoneList list={cars} />
+      <CarsInWorkOrDoneList list={carsInWork} />
 
-      <Link to='/add-car' className={css.btnAddPhoto}>
+      <Link to="/add-car" className={css.btnAddPhoto}>
         <IoCarSport className={css.icon} />
         <BsPlusCircleDotted className={css.icon} />
         <BsCameraFill className={css.icon} />
@@ -63,7 +68,7 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
       <CarsInWorkOrDoneList
         done={true}
-        list={array2}
+        list={carsDone}
         // setDiagOpen={setDiagOpen}
       />
 
