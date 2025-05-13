@@ -18,54 +18,68 @@ export default function CarsInWorkOrDoneList({ done, list }) {
   return (
     <>
       <ul className={`${css.list} ${done ? css.listDone : ''}`}>
-        {list?.map((item, index) => (
-          <li
-            key={index}
-            // onClick={() => setDiagOpen(true)}
-            // className={css.listItem}
-          >
-            <Link to="/car/:carId/diagnostics">
-              <div className={css.listItem}>
-                {done ? (
-                  <span className={css.iconBox}>
-                    <BsPatchExclamationFill className={css.icon} />
-                  </span>
-                ) : !checkTime(item.time) ? (
-                  <span className={css.iconBox}>
-                    <BsPatchExclamationFill
-                      className={`${css.icon} ${css.iconRed}`}
-                    />
-                  </span>
-                ) : (
-                  <p className={css.time}>{item.time}</p>
-                )}
-                <div
-                  className={`${css.stick} ${done ? css.stickDone : ''}`}
-                ></div>
-                <div className={css.carWrapper}>
-                  <p className={css.car}>{item.carModel}</p>
-                  <div className={css.problemAndSpares}>
-                    <p className={css.problem}>{item.problem}</p>
-                    {item.sparesStatus ? (
-                      <BsCheckCircleFill
-                        className={`${css.iconTick} ${
-                          item.sparesStatus === 'received' && css.iconTickOK
-                        } ${
-                          item.sparesStatus === 'ordered' && css.iconTickWait
-                        }`}
+        {list?.length === 0 ? (
+          <p className={css.noRecords}>Записи відсутні</p>
+        ) : (
+          list?.map((item, index) => (
+            <li
+              key={index}
+              // onClick={() => setDiagOpen(true)}
+              // className={css.listItem}
+            >
+              <Link to="/car/:carId/diagnostics">
+                <div className={css.listItem}>
+                  {done ? (
+                    <span className={css.iconBox}>
+                      <BsPatchExclamationFill className={css.icon} />
+                    </span>
+                  ) : !checkTime(item?.time_rec || item.time) ? (
+                    <span className={css.iconBox}>
+                      <BsPatchExclamationFill
+                        className={`${css.icon} ${css.iconRed}`}
                       />
-                    ) : (
-                      ''
-                    )}
+                    </span>
+                  ) : (
+                    <p className={css.time}>{item?.time_rec || item.time}</p>
+                  )}
+                  <div
+                    className={`${css.stick} ${done ? css.stickDone : ''} ${
+                      item?.status === 'diagnostic'
+                        ? css.stickDiag
+                        : item?.status === 'repair'
+                        ? css.stickRepair
+                        : ''
+                    }`}
+                  ></div>
+                  <div className={css.carWrapper}>
+                    <p className={css.car}>
+                      {item.make && item.model
+                        ? `${`${item?.make} ${item?.model}`}`
+                        : item.carModel}
+                    </p>
+                    <div className={css.problemAndSpares}>
+                      <p className={css.problem}>{item.problem}</p>
+                      {item.sparesStatus ? (
+                        <BsCheckCircleFill
+                          className={`${css.iconTick} ${
+                            item.sparesStatus === 'received' && css.iconTickOK
+                          } ${
+                            item.sparesStatus === 'ordered' && css.iconTickWait
+                          }`}
+                        />
+                      ) : (
+                        ''
+                      )}
+                    </div>
                   </div>
+                  <p className={`${css.salary} ${done ? css.salaryDone : ''}`}>
+                    {item.salary}
+                  </p>
                 </div>
-                <p className={`${css.salary} ${done ? css.salaryDone : ''}`}>
-                  {item.salary}
-                </p>
-              </div>
-            </Link>
-          </li>
-        ))}
+              </Link>
+            </li>
+          ))
+        )}
       </ul>
     </>
   );

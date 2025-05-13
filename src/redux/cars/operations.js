@@ -15,6 +15,7 @@ export const getAllCars = createAsyncThunk(
           mechanic_id,
         },
         headers: {
+          "X-Api-Key": "YA7NxysJ",
           'company-id': serviceId,
         },
       });
