@@ -11,8 +11,13 @@ import carData from '../../utils/output.json';
 import { useEffect, useRef, useState } from 'react';
 import AddCarPopup from './AddCarPopup/AddCarPopup';
 import clsx from 'clsx';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { recognizeLicensePlate } from '../../redux/cars/operations';
+import {
+  selectCarInfo,
+  selectIsRecognitionLoading,
+} from '../../redux/cars/selectors';
+import LoaderSvg from '../Loader/LoaderSvg.jsx';
 
 export default function AddCarScreen({ photo, stream }) {
   const [chosenMake, setChosenMake] = useState({});
@@ -33,6 +38,10 @@ export default function AddCarScreen({ photo, stream }) {
   const buttonModelRef = useRef(null);
   const buttonYearRef = useRef(null);
   const videoRef = useRef(null);
+
+  const carInfo = useSelector(selectCarInfo);
+  const isRecoginitionLoading = useSelector(selectIsRecognitionLoading);
+  console.log('carInfo', carInfo);
 
   const makeInputClick = e => {
     e.stopPropagation();
@@ -132,10 +141,27 @@ export default function AddCarScreen({ photo, stream }) {
   }, [stream]);
 
   const handleSend = () => {
-    dispatch(recognizeLicensePlate(photo));
+    if (!photo) {
+      return;
+    }
+    const dataURLtoBlob = dataUrl => {
+      const arr = dataUrl.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) u8arr[n] = bstr.charCodeAt(n);
+      return new Blob([u8arr], { type: mime });
+    };
+
+    const photoToSend = dataURLtoBlob(photo);
+    console.log('photoToSend', photoToSend);
+    dispatch(recognizeLicensePlate(photoToSend));
   };
 
-  return (
+  return isRecoginitionLoading ? (
+    <LoaderSvg />
+  ) : (
     <div className={`${css.wrapper} ${stream ? css.cameraOn : ''}`}>
       {stream ? (
         <video ref={videoRef} autoPlay playsInline className={css.video} />
@@ -159,13 +185,11 @@ export default function AddCarScreen({ photo, stream }) {
                 <img src={flag} alt="flag image" />
                 <p className={css.flagText}>UA</p>
               </div>
-              <p className={css.number}>CA8876CO</p>
+              <p className={css.number}>
+                {carInfo?.license_plate ?? '- - - -'}
+              </p>
             </div>
-            <button
-              type="button"
-              className={css.btn}
-              //   onClick={handleSend}
-            >
+            <button type="button" className={css.btn} onClick={handleSend}>
               <BsFillCpuFill className={css.btnIcon} />
               Розпізнати
             </button>

@@ -41,7 +41,7 @@ export const recognizeLicensePlate = createAsyncThunk(
       formData.append('file', platePhoto);
       const response = await axiosInstancePhotos.post(
         '/recognize_license_plate/',
-        { formData },
+        formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
