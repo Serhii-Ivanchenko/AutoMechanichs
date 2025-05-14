@@ -4,6 +4,10 @@
   margin-right: auto;
 }
 
+.cameraOn {
+  height: 532px;
+}
+
 .video {
   width: 318px;
   height: 532px;
