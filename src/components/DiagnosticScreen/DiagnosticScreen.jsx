@@ -40,6 +40,35 @@ export default function DiagnosticScreen() {
     //  setWithoutDamages(false);
   };
 
+  const groupNodeSubcat = node_subcat => {
+    const result = [];
+
+    node_subcat.forEach(entry => {
+      // Якщо це subNode (3-й рівень)
+      if (entry.subNode) {
+        const existing = result.find(e => e.name === entry.name);
+        const subNodeEntry = {
+          subNodeName: entry.subNode.subNodeName,
+          parts: entry.subNode.parts,
+        };
+
+        if (existing) {
+          existing.subNode.push(subNodeEntry);
+        } else {
+          result.push({
+            name: entry.name,
+            subNode: [subNodeEntry],
+          });
+        }
+      } else {
+        // Якщо це parts напряму (1-й або 2-й рівень без вкладеного subNode)
+        result.push(entry);
+      }
+    });
+
+    return result;
+  };
+
   const nodes = spares
     .map(spare => {
       const node_subcat = [];
@@ -102,19 +131,25 @@ export default function DiagnosticScreen() {
 
               if (chosen.length > 0) {
                 node_subcat.push({
-                  name: subNode.name,
-                  parts: chosen.map(part => ({
-                    id: part.id,
-                    tag: part.tag,
-                    code: part.code,
-                    part_name: part.name,
-                    comment: 'Заміна',
-                    audio_file: '',
-                    photo_file: '',
-                  })),
+                  name: node.name,
+                  subNode: {
+                    subNodeName: subNode.name,
+                    parts: chosen.map(part => ({
+                      id: part.id,
+                      tag: part.tag,
+                      code: part.code,
+                      part_name: part.name,
+                      comment: 'Заміна',
+                      audio_file: '',
+                      photo_file: '',
+                    })),
+                  },
                 });
               }
             });
+            console.log('node_subcat', node_subcat);
+            console.log('chosen', chosen);
+            console.log('node', node);
           }
         });
       }
@@ -123,7 +158,7 @@ export default function DiagnosticScreen() {
       return node_subcat.length > 0
         ? {
             node_name: spare.name,
-            node_subcat,
+            node_subcat: groupNodeSubcat(node_subcat),
           }
         : null;
     })

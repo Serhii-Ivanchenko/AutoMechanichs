@@ -5,14 +5,21 @@ import { BsCheckCircleFill } from 'react-icons/bs';
 
 export default function CarsInWorkOrDoneList({ done, list }) {
   const checkTime = (time, dayOfRecord) => {
-    const currentTime = dayOfRecord;
+    const currentTime = new Date();
     const timeOfRecord = time;
 
     const [hours, minutes] = timeOfRecord.split(':').map(Number);
-    const dateOfRecord = new Date();
+    const dateOfRecord = new Date(dayOfRecord);
     dateOfRecord.setHours(hours, minutes, 0, 0);
 
-    return dateOfRecord > currentTime;
+    console.log(
+      'dateOfRecord > currentTime',
+      new Date(dateOfRecord) > new Date(currentTime)
+    );
+    console.log('dateOfRecord', new Date(dateOfRecord));
+    console.log('currentTime', new Date(currentTime));
+
+    return new Date(dateOfRecord) > new Date(currentTime);
   };
 
   return (
