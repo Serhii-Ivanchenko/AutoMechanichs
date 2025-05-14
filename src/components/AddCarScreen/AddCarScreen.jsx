@@ -23,10 +23,15 @@ export default function AddCarScreen({ photo, stream }) {
   const [modelSearchQuery, setModelSearchQuery] = useState('');
   const [displayedMakeArr, setDisplayedMakeArr] = useState([]);
   const [displayedModelArr, setDisplayedModelArr] = useState([]);
+  const [yearPopupOpen, setYearPopupOpen] = useState(false);
+  const [yearSearchQuery, setYearSearchQuery] = useState('');
+  const [displayedYearArr, setDisplayedYearArr] = useState([]);
+  const [chosenYear, setChosenYear] = useState('');
   const dispatch = useDispatch();
 
   const buttonMakeRef = useRef(null);
   const buttonModelRef = useRef(null);
+  const buttonYearRef = useRef(null);
   const videoRef = useRef(null);
 
   const makeInputClick = e => {
@@ -34,12 +39,19 @@ export default function AddCarScreen({ photo, stream }) {
     setMakePopupOpen(!makePopupOpen);
     setMakeSearchQuery('');
     setChosenModel({});
+    setChosenYear('');
   };
 
   const modelInputClick = e => {
     e.stopPropagation();
     setModelPopupOpen(!modelPopupOpen);
     setModelSearchQuery('');
+  };
+
+  const yearInputClick = e => {
+    e.stopPropagation();
+    setYearPopupOpen(!yearPopupOpen);
+    setYearSearchQuery('');
   };
 
   const carMakesArr = carData?.map(car => ({ id: car.id, make: car.make }));
@@ -75,6 +87,43 @@ export default function AddCarScreen({ photo, stream }) {
           )
     );
   }, [chosenMake, modelSearchQuery]);
+
+  useEffect(() => {
+    if (!chosenMake?.make || !chosenModel?.model_name) {
+      return;
+    }
+
+    const existedMake = carData?.find(
+      item => Number(item.id) === Number(chosenMake?.id)
+    );
+    const selectedCarModel = existedMake?.models.find(
+      car =>
+        chosenModel?.model_name?.toLocaleLowerCase() ===
+        car.model_name.toLocaleLowerCase()
+    );
+    const selectedCarModelConstructionInterval =
+      selectedCarModel?.construction_interval;
+    const [startDate, endDate] =
+      selectedCarModelConstructionInterval.split('- ');
+    const [startMonth, startYear] = startDate.split('.');
+    const [endMonth, endYear] = endDate.split('.');
+    const defaultEndYear = endYear ? endYear : new Date().getFullYear();
+    const yearArr = [];
+    for (let i = startYear; i <= defaultEndYear; i++) {
+      yearArr.push(i);
+    }
+
+    setDisplayedYearArr(
+      yearSearchQuery.trim() === ''
+        ? yearArr
+        : yearArr?.filter(year =>
+            year
+              .toString()
+              .toLowerCase()
+              .includes(yearSearchQuery.trim().toLowerCase())
+          )
+    );
+  }, [chosenModel, yearSearchQuery, chosenMake]);
 
   useEffect(() => {
     if (videoRef.current && stream) {
@@ -220,6 +269,56 @@ export default function AddCarScreen({ photo, stream }) {
                   buttonRef={buttonModelRef}
                   onClose={() => setModelPopupOpen(false)}
                   isOpen={modelPopupOpen}
+                />
+              )}
+            </div>
+            <div
+              onClick={yearInputClick}
+              ref={buttonYearRef}
+              className={css.inputWithPopup}
+            >
+              <div className={css.inputWrapper} onClick={yearInputClick}>
+                {yearPopupOpen ? (
+                  <input
+                    type="text"
+                    value={yearSearchQuery}
+                    onChange={e => setYearSearchQuery(e.target.value)}
+                    className={`${css.input} ${css.text} ${css.textColor}`}
+                    onClick={e => e.stopPropagation()}
+                    placeholder="Рік випуску"
+                  />
+                ) : (
+                  <p
+                    className={clsx(
+                      css.text,
+                      chosenYear ? css.textColor : css.placeholderColor
+                    )}
+                  >
+                    {chosenYear || 'Рік випуску'}
+                  </p>
+                )}
+                <button
+                  type="button"
+                  className={css.arrow}
+                  onClick={yearInputClick}
+                >
+                  <BsFillCaretDownFill
+                    className={clsx(
+                      css.arrowIcon,
+                      yearPopupOpen && css.arrowIconOpen
+                    )}
+                  />
+                </button>
+              </div>
+
+              {yearPopupOpen && (
+                <AddCarPopup
+                  arr={displayedYearArr}
+                  // fieldKey="make"
+                  setFieldValue={setChosenYear}
+                  buttonRef={buttonYearRef}
+                  onClose={() => setYearPopupOpen(false)}
+                  isOpen={yearPopupOpen}
                 />
               )}
             </div>
