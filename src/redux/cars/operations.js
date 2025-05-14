@@ -15,7 +15,7 @@ export const getAllCars = createAsyncThunk(
           mechanic_id,
         },
         headers: {
-          "X-Api-Key": "YA7NxysJ",
+          'X-Api-Key': 'YA7NxysJ',
           'company-id': serviceId,
         },
       });
@@ -49,6 +49,155 @@ export const recognizeLicensePlate = createAsyncThunk(
         }
       );
       console.log('recognizeLicensePlate', response.data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
+// ! Diagnostics
+
+// Get Nodes and Parts list
+export const getNodesAndParts = createAsyncThunk(
+  'cars/getNodesAndParts',
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const response = await axiosInstance.get(`/mb/categories_with_parts`, {
+        headers: {
+          'company-id': serviceId,
+        },
+      });
+      console.log('getNodesAndParts', response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
+// Get particular diagnostic
+export const getDiagnostic = createAsyncThunk(
+  'cars/getDiagnostic',
+  async (diagnostic_id, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const response = await axiosInstance.get(
+        `/mb/get_report/${diagnostic_id}`,
+        {
+          headers: {
+            'company-id': serviceId,
+          },
+        }
+      );
+      console.log('getDiagnostic', response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
+// Create diagnostic
+export const createDiagnostic = createAsyncThunk(
+  'cars/createDiagnostic',
+  async (diagnosticData, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const response = await axiosInstance.post(
+        `/mb/create_diagnostic`,
+        diagnosticData,
+        {
+          headers: {
+            'company-id': serviceId,
+          },
+        }
+      );
+      console.log('createDiagnostic', response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
+// ! New car
+
+// Create new car
+export const createNewCar = createAsyncThunk(
+  'cars/createNewCar',
+  async (carData, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const response = await axiosInstance.post(`/mb/save_car/`, carData, {
+        headers: {
+          'company-id': serviceId,
+        },
+      });
+      console.log('createNewCar', response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
+// Upload car photos
+export const uploadCarPhotos = createAsyncThunk(
+  'cars/uploadCarPhotos',
+  async (carData, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const { car_id, photos } = carData;
+      const formData = new FormData();
+
+      photos.forEach(photo => {
+        formData.append('photos', photo);
+      });
+      formData.append('car_id', car_id);
+      formData.append('company_id', serviceId);
+      const response = await axiosInstancePhotos.post(
+        `/mb/upload_car_photos/`,
+        formData,
+        {
+          headers: {
+            // 'company-id': serviceId,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      console.log('uploadCarPhotos', response.data);
+
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({
