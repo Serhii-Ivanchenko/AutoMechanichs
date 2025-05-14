@@ -12,8 +12,14 @@ export const initialState = {
   cars: {
     cars: [],
     carInfo: {},
+    nodesAndPartsForDiagnostics: [],
+    diagnostic: {},
+
     isLoading: false,
     isRecognitionLoading: false,
+    isDiagLoading: false,
+    isDiagCreateLoading: false,
+    isSavingCarLoading: false,
     error: null,
   },
 };
