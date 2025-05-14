@@ -55,33 +55,18 @@ export default function CalendarPart() {
     }
   };
 
-  // useEffect(() => {
-  //   const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(
-  //     day
-  //   ).padStart(2, '0')}`;
+  useEffect(() => {
+    const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(
+      day
+    ).padStart(2, '0')}`;
 
-  //   const data = {
-  //     date,
-  //     mechanic_id: 1,
-  //   };
+    const data = {
+      date,
+      mechanic_id: 1,
+    };
 
-  //   dispatch(getAllCars(data));
-  // }, [year, month, day, dispatch]);
-
-  // const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(
-  //   day
-  // ).padStart(2, '0')}`;
-
-  // console.log('date', date);
-
-  // const getCarsByDate = () => {
-  //   const data = {
-  //     date: date,
-  //     mechanic_id: 1,
-  //   };
-
-  //   dispatch(getAllCars(data));
-  // };
+    dispatch(getAllCars(data));
+  }, [year, month, day, dispatch]);
 
   return (
     <div className={css.calendarBox}>

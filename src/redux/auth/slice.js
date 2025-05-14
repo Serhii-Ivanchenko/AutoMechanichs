@@ -63,7 +63,8 @@ const authSlice = createSlice({
           state.userData.selectedServiceId = storedServiceId;
         } else {
           // Якщо немає, використовуємо значення з сервера
-          state.userData.selectedServiceId = action.payload.services[0]?.id;
+          // state.userData.selectedServiceId = action.payload.services[0]?.id;
+          state.userData.selectedServiceId = action.payload.company_id;
         }
 
         state.isLoading = false;

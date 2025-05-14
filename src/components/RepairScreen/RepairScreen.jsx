@@ -138,7 +138,7 @@ export default function RepairScreen() {
       {savedSparesPartOpen ? (
         <SavedSparesPart nodes={nodes} />
       ) : subcatOpen ? (
-        <ul className={css.list}>
+        <ul className={css.list} ref={containerRef}>
           {chosenPoints?.map(point => (
             <SubcategoriesPart
               key={point.id}
