@@ -59,3 +59,87 @@ export const recognizeLicensePlate = createAsyncThunk(
     }
   }
 );
+
+// ! Diagnostics
+
+// Get Nodes and Parts list
+export const getNodesAndParts = createAsyncThunk(
+  "cars/getNodesAndParts",
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const response = await axiosInstance.get(`/mb/categories_with_parts`, {
+        headers: {
+          "company-id": serviceId,
+        },
+      });
+      console.log("getNodesAndParts", response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
+// Get particular diagnostic
+export const getDiagnostic = createAsyncThunk(
+  "cars/getDiagnostic",
+  async (diagnostic_id, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const response = await axiosInstance.get(
+        `/mb/get_report/${diagnostic_id}`,
+        {
+          headers: {
+            'company-id': serviceId,
+          },
+        }
+      );
+      console.log("getDiagnostic", response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
+// Create diagnostic
+export const createDiagnostic = createAsyncThunk(
+  "cars/createDiagnostic",
+  async (diagnosticData, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const response = await axiosInstance.post(
+        `/mb/create_diagnostic`,
+        diagnosticData,
+        {
+          headers: {
+            'company-id': serviceId,
+          },
+        }
+      );
+      console.log("createDiagnostic", response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
