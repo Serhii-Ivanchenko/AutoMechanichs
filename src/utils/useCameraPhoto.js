@@ -54,16 +54,18 @@ export const useCameraPhoto = onPhotoReady => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
 
   const startCamera = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }, // задня камера на телефоні
+        video: { facingMode: 'environment' },
       });
       videoRef.current.srcObject = mediaStream;
       setStream(mediaStream);
+      setIsCameraActive(true);
     } catch (err) {
-      console.error('Ошибка при доступе к камере', err);
+      console.error('Помилка доступу до камери:', err);
     }
   };
 
@@ -72,6 +74,7 @@ export const useCameraPhoto = onPhotoReady => {
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
     }
+    setIsCameraActive(false);
   };
 
   const takePhoto = () => {
@@ -79,7 +82,10 @@ export const useCameraPhoto = onPhotoReady => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
 
-    if (video.videoWidth === 0) return; // захист
+    if (!video.videoWidth || !video.videoHeight) {
+      console.warn('Камера ще не готова');
+      return;
+    }
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -92,9 +98,11 @@ export const useCameraPhoto = onPhotoReady => {
 
   return {
     startCamera,
-    takePhoto,
     stopCamera,
+    takePhoto,
+    isCameraActive,
     videoRef,
     canvasRef,
   };
 };
+

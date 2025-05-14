@@ -38,37 +38,48 @@ import { useEffect } from 'react';
 // }
 
 export default function AddCarPhoto({ setPhoto }) {
-  const { startCamera, takePhoto, stopCamera, videoRef, canvasRef } = useCameraPhoto(
-    photoData => {
-      setPhoto(photoData);
-    }
-  );
-
-  useEffect(() => {
-    startCamera(); // запускаємо камеру одразу
-    return () => stopCamera(); // зупиняємо при виході
-  }, []);
+  const {
+    startCamera,
+    stopCamera,
+    takePhoto,
+    isCameraActive,
+    videoRef,
+    canvasRef,
+  } = useCameraPhoto(photoData => {
+    setPhoto(photoData);
+  });
 
   return (
     <div className={css.wrapper}>
       <Link to="/main">
-        <IoCloseCircle className={`${css.btn} ${css.cross}`} />
+        <IoCloseCircle
+          className={`${css.btn} ${css.cross}`}
+          onClick={stopCamera}
+        />
       </Link>
 
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        className={css.videoPreview} // Зробити нормальну ширину
-      />
+      {isCameraActive && (
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          className={css.videoPreview}
+        />
+      )}
       <canvas ref={canvasRef} style={{ display: 'none' }} />
 
-      <button type="button" className={css.cameraBtn} onClick={takePhoto}>
-        <BsCameraFill className={css.cameraIcon} />
-      </button>
-
-      <IoCheckmarkCircleSharp className={`${css.btn} ${css.check}`} />
+      {!isCameraActive ? (
+        <button type="button" className={css.cameraBtn} onClick={startCamera}>
+          <BsCameraFill className={css.cameraIcon} />
+        </button>
+      ) : (
+        <IoCheckmarkCircleSharp
+          className={`${css.btn} ${css.check}`}
+          onClick={takePhoto}
+        />
+      )}
     </div>
   );
 }
+
 
