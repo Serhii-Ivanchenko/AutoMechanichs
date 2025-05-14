@@ -1,8 +1,10 @@
 .appContainer {
-  max-width: 390px;
+  display: flex;
+  flex-direction: column;
+  /* max-width: 390px; */
   width: 100vw;
   height: 100vh;
-  padding: 57px 6px 12px 6px;
+  padding: 12px 6px 12px 6px;
   overflow: hidden;
   margin-left: auto;
   margin-right: auto;
