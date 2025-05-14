@@ -1,6 +1,12 @@
 .sectionWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   width: 100%;
+  max-width: 378px;
   padding: 0 9px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* .topPart {
@@ -82,7 +88,8 @@
 
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 
-  margin-bottom: 35px;
+  /* margin-bottom: 25px; */
+  margin-bottom: 3.11vh;
   cursor: pointer;
 }
 
@@ -96,7 +103,8 @@
   /* display: flex;
   justify-content: space-between;*/
 
-  padding: 19px 9px 0;
+  /* padding: 19px 9px 0; */
+  padding: 2.36vh 9px 0;
   width: 100%;
   /* padding-top: 19px; */
 
