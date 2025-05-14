@@ -1,5 +1,7 @@
 import css from './AddCarPhoto.module.css';
 import { IoCloseCircle, IoCheckmarkCircleSharp } from 'react-icons/io5';
+import { IoMdClose } from 'react-icons/io';
+import { IoMdCheckmark } from 'react-icons/io';
 import { BsCameraFill } from 'react-icons/bs';
 // import { useCameraPhoto } from '../../utils/useCameraPhoto';
 import { Link } from 'react-router-dom';
@@ -51,10 +53,16 @@ export default function AddCarPhoto({ setPhoto, setVideoStream }) {
   };
 
   return (
-    <div className={css.wrapper}>
-      <Link to="/main">
-        <IoCloseCircle className={`${css.btn} ${css.cross}`} />
-      </Link>
+    <div className={`${css.wrapper} ${cameraOn ? css.cameraOn : ''}`}>
+      {!cameraOn ? (
+        <Link className={css.cancelBtn} to="/main">
+          <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+        </Link>
+      ) : (
+        <button className={css.cancelBtn} onClick={stopCamera}>
+          <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+        </button>
+      )}
 
       <div>
         <video
@@ -68,7 +76,9 @@ export default function AddCarPhoto({ setPhoto, setVideoStream }) {
           <BsCameraFill className={css.cameraIcon} />
         </button>
       </div>
-      <IoCheckmarkCircleSharp className={`${css.btn} ${css.check}`} />
+      {!cameraOn && (
+        <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
+      )}
     </div>
   );
 }

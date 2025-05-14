@@ -136,7 +136,7 @@ export default function AddCarScreen({ photo, stream }) {
   };
 
   return (
-    <div className={css.wrapper}>
+    <div className={`${css.wrapper} ${stream ? css.cameraOn : ''}`}>
       {stream ? (
         <video ref={videoRef} autoPlay playsInline className={css.video} />
       ) : (
