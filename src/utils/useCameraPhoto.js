@@ -4,6 +4,7 @@ export const useCameraPhoto = onPhotoReady => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
+  const [photoTaken, setPhotoTaken] = useState(false);
 
   const startCamera = async () => {
     try {
@@ -25,27 +26,32 @@ export const useCameraPhoto = onPhotoReady => {
   };
 
   const takePhoto = () => {
-    const video = videoRef.current;
+    // const canvas = document.createElement('canvas');
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-
+    const video = videoRef.current;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     const photoData = canvas.toDataURL('image/jpeg');
+    setPhotoTaken(true);
     onPhotoReady(photoData);
     stopCamera();
   };
 
-  const handleTakePhoto = async () => {
-    await startCamera();
-    setTimeout(takePhoto, 500); // задержка, чтобы видео успело загрузиться
+  const handleClick = async () => {
+    if (!stream) {
+      setPhotoTaken(false);
+      await startCamera();
+    } else if (!photoTaken) {
+      takePhoto();
+    }
   };
 
   return {
-    handleTakePhoto,
+    handleClick,
     videoRef,
-    canvasRef,
+    stream,
   };
 };

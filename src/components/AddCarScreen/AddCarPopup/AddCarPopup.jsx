@@ -39,11 +39,13 @@ export default function AddCarPopup({
             key={index}
             className={css.text}
             onClick={() => {
-              setFieldValue({ id: item.id, [fieldKey]: item[fieldKey] });
+              setFieldValue(
+                fieldKey ? { id: item.id, [fieldKey]: item[fieldKey] } : item
+              );
               onClose();
             }}
           >
-            {item[fieldKey]}
+            {fieldKey ? item[fieldKey] : item}
           </p>
         ))
       ) : (

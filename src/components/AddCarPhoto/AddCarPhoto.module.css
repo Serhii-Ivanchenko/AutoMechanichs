@@ -8,6 +8,11 @@
   align-items: end;
 }
 
+.cameraOn {
+  justify-content: flex-start;
+  gap: 18px;
+}
+
 .btn {
   display: flex;
   align-items: center;
@@ -18,11 +23,27 @@
 }
 
 .cross {
-  fill: var(--red);
+  fill: var(--bg-secondary);
+}
+
+.cancelBtn {
+  width: 70px;
+  height: 70px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--red);
+}
+
+.acceptBtn {
+  width: 70px;
+  height: 70px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--green-btn-normal);
 }
 
 .check {
-  fill: var(--green-btn-normal);
+  fill: var(--bg-secondary);
 }
 
 .cameraBtn {
