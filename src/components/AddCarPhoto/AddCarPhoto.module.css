@@ -1,5 +1,7 @@
 .wrapper {
-  width: 318px;
+  max-width: 318px;
+  width: 100%;
+
   padding: 14px 21px;
   display: flex;
   justify-content: space-between;
