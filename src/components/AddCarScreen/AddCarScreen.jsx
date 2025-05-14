@@ -13,7 +13,11 @@ import AddCarPopup from './AddCarPopup/AddCarPopup';
 import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { recognizeLicensePlate } from '../../redux/cars/operations';
-import { selectCarInfo } from '../../redux/cars/selectors';
+import {
+  selectCarInfo,
+  selectIsRecognitionLoading,
+} from '../../redux/cars/selectors';
+import LoaderSvg from '../Loader/LoaderSvg.jsx';
 
 export default function AddCarScreen({ photo, stream }) {
   const [chosenMake, setChosenMake] = useState({});
@@ -36,6 +40,7 @@ export default function AddCarScreen({ photo, stream }) {
   const videoRef = useRef(null);
 
   const carInfo = useSelector(selectCarInfo);
+  const isRecoginitionLoading = useSelector(selectIsRecognitionLoading);
   console.log('carInfo', carInfo);
 
   const makeInputClick = e => {
@@ -148,10 +153,15 @@ export default function AddCarScreen({ photo, stream }) {
       while (n--) u8arr[n] = bstr.charCodeAt(n);
       return new Blob([u8arr], { type: mime });
     };
-    dispatch(recognizeLicensePlate(dataURLtoBlob(photo)));
+
+    const photoToSend = dataURLtoBlob(photo);
+    console.log('photoToSend', photoToSend);
+    dispatch(recognizeLicensePlate(photoToSend));
   };
 
-  return (
+  return isRecoginitionLoading ? (
+    <LoaderSvg />
+  ) : (
     <div className={`${css.wrapper} ${stream ? css.cameraOn : ''}`}>
       {stream ? (
         <video ref={videoRef} autoPlay playsInline className={css.video} />
@@ -175,7 +185,9 @@ export default function AddCarScreen({ photo, stream }) {
                 <img src={flag} alt="flag image" />
                 <p className={css.flagText}>UA</p>
               </div>
-              <p className={css.number}>CA8876CO</p>
+              <p className={css.number}>
+                {carInfo?.license_plate ?? '- - - -'}
+              </p>
             </div>
             <button type="button" className={css.btn} onClick={handleSend}>
               <BsFillCpuFill className={css.btnIcon} />
