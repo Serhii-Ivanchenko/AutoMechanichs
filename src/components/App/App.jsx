@@ -15,6 +15,8 @@ import {
 import { refreshUser } from '../../redux/auth/operations.js';
 import RestrictedRoute from '../RestrictedRoute.jsx';
 import PrivateRoute from '../PrivateRoute.jsx';
+import { getAllCars } from '../../redux/cars/operations.js';
+// import { selectChosenDay } from '../../redux/cars/selectors.js';
 
 const array1 = [
   {
@@ -167,6 +169,19 @@ export default function App() {
     };
     refreshUserData();
   }, [dispatch]);
+
+  // const day = useSelector(selectChosenDay);
+  // console.log('day', day);
+
+  // useEffect(() => {
+  //   const data = {
+  //     date: day,
+  //     mechanic_id: 1,
+  //   };
+  //   console.log('data', data);
+
+  //   dispatch(getAllCars(data));
+  // }, [dispatch, day]);
 
   const wage = array2.reduce((sum, i) => sum + Number(i.salary || 0), 0);
   const possibleSum = array1.reduce((sum, i) => sum + Number(i.salary || 0), 0);

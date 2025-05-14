@@ -16,8 +16,8 @@ export default function CarsInWorkOrDoneList({ done, list }) {
       'dateOfRecord > currentTime',
       new Date(dateOfRecord) > new Date(currentTime)
     );
-    console.log('dateOfRecord', new Date(dateOfRecord));
-    console.log('currentTime', new Date(currentTime));
+    // console.log('dateOfRecord', new Date(dateOfRecord));
+    // console.log('currentTime', new Date(currentTime));
 
     return new Date(dateOfRecord) > new Date(currentTime);
   };
@@ -36,7 +36,15 @@ export default function CarsInWorkOrDoneList({ done, list }) {
               // onClick={() => setDiagOpen(true)}
               // className={css.listItem}
             >
-              <Link to="/car/:carId/diagnostics">
+              <Link
+                to={
+                  item?.status === 'diagnostic' || item?.status === 'complete'
+                    ? `/car/${item.car_id}/diagnostics`
+                    : item?.status === 'repair'
+                    ? `/car/${item.car_id}/repair`
+                    : ''
+                }
+              >
                 <div className={css.listItem}>
                   {done ? (
                     <span className={css.iconBox}>

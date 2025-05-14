@@ -24,11 +24,23 @@
   margin-right: 30px;
 }
 
+.stickDiag {
+  background-color: var(--status-diag);
+}
+
+.stickRepair {
+  background-color: var(--status-repair);
+}
+
+.stickDone {
+  background-color: var(--green);
+}
+
 /* Car plate */
 .carRegContainer {
   display: flex;
   align-items: center;
-  gap: 12px;
+  /* gap: 12px; */
   width: 139px;
   height: 33px;
   border-radius: 5px;
@@ -60,7 +72,7 @@
 
 .carRegNumber {
   color: var(--Dark-grey, #101010);
-  font-size: 28px;
+  font-size: 24px;
   font-style: normal;
   font-weight: 600;
   line-height: normal;

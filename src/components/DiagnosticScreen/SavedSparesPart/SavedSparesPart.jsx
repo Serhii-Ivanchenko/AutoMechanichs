@@ -3,23 +3,44 @@ import { BsFillMicFill } from 'react-icons/bs';
 import { BsCameraFill } from 'react-icons/bs';
 import css from './SavedSparesPart.module.css';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { BsWrench } from 'react-icons/bs';
+import { BsFillCaretDownFill } from 'react-icons/bs';
+import { useDispatch } from 'react-redux';
+import { createDiagnostic } from '../../../redux/cars/operations';
+import { useState } from 'react';
 
 export default function SavedSparesPart({ nodes }) {
+  const [expandedMap, setExpandedMap] = useState({});
+
+  const handleAccordionToggle = (categoryId, nodeId) => (event, isExpanded) => {
+    setExpandedMap(prev => ({
+      ...prev,
+      [categoryId]: isExpanded ? nodeId : null,
+    }));
+
+    // setOpenDetails(isExpanded ? nodeId : null);
+    // setCategoryForDetailsPart(isExpanded ? name : '');
+  };
+
   return (
     <div>
       <ul className={css.SavedSparesList}>
-        {nodes.length === 0 ? (
+        {nodes?.length === 0 ? (
           <p className={css.noProblems}>
             Після проведення діагностики проблем з автомобілем не виявлено
           </p>
         ) : (
-          nodes.map((node, index) => (
+          nodes?.map((node, index) => (
             <li key={index}>
               <p className={css.nodeName}>{node.node_name}</p>
               <ul className={css.subcatList}>
                 {node.node_subcat.map((item, index) => (
-                  <li key={index}>
-                    <Accordion className={css.accordion}>
+                  <li key={index} className={css.item}>
+                    <Accordion
+                      className={css.accordion}
+                      expanded={expandedMap[item.id] === item.id}
+                      onChange={handleAccordionToggle(item.id, item.id)}
+                    >
                       <AccordionSummary
                         className={css.subcatListItem}
                         sx={{
@@ -33,14 +54,19 @@ export default function SavedSparesPart({ nodes }) {
                           minHeight: 'unset',
                         }}
                         // ref={el => {
-                        //   if (el) summaryRefs.current[node.id] = el;
+                        //   if (el) summaryRefs.current[item.id] = el;
                         // }}
                       >
                         <p className={css.subcatName}>{item.name}</p>
                         <div className={css.btnBox}>
                           <div
                             className={`${css.circle} ${
-                              item?.parts?.length > 0 ? css.circleFilled : ''
+                              item?.parts?.length > 0 ||
+                              item?.subNode?.every(
+                                part => part?.parts?.length > 0
+                              )
+                                ? css.circleFilled
+                                : ''
                             }`}
                           >
                             <BsCheckLg className={css.iconCheck} />
@@ -51,9 +77,19 @@ export default function SavedSparesPart({ nodes }) {
                           <div className={css.circle}>
                             <BsCameraFill className={css.icon} />
                           </div>
+                          <BsFillCaretDownFill
+                            className={`${css.icon} ${
+                              expandedMap[item.id] === item.id
+                                ? css.rotated
+                                : ''
+                            }`}
+                          />
                         </div>
                       </AccordionSummary>
-                      <AccordionDetails>
+                      <AccordionDetails
+                        className={css.details}
+                        sx={{ width: '340px' }}
+                      >
                         <ul className={css.sparesList}>
                           {item?.parts
                             ? item?.parts?.map((part, index) => (
@@ -61,6 +97,7 @@ export default function SavedSparesPart({ nodes }) {
                                   <p className={css.sparesNames}>
                                     {part?.part_name}
                                   </p>
+                                  <BsWrench className={css.iconWrench} />
                                 </li>
                               ))
                             : item?.subNode?.flatMap(part =>
@@ -72,6 +109,7 @@ export default function SavedSparesPart({ nodes }) {
                                     <p className={css.sparesNames}>
                                       {item?.part_name}
                                     </p>
+                                    <BsWrench className={css.iconWrench} />
                                   </li>
                                 ))
                               )}

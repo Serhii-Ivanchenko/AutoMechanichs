@@ -18,6 +18,7 @@ export default function BottomPart({
   buttonSpares,
   chosenPoints,
   savedPartBottom,
+  handleCreateDiag,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -60,7 +61,7 @@ export default function BottomPart({
       {button || btnToggle || buttonSpares ? (
         <button
           type="button"
-          onClick={next}
+          onClick={savedPartBottom ? handleCreateDiag : next}
           className={`${css.confirm} ${isDisabled && css.confirmDisabled}`}
           disabled={isDisabled}
         >
