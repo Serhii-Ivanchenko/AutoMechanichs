@@ -19,4 +19,7 @@ export const selectIsDiagLoading = state => state.cars.isDiagLoading;
 export const selectIsDiagCreateLoading = state =>
   state.cars.isDiagCreateLoading;
 
+export const selectIsSavingCarLoading = state =>
+  state.cars.isSavingCarLoading;
+
 export const selectError = state => state.cars.error;

@@ -19,6 +19,7 @@ export const initialState = {
     isRecognitionLoading: false,
     isDiagLoading: false,
     isDiagCreateLoading: false,
+    isSavingCarLoading: false,
     error: null,
   },
 };
