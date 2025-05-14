@@ -93,7 +93,7 @@ export const useCameraPhoto = onPhotoReady => {
   return {
     startCamera,
     takePhoto,
-    sropCamera,
+    stopCamera,
     videoRef,
     canvasRef,
   };
