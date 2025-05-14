@@ -11,11 +11,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logOut } from '../../redux/auth/operations';
 import { selectCars } from '../../redux/cars/selectors';
 import { Link } from 'react-router-dom';
+import { selectBalance } from '../../redux/auth/selectors.js';
 
 export default function MainScreenSection({ array1, array2, wage }) {
   // const [car, setCar] = useState('');
   // const [diagOpen, setDiagOpen] = useState(false);
   const cars = useSelector(selectCars);
+    const balance = useSelector(selectBalance);
+  
   const dispatch = useDispatch();
 
   const handleLogOut = () => {
@@ -77,7 +80,7 @@ export default function MainScreenSection({ array1, array2, wage }) {
           <BsBoxArrowLeft className={css.iconExit} />
         </button>
         <BiSolidMessageDetail className={css.iconMessage} />
-        <p className={css.wage}>{'+' + wage}</p>
+        <p className={css.wage}>+ {balance?.today_earned ?? '----'}</p>
       </div>
       {/* </>
       )} */}
