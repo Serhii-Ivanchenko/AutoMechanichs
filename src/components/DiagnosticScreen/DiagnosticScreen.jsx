@@ -1,4 +1,4 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useParams } from 'react-router-dom';
 import CarDetailsPart from './CarDetailsPart/CarDetailsPart';
 import WorksSwitcher from './WorksSwitcher/WorksSwitcher';
 import newTree from '../../utils/tree.json';
@@ -9,9 +9,18 @@ import SubcategoriesPart from './SubcategoriesPart/SubcategoriesPart';
 import SparesPart from './SparesPart/SparesPart';
 import css from './DiagnosticScreen.module.css';
 import SavedSparesPart from './SavedSparesPart/SavedSparesPart';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectCars,
+  selectNodesAndPartsForDiagnostics,
+} from '../../redux/cars/selectors';
+import {
+  createDiagnostic,
+  getDiagnostic,
+  getNodesAndParts,
+} from '../../redux/cars/operations';
 
 export default function DiagnosticScreen() {
-  const togglePoints = newTree?.nodes;
   const [chosenPoints, setChosenPoints] = useState([]);
   const [categoryForDetailsPart, setCategoryForDetailsPart] = useState('');
   const [subcatOpen, setSubcatOpen] = useState(false);
@@ -20,6 +29,22 @@ export default function DiagnosticScreen() {
   const [spares, setSpares] = useState([]);
   const [savedSparesPartOpen, setSavedSparesPartOpen] = useState(false);
   const containerRef = useRef(null);
+  const dispatch = useDispatch();
+  const { carId } = useParams();
+  // console.log('carId', carId);
+
+  const cars = useSelector(selectCars);
+  // console.log('cars', cars);
+
+  const particularCar = cars?.find(car => car?.car_id === Number(carId));
+  // console.log('particularCar', particularCar);
+  //
+
+  useEffect(() => {
+    dispatch(getNodesAndParts());
+  }, [dispatch]);
+
+  const togglePoints = useSelector(selectNodesAndPartsForDiagnostics);
 
   const handleCloseSavedScreen = () => {
     setSavedSparesPartOpen(false);
@@ -40,6 +65,38 @@ export default function DiagnosticScreen() {
     //  setWithoutDamages(false);
   };
 
+  const groupNodeSubcat = node_subcat => {
+    const result = [];
+
+    node_subcat.forEach(entry => {
+      // Якщо це subNode (3-й рівень)
+      if (entry.subNode) {
+        const existing = result.find(e => e.name === entry.name);
+        const subNodeEntry = {
+          subNodeName: entry.subNode.subNodeName,
+          parts: entry.subNode.parts,
+        };
+
+        if (existing) {
+          existing.subNode.push(subNodeEntry);
+        } else {
+          result.push({
+            name: entry.name,
+            id: entry.id,
+            subNode: [subNodeEntry],
+          });
+        }
+      } else {
+        // Якщо це parts напряму (1-й або 2-й рівень без вкладеного subNode)
+        result.push(entry);
+      }
+    });
+
+    return result;
+  };
+
+  // Вузли для відмальовки збереженої після вибору запчастин
+
   const nodes = spares
     .map(spare => {
       const node_subcat = [];
@@ -52,6 +109,7 @@ export default function DiagnosticScreen() {
 
         if (chosen.length > 0) {
           node_subcat.push({
+            id: spare.id,
             name: spare.name, // ім'я вузла верхнього рівня
             parts: chosen.map(part => ({
               id: part.id,
@@ -77,6 +135,7 @@ export default function DiagnosticScreen() {
 
           if (chosen.length > 0) {
             node_subcat.push({
+              id: node.id,
               name: node.name,
               parts: chosen.map(part => ({
                 id: part.id,
@@ -102,19 +161,26 @@ export default function DiagnosticScreen() {
 
               if (chosen.length > 0) {
                 node_subcat.push({
-                  name: subNode.name,
-                  parts: chosen.map(part => ({
-                    id: part.id,
-                    tag: part.tag,
-                    code: part.code,
-                    part_name: part.name,
-                    comment: 'Заміна',
-                    audio_file: '',
-                    photo_file: '',
-                  })),
+                  name: node.name,
+                  id: node.id,
+                  subNode: {
+                    subNodeName: subNode.name,
+                    parts: chosen.map(part => ({
+                      id: part.id,
+                      tag: part.tag,
+                      code: part.code,
+                      part_name: part.name,
+                      comment: 'Заміна',
+                      audio_file: '',
+                      photo_file: '',
+                    })),
+                  },
                 });
               }
             });
+            console.log('node_subcat', node_subcat);
+            console.log('chosen', chosen);
+            console.log('node', node);
           }
         });
       }
@@ -123,7 +189,7 @@ export default function DiagnosticScreen() {
       return node_subcat.length > 0
         ? {
             node_name: spare.name,
-            node_subcat,
+            node_subcat: groupNodeSubcat(node_subcat),
           }
         : null;
     })
@@ -131,13 +197,92 @@ export default function DiagnosticScreen() {
 
   console.log('nodes', nodes);
 
+  // For diagnostic creation
+
+  const nodesToCreateDiag = spares
+    .map(spare => {
+      let chosenParts = [];
+
+      // Обробка запчастин на першому рівні
+      if (spare.spareParts) {
+        chosenParts = spare.spareParts.filter(
+          part => part.isChosen || part.isChosenRight || part.isChosenLeft
+        );
+      }
+
+      // Обробка вкладених рівнів (2-й і 3-й рівень)
+      if (spare.nodes) {
+        chosenParts = [
+          ...chosenParts,
+          ...spare.nodes.flatMap(node =>
+            node.spareParts
+              ? node.spareParts.filter(
+                  part =>
+                    part.isChosen || part.isChosenRight || part.isChosenLeft
+                )
+              : []
+          ),
+          ...spare.nodes.flatMap(node =>
+            node.nodes
+              ? node.nodes.flatMap(subNode =>
+                  subNode.spareParts
+                    ? subNode.spareParts.filter(
+                        part =>
+                          part.isChosen ||
+                          part.isChosenRight ||
+                          part.isChosenLeft
+                      )
+                    : []
+                )
+              : []
+          ),
+        ];
+      }
+
+      // Формуємо об'єкт тільки якщо є вибрані запчастини
+      return chosenParts.length > 0
+        ? {
+            node_name: spare.name,
+            parts: chosenParts.map(part => ({
+              id: part.id,
+              tag: part.tag,
+              code: part.code,
+              part_name: part.name,
+              comment: 'Заміна',
+              audio_file: '',
+              photo_file: '',
+            })),
+          }
+        : null;
+    })
+    .filter(Boolean);
+
+  // console.log("dataToSend", nodes);
+  const dataToSend = {
+    car_id: carId,
+    mechanic_id: 1,
+    nodes: nodesToCreateDiag,
+  };
+
+  console.log('dataToSend', dataToSend);
+
+  const handleCreateDiag = () => {
+    dispatch(createDiagnostic(dataToSend));
+  };
+
+  // useEffect(() => {
+  //   dispatch(getDiagnostic(105596));
+  // });
+
   return (
     <div>
-      <CarDetailsPart />
-      <WorksSwitcher subcatOpen={subcatOpen} />
+      <CarDetailsPart particularCar={particularCar} />
+      <WorksSwitcher subcatOpen={subcatOpen} carId={carId} />
 
-      {savedSparesPartOpen ? (
-        <SavedSparesPart nodes={nodes} />
+      {particularCar?.status === 'complete' ? (
+        <SavedSparesPart />
+      ) : savedSparesPartOpen ? (
+        <SavedSparesPart nodes={nodes} dataToSend={dataToSend} />
       ) : subcatOpen ? (
         <ul className={css.list} ref={containerRef}>
           {chosenPoints?.map(point => (
@@ -185,6 +330,7 @@ export default function DiagnosticScreen() {
         }
         chosenPoints={chosenPoints}
         savedPartBottom={savedSparesPartOpen}
+        handleCreateDiag={() => handleCreateDiag()}
       />
     </div>
   );

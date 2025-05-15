@@ -4,6 +4,7 @@ import css from './CalendarPart.module.css';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getAllCars } from '../../../redux/cars/operations';
+// import { setChosenDay } from '../../../redux/cars/slice';
 
 export default function CalendarPart() {
   const months = [
@@ -65,6 +66,9 @@ export default function CalendarPart() {
       mechanic_id: 1,
     };
 
+    // console.log('date', date);
+    // console.log('dispatching date:', date);
+    // dispatch(setChosenDay(date));
     dispatch(getAllCars(data));
   }, [year, month, day, dispatch]);
 
