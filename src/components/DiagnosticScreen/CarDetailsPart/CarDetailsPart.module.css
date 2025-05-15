@@ -71,12 +71,14 @@
 }
 
 .carRegNumber {
+  width: 100%;
   color: var(--Dark-grey, #101010);
-  font-size: 24px;
+  font-size: 23px;
   font-style: normal;
   font-weight: 600;
   line-height: normal;
   text-transform: uppercase;
+  text-align: center;
 }
 
 .carRegCountry {

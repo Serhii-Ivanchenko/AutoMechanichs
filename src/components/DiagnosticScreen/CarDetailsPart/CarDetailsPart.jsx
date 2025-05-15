@@ -12,6 +12,10 @@ export default function CarDetailsPart({ particularCar }) {
             ? `https://aps.assist.cam/auto/${particularCar?.plate}.jpg`
             : car
         }
+        onError={e => {
+          e.target.onerror = null;
+          e.target.src = car;
+        }}
         alt="car"
         className={css.image}
       />
