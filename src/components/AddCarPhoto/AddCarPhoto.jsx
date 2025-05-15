@@ -1,13 +1,19 @@
 import css from './AddCarPhoto.module.css';
-import { IoCloseCircle, IoCheckmarkCircleSharp } from 'react-icons/io5';
+// import { IoCloseCircle, IoCheckmarkCircleSharp } from 'react-icons/io5';
 import { IoMdClose } from 'react-icons/io';
 import { IoMdCheckmark } from 'react-icons/io';
 import { BsCameraFill } from 'react-icons/bs';
-// import { useCameraPhoto } from '../../utils/useCameraPhoto';
 import { Link } from 'react-router-dom';
 import { useRef, useState } from 'react';
 
-export default function AddCarPhoto({ setPhoto, setVideoStream }) {
+export default function AddCarPhoto({
+  setPhoto,
+  setVideoStream,
+  chosenMake,
+  chosenModel,
+  chosenYear,
+  mileage,
+}) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [cameraOn, setCameraOn] = useState(false);
@@ -77,7 +83,10 @@ export default function AddCarPhoto({ setPhoto, setVideoStream }) {
         </button>
       </div>
       {!cameraOn && (
-        <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
+        // chosenMake && chosenModel && chosenYear && mileage &&
+        <Link to="/car/:carId/photos">
+          <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
+        </Link>
       )}
     </div>
   );
