@@ -19,7 +19,14 @@ import {
 } from '../../redux/cars/selectors';
 import LoaderSvg from '../Loader/LoaderSvg.jsx';
 
-export default function AddCarScreen({ photo, stream }) {
+export default function AddCarScreen({
+  photo,
+  stream,
+  setCarMake,
+  setCarModel,
+  setCarYear,
+  setCarMileage,
+}) {
   const [chosenMake, setChosenMake] = useState({});
   const [chosenModel, setChosenModel] = useState({});
   const [makePopupOpen, setMakePopupOpen] = useState(false);
@@ -32,6 +39,7 @@ export default function AddCarScreen({ photo, stream }) {
   const [yearSearchQuery, setYearSearchQuery] = useState('');
   const [displayedYearArr, setDisplayedYearArr] = useState([]);
   const [chosenYear, setChosenYear] = useState('');
+  const [mileage, setMileage] = useState('');
   const dispatch = useDispatch();
 
   const buttonMakeRef = useRef(null);
@@ -139,6 +147,13 @@ export default function AddCarScreen({ photo, stream }) {
       videoRef.current.srcObject = stream;
     }
   }, [stream]);
+
+  useEffect(() => {
+    setCarMake(chosenMake?.make ? chosenMake?.make : ''),
+      setCarModel(chosenModel?.model_name ? chosenModel?.model_name : ''),
+      setCarYear(chosenYear ? chosenYear : ''),
+      setCarMileage(mileage ? mileage : '');
+  }, [chosenMake, chosenModel, chosenYear, mileage]);
 
   const handleSend = () => {
     if (!photo) {
