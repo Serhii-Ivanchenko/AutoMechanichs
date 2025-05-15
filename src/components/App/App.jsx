@@ -17,6 +17,7 @@ import RestrictedRoute from '../RestrictedRoute.jsx';
 import PrivateRoute from '../PrivateRoute.jsx';
 import { getAllCars } from '../../redux/cars/operations.js';
 import CompletedDocPage from '../../pages/CompleteDocPage/CompletedDocPage.jsx';
+import UpdateCarPage from '../../pages/UpdateCarPage/UpdateCarPage.jsx';
 // import { selectChosenDay } from '../../redux/cars/selectors.js';
 
 const array1 = [
@@ -230,6 +231,12 @@ export default function App() {
               path="/add-car"
               element={
                 <PrivateRoute redirectTo="/login" component={<AddCarPage />} />
+              }
+            />
+            <Route
+              path="/car/:carId/update-car"
+              element={
+                <PrivateRoute redirectTo="/login" component={<UpdateCarPage />} />
               }
             />
             <Route

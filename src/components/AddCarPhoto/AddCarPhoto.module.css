@@ -7,6 +7,7 @@
   justify-content: space-between; */
   margin-left: auto;
   margin-right: auto;
+  margin-top: auto;
   display: grid;
   gap: 20px;
   grid-template-columns: 1fr auto 1fr;
@@ -15,7 +16,7 @@
 
 .cameraOn {
   justify-content: flex-start;
-  gap: 18px;
+  gap: 20px;
 }
 
 .btn {

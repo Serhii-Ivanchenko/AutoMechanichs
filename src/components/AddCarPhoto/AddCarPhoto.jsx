@@ -84,7 +84,7 @@ export default function AddCarPhoto({
       </div>
       {!cameraOn && (
         // chosenMake && chosenModel && chosenYear && mileage &&
-        <Link to="/car/:carId/photos">
+        <Link className={css.acceptBtn} to="/car/:carId/photos">
           <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
         </Link>
       )}

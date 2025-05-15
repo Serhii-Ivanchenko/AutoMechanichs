@@ -34,7 +34,7 @@ export default function DiagnosticScreen() {
   // console.log('carId', carId);
 
   const cars = useSelector(selectCars);
-  // console.log('cars', cars);
+  console.log('cars', cars);
 
   const particularCar = cars?.find(car => car?.car_id === Number(carId));
   // console.log('particularCar', particularCar);
@@ -51,8 +51,8 @@ export default function DiagnosticScreen() {
     setSubcatOpen(true);
   };
 
-  console.log('chosenSpares', chosenSpares);
-  console.log('spares', spares);
+  // console.log('chosenSpares', chosenSpares);
+  // console.log('spares', spares);
 
   const handleCheckboxChange = (event, id, label) => {
     setChosenPoints(prevPoints => {
@@ -178,9 +178,9 @@ export default function DiagnosticScreen() {
                 });
               }
             });
-            console.log('node_subcat', node_subcat);
-            console.log('chosen', chosen);
-            console.log('node', node);
+            // console.log('node_subcat', node_subcat);
+            // console.log('chosen', chosen);
+            // console.log('node', node);
           }
         });
       }
@@ -195,7 +195,7 @@ export default function DiagnosticScreen() {
     })
     .filter(Boolean);
 
-  console.log('nodes', nodes);
+  // console.log('nodes', nodes);
 
   // For diagnostic creation
 

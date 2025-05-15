@@ -1,6 +1,7 @@
 .wrapper {
   width: 342px;
-  height: 660px;
+  /* height: 660px; */
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -10,22 +11,23 @@
 }
 
 .photoSectionWrapper {
-  height: 477px;
+  /* height: 477px; */
+  max-height: 580px;
   width: 100%;
   display: grid;
   grid-template-columns: 161px 161px;
   grid-auto-rows: 130px;
   gap: 10px;
   flex-wrap: wrap;
-  overflow: hidden;
   overflow-y: auto;
   overflow-x: hidden;
+  flex: 1;
 }
 
 .photoSectionWrapper::-webkit-scrollbar {
   width: 4px;
   padding-top: 4px;
-  height: 477px;
+  /* height: 477px; */
 }
 
 .photoSectionWrapper::-webkit-scrollbar-track {
@@ -52,6 +54,7 @@
   position: absolute;
   width: 29px;
   height: 29px;
+  border: none;
   border-radius: 52px;
   background: var(--red);
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -89,11 +92,12 @@
   margin-right: auto;
   grid-template-columns: 1fr auto 1fr;
   align-items: end;
+  margin-top: auto;
 }
 
 .cameraOn {
   justify-content: flex-start;
-  gap: 18px;
+  gap: 20px;
 }
 
 .cross {

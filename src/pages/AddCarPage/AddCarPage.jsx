@@ -12,7 +12,7 @@ export default function AddCarPage() {
   const [mileage, setMileage] = useState('');
 
   return (
-    <div>
+    <>
       <AddCarScreen
         photo={photo}
         stream={videoStream}
@@ -29,6 +29,6 @@ export default function AddCarPage() {
         carYear={chosenYear}
         carMileage={mileage}
       />
-    </div>
+    </>
   );
 }

@@ -110,7 +110,7 @@ export default function PhotoCapturePage() {
         </button>
 
         {!isCameraOpen && (
-          <Link to="/car/:carId/diagnostics">
+          <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
             <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
           </Link>
         )}
