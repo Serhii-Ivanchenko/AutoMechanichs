@@ -7,36 +7,36 @@ import { selectBalance, selectUser } from '../../redux/auth/selectors';
 export default function TopPart({ wage, amountPossible }) {
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   dispatch(getMechanicBalance(1));
-  // }, [dispatch]);
-
   const balance = useSelector(selectBalance);
   const user = useSelector(selectUser);
   console.log('balance', balance);
   console.log('user', user);
 
-  // const nameToDisplay = 
+  // useEffect(() => {
+  //   dispatch(getMechanicBalance(user?.id));
+  // }, [dispatch, user?.id]);
+
+  // const nameToDisplay =
 
   return (
     <div className={css.topPart}>
       <div className={css.mechNameBox}>
-        <p className={css.name}>{(`${user?.first_name} ${user?.last_name}`) }</p>
+        <p className={css.name}>{`${user?.first_name} ${user?.last_name}`}</p>
         <p className={css.paleText}>Механік</p>
       </div>
       <div className={css.salaryInfoBox}>
         <div className={css.salaryPoint}>
           <p className={css.paleText}>Нараховано</p>
-          <p className={css.amount}>{balance?.total_earned ?? "----"}</p>
+          <p className={css.amount}>{balance?.total_earned ?? '----'}</p>
         </div>
         <div className={css.salaryPoint}>
           <p className={css.paleText}>Сьогодні</p>
-          <p className={css.amount}>+ {balance?.today_earned ?? "----"}</p>
+          <p className={css.amount}>+ {balance?.today_earned ?? '----'}</p>
         </div>
         <div className={css.salaryPoint}>
           <p className={css.paleText}>Можлива ЗП</p>
           <p className={css.amountPossible}>
-            {balance?.potential_earned ?? "----"}
+            {balance?.potential_earned ?? '----'}
           </p>
         </div>
       </div>

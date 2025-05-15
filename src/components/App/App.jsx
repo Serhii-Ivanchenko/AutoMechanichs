@@ -1,4 +1,10 @@
-import { Navigate, redirect, Route, Routes, useLocation } from 'react-router-dom';
+import {
+  Navigate,
+  redirect,
+  Route,
+  Routes,
+  useLocation,
+} from 'react-router-dom';
 import Layout from '../Layout/Layout.jsx';
 import css from './App.module.css';
 import TopPart from '../TopPart/TopPart.jsx';
@@ -11,13 +17,18 @@ import {
   selectIsLoggedIn,
   selectIsRefreshing,
   selectLoading,
+  selectUser,
 } from '../../redux/auth/selectors.js';
-import { refreshUser } from '../../redux/auth/operations.js';
+import {
+  getMechanicBalance,
+  refreshUser,
+} from '../../redux/auth/operations.js';
 import RestrictedRoute from '../RestrictedRoute.jsx';
 import PrivateRoute from '../PrivateRoute.jsx';
 import { getAllCars } from '../../redux/cars/operations.js';
 import CompletedDocPage from '../../pages/CompleteDocPage/CompletedDocPage.jsx';
 import UpdateCarPage from '../../pages/UpdateCarPage/UpdateCarPage.jsx';
+import { selectDate } from '../../redux/cars/selectors.js';
 // import { selectChosenDay } from '../../redux/cars/selectors.js';
 
 const array1 = [
@@ -157,6 +168,7 @@ export default function App() {
   const isLoading = useSelector(selectLoading);
   const isRefreshing = useSelector(selectIsRefreshing);
   const isLoggedIn = useSelector(selectIsLoggedIn);
+  const user = useSelector(selectUser);
   // const [isAuthChecked, setIsAuthChecked] = useState(false);
   const location = useLocation();
   console.log('isLoggedIn', isLoggedIn);
@@ -170,20 +182,27 @@ export default function App() {
       // setIsAuthChecked(true);
     };
     refreshUserData();
+    // localStorage.setItem('date', new Date().toISOString().split('T')[0]);
   }, [dispatch]);
 
-  // const day = useSelector(selectChosenDay);
-  // console.log('day', day);
+  const day = useSelector(selectDate);
+  console.log('day', day);
 
-  // useEffect(() => {
-  //   const data = {
-  //     date: day,
-  //     mechanic_id: 1,
-  //   };
-  //   console.log('data', data);
+  const storedDate = localStorage.getItem('date');
 
-  //   dispatch(getAllCars(data));
-  // }, [dispatch, day]);
+  useEffect(() => {
+    const data = {
+      date: day || storedDate,
+      mechanic_id: 1,
+    };
+    console.log('data', data);
+
+    dispatch(getAllCars(data));
+  }, [dispatch, day, storedDate]);
+
+  useEffect(() => {
+    dispatch(getMechanicBalance(user?.id));
+  }, [dispatch, user?.id]);
 
   const wage = array2.reduce((sum, i) => sum + Number(i.salary || 0), 0);
   const possibleSum = array1.reduce((sum, i) => sum + Number(i.salary || 0), 0);
@@ -236,7 +255,10 @@ export default function App() {
             <Route
               path="/car/:carId/update-car"
               element={
-                <PrivateRoute redirectTo="/login" component={<UpdateCarPage />} />
+                <PrivateRoute
+                  redirectTo="/login"
+                  component={<UpdateCarPage />}
+                />
               }
             />
             <Route

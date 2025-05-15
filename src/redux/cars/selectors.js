@@ -7,6 +7,8 @@ export const selectNodesAndPartsForDiagnostics = state =>
 
 export const selectDiagnostic = state => state.cars.diagnostic;
 
+export const selectDate = state => state.cars.chosenDate;
+
 // Loaders
 
 export const selectIsLoading = state => state.cars.isLoading;

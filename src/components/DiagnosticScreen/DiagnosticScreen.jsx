@@ -19,6 +19,7 @@ import {
   getDiagnostic,
   getNodesAndParts,
 } from '../../redux/cars/operations';
+import toast from 'react-hot-toast';
 
 export default function DiagnosticScreen() {
   const [chosenPoints, setChosenPoints] = useState([]);
@@ -34,7 +35,7 @@ export default function DiagnosticScreen() {
   // console.log('carId', carId);
 
   const cars = useSelector(selectCars);
-  console.log('cars', cars);
+  // console.log('cars', cars);
 
   const particularCar = cars?.find(car => car?.car_id === Number(carId));
   // console.log('particularCar', particularCar);
@@ -267,7 +268,16 @@ export default function DiagnosticScreen() {
   console.log('dataToSend', dataToSend);
 
   const handleCreateDiag = () => {
-    dispatch(createDiagnostic(dataToSend));
+    dispatch(createDiagnostic(dataToSend)).then(() => {
+      toast.success('Діагностика успішно створена', {
+        position: 'top-center',
+        duration: 3000,
+        style: {
+          background: 'var(--bg-input)',
+          color: 'var(--white)',
+        },
+      });
+    });
   };
 
   // useEffect(() => {

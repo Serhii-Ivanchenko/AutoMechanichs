@@ -19,6 +19,10 @@
   /* margin-bottom: auto; */
 }
 
+.wrapperSaved {
+  justify-content: center;
+}
+
 .cancel,
 .confirm,
 .home {
@@ -87,4 +91,8 @@
   width: 24px;
   height: 24px;
   fill: var(--bg-secondary);
+}
+
+.savedScreen {
+  display: none;
 }

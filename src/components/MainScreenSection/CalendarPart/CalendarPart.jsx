@@ -4,6 +4,8 @@ import css from './CalendarPart.module.css';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getAllCars } from '../../../redux/cars/operations';
+import { setChosenDate } from '../../../redux/cars/slice';
+import { useLocation } from 'react-router-dom';
 // import { setChosenDay } from '../../../redux/cars/slice';
 
 export default function CalendarPart() {
@@ -22,10 +24,15 @@ export default function CalendarPart() {
     'Грудень',
   ];
   const dispatch = useDispatch();
-  const today = new Date();
-  const [year, setYear] = useState(today.getFullYear());
-  const [month, setMonth] = useState(today.getMonth());
-  const [day, setDay] = useState(today.getDate());
+  const location = useLocation();
+  const isMainPage = location.pathname === '/main';
+
+  // const today = new Date();
+  const storedDate = localStorage.getItem('date');
+  const initialDate = storedDate ? new Date(storedDate) : new Date();
+  const [year, setYear] = useState(initialDate.getFullYear());
+  const [month, setMonth] = useState(initialDate.getMonth());
+  const [day, setDay] = useState(initialDate.getDate());
   // console.log('today', today);
   // console.log('month', today.getMonth());
 
@@ -61,16 +68,19 @@ export default function CalendarPart() {
       day
     ).padStart(2, '0')}`;
 
-    const data = {
-      date,
-      mechanic_id: 1,
-    };
+    // const data = {
+    //   date,
+    //   mechanic_id: 1,
+    // };
 
     // console.log('date', date);
     // console.log('dispatching date:', date);
     // dispatch(setChosenDay(date));
-    dispatch(getAllCars(data));
-  }, [year, month, day, dispatch]);
+    // dispatch(getAllCars(data));
+
+    localStorage.setItem('date', date);
+    dispatch(setChosenDate(date));
+  }, [year, month, day, dispatch, isMainPage]);
 
   return (
     <div className={css.calendarBox}>

@@ -12,10 +12,10 @@ export default function CarsInWorkOrDoneList({ done, list }) {
     const dateOfRecord = new Date(dayOfRecord);
     dateOfRecord.setHours(hours, minutes, 0, 0);
 
-    console.log(
-      'dateOfRecord > currentTime',
-      new Date(dateOfRecord) > new Date(currentTime)
-    );
+    // console.log(
+    //   'dateOfRecord > currentTime',
+    //   new Date(dateOfRecord) > new Date(currentTime)
+    // );
     // console.log('dateOfRecord', new Date(dateOfRecord));
     // console.log('currentTime', new Date(currentTime));
 
@@ -38,10 +38,12 @@ export default function CarsInWorkOrDoneList({ done, list }) {
             >
               <Link
                 to={
-                  item?.status === 'diagnostic' || item?.status === 'complete'
+                  item?.status === 'diagnostic'
                     ? `/car/${item.car_id}/diagnostics`
                     : item?.status === 'repair'
                     ? `/car/${item.car_id}/repair`
+                    : item?.status === 'complete'
+                    ? `/car/${item.car_id}/completed-doc`
                     : ''
                 }
               >
