@@ -257,7 +257,7 @@ export default function App() {
               }
             />
             <Route
-              path="/car/:carId/completed-docs"
+              path="/car/:carId/completed-doc"
               element={
                 <PrivateRoute
                   redirectTo="/login"
