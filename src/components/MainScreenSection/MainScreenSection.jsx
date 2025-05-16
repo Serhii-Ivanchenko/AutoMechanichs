@@ -12,6 +12,7 @@ import { logOut } from '../../redux/auth/operations';
 import { selectCars } from '../../redux/cars/selectors';
 import { Link } from 'react-router-dom';
 import { selectBalance } from '../../redux/auth/selectors.js';
+import { clearChosenDate } from '../../redux/cars/slice.js';
 
 export default function MainScreenSection({ array1, array2, wage }) {
   // const [car, setCar] = useState('');
@@ -23,6 +24,8 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
   const handleLogOut = () => {
     dispatch(logOut());
+    localStorage.removeItem('date');
+    dispatch(clearChosenDate());
   };
 
   console.log('cars', cars);
