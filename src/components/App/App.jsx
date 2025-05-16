@@ -199,7 +199,7 @@ export default function App() {
     };
     console.log('data', data);
 
-    dispatch(getAllCars(data));
+    user?.company_id && (day || storedDate) && dispatch(getAllCars(data));
   }, [dispatch, day, storedDate]);
 
   useEffect(() => {

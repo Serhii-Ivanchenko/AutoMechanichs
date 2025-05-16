@@ -20,6 +20,9 @@ const carsSlice = createSlice({
   reducers: {
     setChosenDate:(state, action) => {
   state.chosenDate=action.payload
+    },
+    clearChosenDate: (state) => {
+      state.chosenDate = ""
     }
   },
   extraReducers: builder =>
@@ -106,6 +109,6 @@ const carsSlice = createSlice({
         state.error = action.payload;
       }),
 });
-export const { setChosenDate } = carsSlice.actions;
+export const { setChosenDate, clearChosenDate } = carsSlice.actions;
 
 export default carsSlice.reducer;
