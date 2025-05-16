@@ -17,7 +17,11 @@ const handleRejected = (state, action) => {
 const carsSlice = createSlice({
   name: 'cars',
   initialState: initialState.cars,
-  reducers: {},
+  reducers: {
+    setChosenDate:(state, action) => {
+  state.chosenDate=action.payload
+    }
+  },
   extraReducers: builder =>
     builder
       // Get all cars
@@ -102,5 +106,6 @@ const carsSlice = createSlice({
         state.error = action.payload;
       }),
 });
+export const { setChosenDate } = carsSlice.actions;
 
 export default carsSlice.reducer;
