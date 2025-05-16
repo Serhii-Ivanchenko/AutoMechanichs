@@ -2,15 +2,15 @@
   max-width: 318px;
   width: 100%;
 
-  padding: 14px 21px;
-  /* display: flex;
-  justify-content: space-between; */
+  padding: 1.24vh 21px;
+  display: flex;
+  justify-content: space-between;
   margin-left: auto;
   margin-right: auto;
   margin-top: auto;
-  display: grid;
-  gap: 20px;
-  grid-template-columns: 1fr auto 1fr;
+  /* display: grid; */
+  /* gap: 20px; */
+  /* grid-template-columns: 1fr auto 1fr; */
   align-items: end;
 }
 
@@ -23,8 +23,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 70px;
-  height: 70px;
+  max-width: 70px;
+  max-height: 70px;
+  width: 8.706vh;
+  height: 8.706vh;
   cursor: pointer;
 }
 
@@ -33,16 +35,20 @@
 }
 
 .cancelBtn {
-  width: 70px;
-  height: 70px;
+  max-width: 70px;
+  max-height: 70px;
+  width: 8.706vh;
+  height: 8.706vh;
   border: none;
   border-radius: 50%;
   background-color: var(--red);
 }
 
 .acceptBtn {
-  width: 70px;
-  height: 70px;
+  max-width: 70px;
+  max-height: 70px;
+  width: 8.706vh;
+  height: 8.706vh;
   border: none;
   border-radius: 50%;
   background-color: var(--green-btn-normal);
@@ -53,8 +59,10 @@
 }
 
 .cameraBtn {
-  width: 100px;
-  height: 100px;
+  width: 12.438vh;
+  height: 12.438vh;
+  max-width: 100px;
+  max-height: 100px;
   border: none;
   border-radius: 145px;
   background-color: var(--light-gray);
