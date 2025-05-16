@@ -29,6 +29,7 @@ import { getAllCars } from '../../redux/cars/operations.js';
 import CompletedDocPage from '../../pages/CompleteDocPage/CompletedDocPage.jsx';
 import UpdateCarPage from '../../pages/UpdateCarPage/UpdateCarPage.jsx';
 import { selectDate } from '../../redux/cars/selectors.js';
+import { Toaster } from 'react-hot-toast';
 // import { selectChosenDay } from '../../redux/cars/selectors.js';
 
 const array1 = [
@@ -171,10 +172,10 @@ export default function App() {
   const user = useSelector(selectUser);
   // const [isAuthChecked, setIsAuthChecked] = useState(false);
   const location = useLocation();
-  console.log('isLoggedIn', isLoggedIn);
-  console.log('isRefreshing', isRefreshing);
+  // console.log('isLoggedIn', isLoggedIn);
+  // console.log('isRefreshing', isRefreshing);
   // console.log('isAuthChecked', isAuthChecked);
-  console.log('isLoading', isLoading);
+  // console.log('isLoading', isLoading);
 
   useEffect(() => {
     const refreshUserData = async () => {
@@ -189,6 +190,7 @@ export default function App() {
   console.log('day', day);
 
   const storedDate = localStorage.getItem('date');
+  console.log('storedDate', storedDate);
 
   useEffect(() => {
     const data = {
@@ -202,7 +204,7 @@ export default function App() {
 
   useEffect(() => {
     dispatch(getMechanicBalance(user?.id));
-  }, [dispatch, user?.id]);
+  }, [dispatch]);
 
   const wage = array2.reduce((sum, i) => sum + Number(i.salary || 0), 0);
   const possibleSum = array1.reduce((sum, i) => sum + Number(i.salary || 0), 0);
@@ -224,6 +226,7 @@ export default function App() {
           {location.pathname === '/main' && !isLoading && !isRefreshing && (
             <CalendarPart />
           )}
+          <Toaster />
           <Routes>
             <Route
               path="/"

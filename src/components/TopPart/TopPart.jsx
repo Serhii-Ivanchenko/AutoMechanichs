@@ -9,8 +9,8 @@ export default function TopPart({ wage, amountPossible }) {
 
   const balance = useSelector(selectBalance);
   const user = useSelector(selectUser);
-  console.log('balance', balance);
-  console.log('user', user);
+  // console.log('balance', balance);
+  // console.log('user', user);
 
   // useEffect(() => {
   //   dispatch(getMechanicBalance(user?.id));

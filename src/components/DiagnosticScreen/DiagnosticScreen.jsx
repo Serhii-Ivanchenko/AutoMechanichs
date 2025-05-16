@@ -265,19 +265,22 @@ export default function DiagnosticScreen() {
     nodes: nodesToCreateDiag,
   };
 
-  console.log('dataToSend', dataToSend);
+  // console.log('dataToSend', dataToSend);
 
   const handleCreateDiag = () => {
-    dispatch(createDiagnostic(dataToSend)).then(() => {
-      toast.success('Діагностика успішно створена', {
-        position: 'top-center',
-        duration: 3000,
-        style: {
-          background: 'var(--bg-input)',
-          color: 'var(--white)',
-        },
+    dispatch(createDiagnostic(dataToSend))
+      .unwrap()
+      .then(() => {
+        console.log('Діагностика успішно створена');
+        toast.success('Діагностика успішно створена', {
+          position: 'top-center',
+          duration: 3000,
+          style: {
+            background: 'var(--bg-input)',
+            color: 'var(--white)',
+          },
+        });
       });
-    });
   };
 
   // useEffect(() => {
