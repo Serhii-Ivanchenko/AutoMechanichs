@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import css from './WorksSwitcher.module.css';
-import {
-  BsUiRadiosGrid,
-  //   BsClipboardCheck,
-  // BsCurrencyDollar,
-  BsWrench,
-} from 'react-icons/bs';
+import { BsUiRadiosGrid, BsWrench } from 'react-icons/bs';
 import { NavLink } from 'react-router-dom';
 
 export default function WorksSwitcher({

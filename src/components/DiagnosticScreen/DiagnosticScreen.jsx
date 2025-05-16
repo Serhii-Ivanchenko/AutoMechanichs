@@ -1,4 +1,4 @@
-import { Link, Outlet, useParams } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
 import CarDetailsPart from './CarDetailsPart/CarDetailsPart';
 import WorksSwitcher from './WorksSwitcher/WorksSwitcher';
 import newTree from '../../utils/tree.json';
@@ -31,6 +31,7 @@ export default function DiagnosticScreen() {
   const [savedSparesPartOpen, setSavedSparesPartOpen] = useState(false);
   const containerRef = useRef(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { carId } = useParams();
   // console.log('carId', carId);
 
@@ -280,6 +281,7 @@ export default function DiagnosticScreen() {
             color: 'var(--white)',
           },
         });
+        navigate('/main');
       });
   };
 
