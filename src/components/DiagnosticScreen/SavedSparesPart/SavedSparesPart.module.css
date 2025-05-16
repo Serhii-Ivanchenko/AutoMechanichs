@@ -4,10 +4,12 @@
   gap: 30px;
   padding-right: 23px;
   padding-left: 23px;
-
+  max-width: 378px;
   height: 429px;
   margin-bottom: 30px;
   overflow-y: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .SavedSparesList::-webkit-scrollbar {
