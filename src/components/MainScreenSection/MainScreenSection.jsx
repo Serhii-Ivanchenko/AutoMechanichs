@@ -17,8 +17,8 @@ export default function MainScreenSection({ array1, array2, wage }) {
   // const [car, setCar] = useState('');
   // const [diagOpen, setDiagOpen] = useState(false);
   const cars = useSelector(selectCars);
-    const balance = useSelector(selectBalance);
-  
+  const balance = useSelector(selectBalance);
+
   const dispatch = useDispatch();
 
   const handleLogOut = () => {
@@ -27,10 +27,10 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
   console.log('cars', cars);
 
-  const carsInWork = cars.filter(car => !car?.complete_date);
-  const carsDone = cars.filter(car => car?.complete_date);
-  console.log('carsInWork', carsInWork);
-  console.log('carsDone', carsDone);
+  const carsInWork = cars.filter(car => car?.status !== 'complete');
+  const carsDone = cars.filter(car => car?.status === 'complete');
+  // console.log('carsInWork', carsInWork);
+  // console.log('carsDone', carsDone);
 
   return (
     <div className={css.sectionWrapper}>

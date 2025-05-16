@@ -3,14 +3,21 @@ import CarDetailsPart from '../DiagnosticScreen/CarDetailsPart/CarDetailsPart';
 import TogglePoints from '../DiagnosticScreen/TogglePoints/TogglePoints';
 import WorksSwitcher from '../DiagnosticScreen/WorksSwitcher/WorksSwitcher';
 import newTree from '../../utils/tree.json';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import SubcategoriesPart from '../DiagnosticScreen/SubcategoriesPart/SubcategoriesPart';
 import css from './RepairScreen.module.css';
 import SavedSparesPart from '../DiagnosticScreen/SavedSparesPart/SavedSparesPart.jsx';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectCars,
+  selectNodesAndPartsForDiagnostics,
+} from '../../redux/cars/selectors.js';
+import { getNodesAndParts } from '../../redux/cars/operations.js';
 
 export default function RepairScreen() {
-  const togglePoints = newTree?.nodes;
+  // const togglePoints = newTree?.nodes;
   const [chosenPoints, setChosenPoints] = useState([]);
   const [categoryForDetailsPart, setCategoryForDetailsPart] = useState('');
   const [subcatOpen, setSubcatOpen] = useState(false);
@@ -19,6 +26,21 @@ export default function RepairScreen() {
   const [spares, setSpares] = useState([]);
   const [savedSparesPartOpen, setSavedSparesPartOpen] = useState(false);
   const containerRef = useRef(null);
+  const dispatch = useDispatch();
+  const { carId } = useParams();
+  // console.log('carId', carId);
+
+  const cars = useSelector(selectCars);
+  // console.log('cars', cars);
+
+  const particularCar = cars?.find(car => car?.car_id === Number(carId));
+  // console.log('particularCar', particularCar);
+
+  useEffect(() => {
+    dispatch(getNodesAndParts());
+  }, [dispatch]);
+
+  const togglePoints = useSelector(selectNodesAndPartsForDiagnostics);
 
   const handleCloseSavedScreen = () => {
     setSavedSparesPartOpen(false);
@@ -132,8 +154,8 @@ export default function RepairScreen() {
 
   return (
     <div>
-      <CarDetailsPart />
-      <WorksSwitcher subcatRepairOpen={subcatOpen} />
+      <CarDetailsPart particularCar={particularCar} />
+      <WorksSwitcher subcatRepairOpen={subcatOpen} carId={carId} />
 
       {savedSparesPartOpen ? (
         <SavedSparesPart nodes={nodes} />
