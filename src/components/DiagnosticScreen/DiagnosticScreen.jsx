@@ -293,8 +293,6 @@ export default function DiagnosticScreen() {
 
   // console.log('chosenPoints', chosenPoints);
 
-  // const visibleChosenPoints = () => {};
-
   const visiblePoints = togglePoints.filter(category => {
     // Перевірка spareParts на рівні категорії
     const hasCategoryMatch = category.spareParts?.some(spare =>
@@ -321,13 +319,13 @@ export default function DiagnosticScreen() {
   });
 
   const chp = chosenPoints.map(p => p.label);
-  console.log('chp', chp);
+  // console.log('chp', chp);
 
   const visibleSubcategories = visiblePoints.filter(point =>
     chp.includes(point.name)
   );
 
-  console.log('visibleSubcategories', visibleSubcategories);
+  // console.log('visibleSubcategories', visibleSubcategories);
 
   return (
     <div>

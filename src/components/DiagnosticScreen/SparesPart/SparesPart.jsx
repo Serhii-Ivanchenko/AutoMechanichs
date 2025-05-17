@@ -187,13 +187,19 @@ export default function SparesPart({
       ? category.nodes.map(node => ({
           ...node,
           nodes: node.nodes?.length
-            ? node.nodes.map(part => ({
-                ...part,
-                spareParts:
-                  part.spareParts?.filter(spare =>
+            ? node.nodes
+                .filter(part =>
+                  part.spareParts?.some(spare =>
                     spare.name.toLowerCase().includes(filter.toLowerCase())
-                  ) || [], // Фільтруємо spareParts
-              }))
+                  )
+                )
+                .map(part => ({
+                  ...part,
+                  spareParts:
+                    part.spareParts?.filter(spare =>
+                      spare.name.toLowerCase().includes(filter.toLowerCase())
+                    ) || [],
+                }))
             : [], // Якщо немає дочірніх частин, повертаємо порожній масив
           spareParts:
             node.spareParts?.filter(spare =>
@@ -208,6 +214,18 @@ export default function SparesPart({
         ) || [] // Фільтруємо spareParts для category
       : [],
   }));
+
+  // const visibleSubcategories = visibleSpares.map(cat => ({
+  //   ...cat,
+  //   nodes: cat.nodes.map(node => ({
+  //     ...node,
+  //     nodes: node.nodes.filter(item =>
+  //       item.spareParts.some(spare =>
+  //         spare.name.toLowerCase().includes(filter.toLowerCase())
+  //       )
+  //     ),
+  //   })),
+  // }));
 
   return (
     <div className={`${css.wrapper} ${openDetails && css.wrapperIsOpen}`}>
@@ -230,7 +248,7 @@ export default function SparesPart({
                     {node?.nodes?.length > 0 ? (
                       <>
                         <ul>
-                          {node.nodes.map((subNode, subNodeIndex) => (
+                          {node?.nodes.map((subNode, subNodeIndex) => (
                             <Fragment key={subNodeIndex}>
                               <div className={`${css.title} ${css.subTitle}`}>
                                 <GoDotFill size={18} className={css.icon} />
