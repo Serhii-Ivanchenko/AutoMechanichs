@@ -20,6 +20,7 @@ import {
   getNodesAndParts,
 } from '../../redux/cars/operations';
 import toast from 'react-hot-toast';
+import Filter from './Filter/Filter';
 
 export default function DiagnosticScreen() {
   const [chosenPoints, setChosenPoints] = useState([]);
@@ -29,6 +30,7 @@ export default function DiagnosticScreen() {
   const [chosenSpares, setChosenSpares] = useState([]);
   const [spares, setSpares] = useState([]);
   const [savedSparesPartOpen, setSavedSparesPartOpen] = useState(false);
+  const [filter, setFilter] = useState('');
   const containerRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -289,6 +291,44 @@ export default function DiagnosticScreen() {
   //   dispatch(getDiagnostic(105596));
   // });
 
+  // console.log('chosenPoints', chosenPoints);
+
+  // const visibleChosenPoints = () => {};
+
+  const visiblePoints = togglePoints.filter(category => {
+    // Перевірка spareParts на рівні категорії
+    const hasCategoryMatch = category.spareParts?.some(spare =>
+      spare.name.toLowerCase().includes(filter.toLowerCase())
+    );
+
+    // Перевірка spareParts на рівні першого node
+    const hasNodeMatch = category.nodes?.some(node =>
+      node.spareParts?.some(spare =>
+        spare.name.toLowerCase().includes(filter.toLowerCase())
+      )
+    );
+
+    // Перевірка spareParts на рівні глибших node.nodes
+    const hasDeepNodeMatch = category.nodes?.some(node =>
+      node.nodes?.some(part =>
+        part.spareParts?.some(spare =>
+          spare.name.toLowerCase().includes(filter.toLowerCase())
+        )
+      )
+    );
+
+    return hasCategoryMatch || hasNodeMatch || hasDeepNodeMatch;
+  });
+
+  const chp = chosenPoints.map(p => p.label);
+  console.log('chp', chp);
+
+  const visibleSubcategories = visiblePoints.filter(point =>
+    chp.includes(point.name)
+  );
+
+  console.log('visibleSubcategories', visibleSubcategories);
+
   return (
     <div>
       <CarDetailsPart particularCar={particularCar} />
@@ -299,25 +339,29 @@ export default function DiagnosticScreen() {
       ) : savedSparesPartOpen ? (
         <SavedSparesPart nodes={nodes} dataToSend={dataToSend} />
       ) : subcatOpen ? (
-        <ul className={css.list} ref={containerRef}>
-          {chosenPoints?.map(point => (
-            <SubcategoriesPart
-              key={point.id}
-              point={point}
-              setCategoryForDetailsPart={setCategoryForDetailsPart}
-              chosenPoints={chosenPoints}
-              togglePoints={togglePoints}
-              setOpenDetails={setOpenDetails}
-              openDetails={openDetails}
-              categoryForDetailsPart={categoryForDetailsPart}
-              spares={spares}
-              setSpares={setSpares}
-              setChosenSpares={setChosenSpares}
-              chosenSpares={chosenSpares}
-              containerRef={containerRef}
-            />
-          ))}
-        </ul>
+        <>
+          <Filter filter={filter} setFilter={setFilter} />
+          <ul className={css.list} ref={containerRef}>
+            {visibleSubcategories?.map(point => (
+              <SubcategoriesPart
+                key={point.id}
+                point={point}
+                setCategoryForDetailsPart={setCategoryForDetailsPart}
+                chosenPoints={chosenPoints}
+                togglePoints={togglePoints}
+                setOpenDetails={setOpenDetails}
+                openDetails={openDetails}
+                categoryForDetailsPart={categoryForDetailsPart}
+                spares={spares}
+                setSpares={setSpares}
+                setChosenSpares={setChosenSpares}
+                chosenSpares={chosenSpares}
+                containerRef={containerRef}
+                filter={filter}
+              />
+            ))}
+          </ul>
+        </>
       ) : (
         <TogglePoints
           togglePoints={togglePoints}

@@ -15,6 +15,7 @@ export default function SparesPart({
   setSavedSparesPartOpen,
   repair,
   chosenPoints,
+  filter,
 }) {
   useEffect(() => {
     if (spares.length === 0 && togglePoints.length > 0) {
@@ -180,33 +181,33 @@ export default function SparesPart({
     setChosenSpares(selectedSpares);
   }, [spares, setChosenSpares]);
 
-  //   const visibleSpares = spares.map(category => ({
-  //     ...category,
-  //     nodes: category.nodes?.length
-  //       ? category.nodes.map(node => ({
-  //           ...node,
-  //           nodes: node.nodes?.length
-  //             ? node.nodes.map(part => ({
-  //                 ...part,
-  //                 spareParts:
-  //                   part.spareParts?.filter(spare =>
-  //                     spare.name.toLowerCase().includes(filter.toLowerCase())
-  //                   ) || [], // Фільтруємо spareParts
-  //               }))
-  //             : [], // Якщо немає дочірніх частин, повертаємо порожній масив
-  //           spareParts:
-  //             node.spareParts?.filter(spare =>
-  //               spare.name.toLowerCase().includes(filter.toLowerCase())
-  //             ) || [], // Фільтруємо spareParts для node
-  //         }))
-  //       : [],
+  const visibleSpares = spares.map(category => ({
+    ...category,
+    nodes: category.nodes?.length
+      ? category.nodes.map(node => ({
+          ...node,
+          nodes: node.nodes?.length
+            ? node.nodes.map(part => ({
+                ...part,
+                spareParts:
+                  part.spareParts?.filter(spare =>
+                    spare.name.toLowerCase().includes(filter.toLowerCase())
+                  ) || [], // Фільтруємо spareParts
+              }))
+            : [], // Якщо немає дочірніх частин, повертаємо порожній масив
+          spareParts:
+            node.spareParts?.filter(spare =>
+              spare.name.toLowerCase().includes(filter.toLowerCase())
+            ) || [], // Фільтруємо spareParts для node
+        }))
+      : [],
 
-  //     spareParts: !category.nodes?.length
-  //       ? category.spareParts?.filter(spare =>
-  //           spare.name.toLowerCase().includes(filter.toLowerCase())
-  //         ) || [] // Фільтруємо spareParts для category
-  //       : [],
-  //   }));
+    spareParts: !category.nodes?.length
+      ? category.spareParts?.filter(spare =>
+          spare.name.toLowerCase().includes(filter.toLowerCase())
+        ) || [] // Фільтруємо spareParts для category
+      : [],
+  }));
 
   return (
     <div className={`${css.wrapper} ${openDetails && css.wrapperIsOpen}`}>
@@ -221,7 +222,7 @@ export default function SparesPart({
       </div> */}
 
       <ul className={css.detailsList}>
-        {spares?.flatMap(cat =>
+        {visibleSpares?.flatMap(cat =>
           cat.nodes?.length > 0
             ? cat.nodes.map((node, nodeIndex) =>
                 node.name === title ? (
