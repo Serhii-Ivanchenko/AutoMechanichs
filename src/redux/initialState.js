@@ -14,6 +14,7 @@ export const initialState = {
     carInfo: {},
     nodesAndPartsForDiagnostics: [],
     diagnostic: {},
+    chosenDate:"",
 
     isLoading: false,
     isRecognitionLoading: false,

@@ -19,13 +19,20 @@ export default function BottomPart({
   chosenPoints,
   savedPartBottom,
   handleCreateDiag,
+  savedPartScreen,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
   return (
-    <div className={css.wrapper}>
+    <div
+      className={`${css.wrapper} ${savedPartScreen ? css.wrapperSaved : ''}`}
+    >
       {button || buttonSpares ? (
-        <button type="button" onClick={back} className={css.cancel}>
+        <button
+          type="button"
+          onClick={back}
+          className={`${css.cancel} ${savedPartScreen ? css.savedScreen : ''}`}
+        >
           <FaArrowLeft className={css.icon} />
         </button>
       ) : (
@@ -62,7 +69,9 @@ export default function BottomPart({
         <button
           type="button"
           onClick={savedPartBottom ? handleCreateDiag : next}
-          className={`${css.confirm} ${isDisabled && css.confirmDisabled}`}
+          className={`${css.confirm} ${isDisabled && css.confirmDisabled} ${
+            savedPartScreen ? css.savedScreen : ''
+          }`}
           disabled={isDisabled}
         >
           {savedPartBottom ? (

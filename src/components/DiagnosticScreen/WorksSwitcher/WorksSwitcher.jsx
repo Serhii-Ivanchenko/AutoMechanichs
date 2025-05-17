@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import css from './WorksSwitcher.module.css';
-import {
-  BsUiRadiosGrid,
-  //   BsClipboardCheck,
-  // BsCurrencyDollar,
-  BsWrench,
-} from 'react-icons/bs';
+import { BsUiRadiosGrid, BsWrench } from 'react-icons/bs';
 import { NavLink } from 'react-router-dom';
 
-export default function WorksSwitcher({ subcatOpen, subcatRepairOpen, carId }) {
+export default function WorksSwitcher({
+  subcatOpen,
+  subcatRepairOpen,
+  carId,
+  disabled,
+}) {
   // const [isActive, setIsActive] = useState('diag');
 
   return (
@@ -22,6 +22,9 @@ export default function WorksSwitcher({ subcatOpen, subcatRepairOpen, carId }) {
           // onClick={() => {
           //   setIsActive('diag');
           // }}
+          onClick={e => {
+            if (disabled) e.preventDefault();
+          }}
         >
           Діагностика
           <div className={css.indicator}>
@@ -37,6 +40,9 @@ export default function WorksSwitcher({ subcatOpen, subcatRepairOpen, carId }) {
             `${css.buttons} ${isActive ? css.buttonsActive : ''}`
           }
           // onClick={() => setIsActive('repair')}
+          onClick={e => {
+            if (disabled) e.preventDefault();
+          }}
         >
           Ремонт{' '}
           <div className={css.indicator}>

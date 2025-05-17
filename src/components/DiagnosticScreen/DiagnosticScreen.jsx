@@ -1,4 +1,4 @@
-import { Link, Outlet, useParams } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
 import CarDetailsPart from './CarDetailsPart/CarDetailsPart';
 import WorksSwitcher from './WorksSwitcher/WorksSwitcher';
 import newTree from '../../utils/tree.json';
@@ -19,6 +19,7 @@ import {
   getDiagnostic,
   getNodesAndParts,
 } from '../../redux/cars/operations';
+import toast from 'react-hot-toast';
 
 export default function DiagnosticScreen() {
   const [chosenPoints, setChosenPoints] = useState([]);
@@ -30,11 +31,12 @@ export default function DiagnosticScreen() {
   const [savedSparesPartOpen, setSavedSparesPartOpen] = useState(false);
   const containerRef = useRef(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { carId } = useParams();
   // console.log('carId', carId);
 
   const cars = useSelector(selectCars);
-  console.log('cars', cars);
+  // console.log('cars', cars);
 
   const particularCar = cars?.find(car => car?.car_id === Number(carId));
   // console.log('particularCar', particularCar);
@@ -264,10 +266,23 @@ export default function DiagnosticScreen() {
     nodes: nodesToCreateDiag,
   };
 
-  console.log('dataToSend', dataToSend);
+  // console.log('dataToSend', dataToSend);
 
   const handleCreateDiag = () => {
-    dispatch(createDiagnostic(dataToSend));
+    dispatch(createDiagnostic(dataToSend))
+      .unwrap()
+      .then(() => {
+        console.log('Діагностика успішно створена');
+        toast.success('Діагностика успішно створена', {
+          position: 'top-center',
+          duration: 3000,
+          style: {
+            background: 'var(--bg-input)',
+            color: 'var(--white)',
+          },
+        });
+        navigate('/main');
+      });
   };
 
   // useEffect(() => {
