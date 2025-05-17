@@ -10,7 +10,7 @@ export default function PhotoCapturePage() {
   const [stream, setStream] = useState(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [photos, setPhotos] = useState([]);
-  const [photoPreview, setPhotoPreview] = useState("");
+  const [photoPreview, setPhotoPreview] = useState('');
 
   useEffect(() => {
     const openCamera = async () => {
@@ -112,18 +112,20 @@ export default function PhotoCapturePage() {
         </button>
 
         {!isCameraOpen ? (
-          <Link to="/car/:carId/diagnostics">
+          <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
             <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
           </Link>
         ) : (
-          <div className={css.photoPreviewWrapper}>
-            <img
-              src={photoPreview}
-              alt="photo preview"
-              className={css.photoPreview}
-            />
-            <p className={css.photoQuantity}>{photos?.length}</p>
-          </div>
+          photos.length > 0 && (
+            <div className={css.photoPreviewWrapper}>
+              <img
+                src={photoPreview}
+                alt="photo preview"
+                className={css.photoPreview}
+              />
+              <p className={css.photoQuantity}>{photos?.length}</p>
+            </div>
+          )
         )}
       </div>
     </div>
