@@ -15,6 +15,7 @@ export default function AddCarPage() {
     <>
       <AddCarScreen
         photo={photo}
+        setPhoto={setPhoto}
         stream={videoStream}
         setCarMake={setChosenMake}
         setCarModel={setChosenModel}

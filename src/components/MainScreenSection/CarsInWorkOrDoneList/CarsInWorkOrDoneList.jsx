@@ -46,6 +46,7 @@ export default function CarsInWorkOrDoneList({ done, list }) {
                     ? `/car/${item.car_id}/completed-doc`
                     : ''
                 }
+                // to={`/car/${item.car_id}/update-car`}
               >
                 <div className={css.listItem}>
                   {done ? (
