@@ -78,7 +78,7 @@ export default function CalendarPart() {
     // dispatch(setChosenDay(date));
     // dispatch(getAllCars(data));
 
-    localStorage.setItem('date', date);
+    sessionStorage.setItem('date', date);
     dispatch(setChosenDate(date));
   }, [year, month, day, dispatch, isMainPage]);
 
