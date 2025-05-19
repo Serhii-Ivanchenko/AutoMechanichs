@@ -87,24 +87,24 @@
 }
 
 .btnsWrapper {
-  /* display: flex;
-  justify-content: space-between; */
+  display: flex;
+  justify-content: space-between;
   max-width: 318px;
   width: 100%;
   padding: 1.24vh 21px;
-  display: grid;
   gap: 18px;
   margin-left: auto;
   margin-right: auto;
-  grid-template-columns: 1fr auto 1fr;
+  /* display: grid;
+  grid-template-columns: 1fr auto 1fr; */
   align-items: end;
   /* margin-top: auto; */
 }
 
-.cameraOn {
+/* .cameraOn {
   justify-content: flex-start;
   gap: 20px;
-}
+} */
 
 .cross {
   fill: var(--bg-secondary);
@@ -158,10 +158,16 @@
   position: relative;
   width: 70px;
   height: 70px;
+  width: 8.706vh;
+  height: 8.706vh;
   border-radius: 14px;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   overflow: hidden;
-  
+}
+
+.emptyDiv{
+  width: 8.706vh;
+  height: 8.706vh;
 }
 
 .photoPreview {
