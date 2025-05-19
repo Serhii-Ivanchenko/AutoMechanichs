@@ -18,8 +18,11 @@ export default function SubcategoriesPart({
   setChosenSpares,
   repair,
   containerRef,
+  filter,
+  // visiblePoints,
 }) {
-  const matchedPoint = togglePoints.find(cat => cat.name === point.label);
+  // const matchedPoint = togglePoints?.find(cat => cat.name === point.label);
+  // console.log('matchedPoint', matchedPoint);
 
   const [expandedMap, setExpandedMap] = useState({});
 
@@ -100,14 +103,29 @@ export default function SubcategoriesPart({
     // console.log("openDetails", openDetails);
   }, [openDetails]);
 
+  const visiblePoints = point?.nodes?.filter(node => {
+    if (node?.nodes) {
+      return node.nodes?.some(part =>
+        part.spareParts?.some(spare =>
+          spare.name.toLowerCase().includes(filter.toLowerCase())
+        )
+      );
+    } else {
+      return node.spareParts?.some(spare =>
+        spare.name.toLowerCase().includes(filter.toLowerCase())
+      );
+    }
+  });
+  console.log('visiblePoints', visiblePoints);
+
   return (
     // <ul>
     <li>
-      <p className={css.categoryName}>{point.label}</p>
+      <p className={css.categoryName}>{point.name}</p>
 
-      {matchedPoint?.nodes?.length > 0 ? (
+      {visiblePoints?.length > 0 ? (
         <ul className={css.subcategoriesList}>
-          {matchedPoint.nodes.map(node => (
+          {visiblePoints.map(node => (
             <li key={node.id}>
               <Accordion
                 className={css.accordion}
@@ -155,6 +173,7 @@ export default function SubcategoriesPart({
                     setCategoryForDetailsPart={setCategoryForDetailsPart}
                     repair={repair}
                     chosenPoints={chosenPoints}
+                    filter={filter}
                   />
                 </AccordionDetails>
               </Accordion>
@@ -167,7 +186,7 @@ export default function SubcategoriesPart({
             <Accordion
               className={css.accordion}
               expanded={expandedMap[point.id] === point.id}
-              onChange={handleAccordionToggle(point.id, point.id, point.label)}
+              onChange={handleAccordionToggle(point.id, point.id, point.name)}
             >
               <AccordionSummary
                 className={css.subcategoriesListItem}
@@ -183,7 +202,7 @@ export default function SubcategoriesPart({
                   if (el) summaryRefs.current[point.id] = el;
                 }}
               >
-                <p className={css.subCategory}>{point.label}</p>
+                <p className={css.subCategory}>{point.name}</p>
                 <div className={css.divForShadow}>
                   <div className={`${css.iconBox} `}>
                     <BsFillCaretDownFill
@@ -197,7 +216,7 @@ export default function SubcategoriesPart({
 
               <AccordionDetails>
                 <SparesPart
-                  title={point.label}
+                  title={point.name}
                   togglePoints={togglePoints}
                   setChosenSpares={setChosenSpares}
                   chosenSpares={chosenSpares}
@@ -209,6 +228,7 @@ export default function SubcategoriesPart({
                   setCategoryForDetailsPart={setCategoryForDetailsPart}
                   repair={repair}
                   chosenPoints={chosenPoints}
+                  filter={filter}
                 />
               </AccordionDetails>
             </Accordion>
