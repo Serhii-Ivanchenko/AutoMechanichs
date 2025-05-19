@@ -1,6 +1,14 @@
 import { initialState } from '../initialState.js';
 import { createSlice } from '@reduxjs/toolkit';
-import { createDiagnostic, createNewCar, getAllCars, getDiagnostic, getNodesAndParts, recognizeLicensePlate, uploadCarPhotos } from './operations.js';
+import {
+  createDiagnostic,
+  createNewCar,
+  getAllCars,
+  getDiagnostic,
+  getNodesAndParts,
+  recognizeLicensePlate,
+  uploadCarPhotos,
+} from './operations.js';
 
 const handlePending = state => {
   state.isLoading = true;
@@ -18,12 +26,12 @@ const carsSlice = createSlice({
   name: 'cars',
   initialState: initialState.cars,
   reducers: {
-    setChosenDate:(state, action) => {
-  state.chosenDate=action.payload
+    setChosenDate: (state, action) => {
+      state.chosenDate = action.payload;
     },
-    clearChosenDate: (state) => {
-      state.chosenDate = ""
-    }
+    clearChosenDate: state => {
+      state.chosenDate = '';
+    },
   },
   extraReducers: builder =>
     builder
