@@ -330,7 +330,11 @@ export default function DiagnosticScreen() {
   return (
     <div>
       <CarDetailsPart particularCar={particularCar} />
-      <WorksSwitcher subcatOpen={subcatOpen} carId={carId} />
+      <WorksSwitcher
+        subcatOpen={subcatOpen}
+        carId={carId}
+        car={particularCar}
+      />
 
       {particularCar?.status === 'complete' ? (
         <SavedSparesPart />
