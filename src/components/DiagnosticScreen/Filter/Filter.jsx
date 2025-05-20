@@ -13,7 +13,7 @@ export default function Filter({ filter, setFilter }) {
     if (focusRef.current) {
       focusRef.current.focus();
     }
-  }, []);
+  }, [filter]);
 
   return (
     <div className={css.searchBox}>
