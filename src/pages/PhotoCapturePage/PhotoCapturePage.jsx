@@ -116,7 +116,7 @@ export default function PhotoCapturePage() {
             <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
           </Link>
         ) : (
-          photos.length > 0 && (
+          photos.length > 0 ? (
             <div className={css.photoPreviewWrapper}>
               <img
                 src={photoPreview}
@@ -125,8 +125,9 @@ export default function PhotoCapturePage() {
               />
               <p className={css.photoQuantity}>{photos?.length}</p>
             </div>
-          )
-        )}
+            ) : (
+                <div className={css.emptyDiv}></div>
+        ))}
       </div>
     </div>
   );
