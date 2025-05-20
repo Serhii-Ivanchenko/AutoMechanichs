@@ -14,42 +14,84 @@ export default function WorksSwitcher({
 
   return (
     <div className={css.btnsBox}>
-      {!subcatRepairOpen && car?.status === 'diagnostic' && (
-        <NavLink
-          to={`/car/${carId}/diagnostics`}
-          className={({ isActive }) =>
-            `${css.buttons} ${isActive ? css.buttonsActive : ''}`
-          }
-          // onClick={() => {
-          //   setIsActive('diag');
-          // }}
-          onClick={e => {
-            if (disabled) e.preventDefault();
-          }}
-        >
-          Діагностика
-          <div className={css.indicator}>
-            <BsUiRadiosGrid />
-          </div>
-        </NavLink>
-      )}
+      {car?.status === 'diagnostic' ? (
+        !subcatRepairOpen && (
+          <NavLink
+            to={`/car/${carId}/diagnostics`}
+            className={({ isActive }) =>
+              `${css.buttons} ${isActive ? css.buttonsActive : ''}`
+            }
+            // onClick={() => {
+            //   setIsActive('diag');
+            // }}
+            onClick={e => {
+              if (disabled) e.preventDefault();
+            }}
+          >
+            Діагностика
+            <div className={css.indicator}>
+              <BsUiRadiosGrid />
+            </div>
+          </NavLink>
+        )
+      ) : car?.status === 'repair' ? (
+        !subcatOpen && (
+          <NavLink
+            to={`/car/${carId}/repair`}
+            className={({ isActive }) =>
+              `${css.buttons} ${isActive ? css.buttonsActive : ''}`
+            }
+            // onClick={() => setIsActive('repair')}
+            onClick={e => {
+              if (disabled) e.preventDefault();
+            }}
+          >
+            Ремонт{' '}
+            <div className={css.indicator}>
+              <BsWrench />
+            </div>
+          </NavLink>
+        )
+      ) : (
+        <>
+          {!subcatRepairOpen && (
+            <NavLink
+              to={`/car/${carId}/diagnostics`}
+              className={({ isActive }) =>
+                `${css.buttons} ${isActive ? css.buttonsActive : ''}`
+              }
+              // onClick={() => {
+              //   setIsActive('diag');
+              // }}
+              onClick={e => {
+                if (disabled) e.preventDefault();
+              }}
+            >
+              Діагностика
+              <div className={css.indicator}>
+                <BsUiRadiosGrid />
+              </div>
+            </NavLink>
+          )}
 
-      {!subcatOpen && car?.status === 'repair' && (
-        <NavLink
-          to={`/car/${carId}/repair`}
-          className={({ isActive }) =>
-            `${css.buttons} ${isActive ? css.buttonsActive : ''}`
-          }
-          // onClick={() => setIsActive('repair')}
-          onClick={e => {
-            if (disabled) e.preventDefault();
-          }}
-        >
-          Ремонт{' '}
-          <div className={css.indicator}>
-            <BsWrench />
-          </div>
-        </NavLink>
+          {!subcatOpen && (
+            <NavLink
+              to={`/car/${carId}/repair`}
+              className={({ isActive }) =>
+                `${css.buttons} ${isActive ? css.buttonsActive : ''}`
+              }
+              // onClick={() => setIsActive('repair')}
+              onClick={e => {
+                if (disabled) e.preventDefault();
+              }}
+            >
+              Ремонт{' '}
+              <div className={css.indicator}>
+                <BsWrench />
+              </div>
+            </NavLink>
+          )}
+        </>
       )}
     </div>
   );
