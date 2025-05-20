@@ -22,7 +22,7 @@ export default function CompletedDocSection() {
 
   const dispatch = useDispatch();
 
-  const id = '67f28384df3f8d0bbdc1e5e4';
+  const id = '682ce6104f095bf3de2739ef';
 
   useEffect(() => {
     dispatch(getDiagnostic(id));
