@@ -28,7 +28,7 @@ export default function CalendarPart() {
   const isMainPage = location.pathname === '/main';
 
   // const today = new Date();
-  const storedDate = localStorage.getItem('date');
+  const storedDate = sessionStorage.getItem('date');
   const initialDate = storedDate ? new Date(storedDate) : new Date();
   const [year, setYear] = useState(initialDate.getFullYear());
   const [month, setMonth] = useState(initialDate.getMonth());
@@ -78,7 +78,7 @@ export default function CalendarPart() {
     // dispatch(setChosenDay(date));
     // dispatch(getAllCars(data));
 
-    localStorage.setItem('date', date);
+    sessionStorage.setItem('date', date);
     dispatch(setChosenDate(date));
   }, [year, month, day, dispatch, isMainPage]);
 

@@ -1,11 +1,20 @@
+import { useEffect, useRef } from 'react';
 import css from './Filter.module.css';
 import { IoIosSearch } from 'react-icons/io';
 import { RxCrossCircled } from 'react-icons/rx';
 
 export default function Filter({ filter, setFilter }) {
+  const focusRef = useRef();
   const handleChange = e => {
     setFilter(e.target.value);
   };
+
+  useEffect(() => {
+    if (focusRef.current) {
+      focusRef.current.focus();
+    }
+  }, [filter]);
+
   return (
     <div className={css.searchBox}>
       <div className={css.circle}>
@@ -16,6 +25,7 @@ export default function Filter({ filter, setFilter }) {
         placeholder="Пошук запчастин"
         onChange={handleChange}
         value={filter}
+        ref={focusRef}
       />
       {filter && (
         <RxCrossCircled

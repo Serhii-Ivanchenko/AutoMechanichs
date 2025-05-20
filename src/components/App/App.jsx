@@ -189,7 +189,7 @@ export default function App() {
   const day = useSelector(selectDate);
   console.log('day', day);
 
-  const storedDate = localStorage.getItem('date');
+  const storedDate = sessionStorage.getItem('date');
   console.log('storedDate', storedDate);
 
   useEffect(() => {
