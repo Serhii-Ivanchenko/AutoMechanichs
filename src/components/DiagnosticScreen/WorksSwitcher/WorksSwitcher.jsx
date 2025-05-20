@@ -8,12 +8,13 @@ export default function WorksSwitcher({
   subcatRepairOpen,
   carId,
   disabled,
+  car,
 }) {
   // const [isActive, setIsActive] = useState('diag');
 
   return (
     <div className={css.btnsBox}>
-      {!subcatRepairOpen && (
+      {!subcatRepairOpen && car?.status === 'diagnostic' && (
         <NavLink
           to={`/car/${carId}/diagnostics`}
           className={({ isActive }) =>
@@ -33,7 +34,7 @@ export default function WorksSwitcher({
         </NavLink>
       )}
 
-      {!subcatOpen && (
+      {!subcatOpen && car?.status === 'repair' && (
         <NavLink
           to={`/car/${carId}/repair`}
           className={({ isActive }) =>
