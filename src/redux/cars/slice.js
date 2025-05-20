@@ -1,6 +1,15 @@
 import { initialState } from '../initialState.js';
 import { createSlice } from '@reduxjs/toolkit';
-import { createDiagnostic, createNewCar, getAllCars, getDiagnostic, getNodesAndParts, recognizeLicensePlate, uploadCarPhotos } from './operations.js';
+import {
+  createDiagnostic,
+  createNewCar,
+  editVINorMileage,
+  getAllCars,
+  getDiagnostic,
+  getNodesAndParts,
+  recognizeLicensePlate,
+  uploadCarPhotos,
+} from './operations.js';
 
 const handlePending = state => {
   state.isLoading = true;
@@ -18,12 +27,12 @@ const carsSlice = createSlice({
   name: 'cars',
   initialState: initialState.cars,
   reducers: {
-    setChosenDate:(state, action) => {
-  state.chosenDate=action.payload
+    setChosenDate: (state, action) => {
+      state.chosenDate = action.payload;
     },
-    clearChosenDate: (state) => {
-      state.chosenDate = ""
-    }
+    clearChosenDate: state => {
+      state.chosenDate = '';
+    },
   },
   extraReducers: builder =>
     builder
@@ -47,6 +56,22 @@ const carsSlice = createSlice({
       .addCase(recognizeLicensePlate.rejected, (state, action) => {
         state.isRecognitionLoading = false;
         state.error = action.payload;
+      })
+
+      // Edit VIN or mileage
+      .addCase(editVINorMileage.pending, handlePending)
+      .addCase(editVINorMileage.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const { car_id, vin, mileage } = action.meta.arg;
+
+        const carToEdit = state.cars.find(car => car.car_id === car_id);
+
+        if (carToEdit && vin) {
+          carToEdit.vin = vin;
+        }
+        if (carToEdit && mileage) {
+          carToEdit.mileage = mileage;
+        }
       })
 
       //! DIAGNOSTICS

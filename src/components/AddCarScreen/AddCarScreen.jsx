@@ -15,12 +15,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { recognizeLicensePlate } from '../../redux/cars/operations';
 import {
   selectCarInfo,
+  selectCars,
   selectIsRecognitionLoading,
 } from '../../redux/cars/selectors';
 import LoaderSvg from '../Loader/LoaderSvg.jsx';
 
 export default function AddCarScreen({
   photo,
+  setPhoto,
   stream,
   setCarMake,
   setCarModel,
@@ -40,6 +42,7 @@ export default function AddCarScreen({
   const [displayedYearArr, setDisplayedYearArr] = useState([]);
   const [chosenYear, setChosenYear] = useState('');
   const [mileage, setMileage] = useState('');
+  const [plate, setPlate] = useState('');
   const dispatch = useDispatch();
 
   const buttonMakeRef = useRef(null);
@@ -49,7 +52,48 @@ export default function AddCarScreen({
 
   const carInfo = useSelector(selectCarInfo);
   const isRecoginitionLoading = useSelector(selectIsRecognitionLoading);
+
+  const cars = useSelector(selectCars);
+  const carId = null;
   console.log('carInfo', carInfo);
+  console.log("cars",cars);
+
+  useEffect(() => {
+    if (!carId || cars?.length === 0) return;
+
+    const displayedCar = cars?.find(
+      car => Number(car?.car_id) === Number(carId)
+    );
+
+    const existedMake = carData?.find(
+      car => car?.make?.toLocaleLowerCase() === displayedCar?.make.toLowerCase()
+    );
+
+    const existedModel = existedMake?.models?.find(
+      model =>
+        model?.model_name?.toLowerCase() === displayedCar?.model?.toLowerCase()
+    );
+
+    const existedPhoto = `https://aps.assist.cam/auto/${displayedCar?.plate}.jpg`;
+
+    setChosenMake({ id: existedMake?.id, make: existedMake?.make || '' });
+
+    setChosenModel({
+      id: existedModel?.id,
+      model_name: existedModel?.model_name || '',
+    });
+
+    setChosenYear(displayedCar?.year);
+    setMileage(displayedCar?.mileage);
+    setPlate(displayedCar?.plate);
+
+    setCarMake(existedMake?.make);
+    setCarModel(existedModel?.model_name);
+    setCarYear(displayedCar?.year);
+    setCarMileage(displayedCar?.mileage);
+
+    setPhoto(existedPhoto);
+  }, [carId]);
 
   const makeInputClick = e => {
     e.stopPropagation();
@@ -118,6 +162,7 @@ export default function AddCarScreen({
         chosenModel?.model_name?.toLocaleLowerCase() ===
         car.model_name.toLocaleLowerCase()
     );
+
     const selectedCarModelConstructionInterval =
       selectedCarModel?.construction_interval;
     const [startDate, endDate] =
@@ -183,10 +228,6 @@ export default function AddCarScreen({
       ) : (
         <>
           <div className={css.carPhoto}>
-            {/* {!photo && !stream && (
-          <img src={autoPhoto} alt="car photo" className={css.carImg} />
-        )} */}
-
             {photo ? (
               <img src={photo} alt="car photo" className={css.carImg} />
             ) : (
@@ -200,9 +241,7 @@ export default function AddCarScreen({
                 <img src={flag} alt="flag image" />
                 <p className={css.flagText}>UA</p>
               </div>
-              <p className={css.number}>
-                {carInfo?.license_plate ?? '- - - -'}
-              </p>
+              <p className={css.number}>{plate ?? '- - - -'}</p>
             </div>
             <button type="button" className={css.btn} onClick={handleSend}>
               <BsFillCpuFill className={css.btnIcon} />
@@ -364,7 +403,7 @@ export default function AddCarScreen({
             <div className={css.mileageWrapper}>
               <SlSpeedometer className={css.mileageIcon} />
               <p className={css.mileage}>
-                257 <span className={css.mileageText}>тис. км</span>
+                {mileage || ''} <span className={css.mileageText}>тис. км</span>
               </p>
               <BsCameraFill className={css.cameraIcon} />
             </div>
