@@ -228,7 +228,11 @@ export default function RepairScreen() {
   return (
     <div>
       <CarDetailsPart particularCar={particularCar} />
-      <WorksSwitcher subcatRepairOpen={subcatOpen} carId={carId} />
+      <WorksSwitcher
+        subcatRepairOpen={subcatOpen}
+        carId={carId}
+        car={particularCar}
+      />
 
       {savedSparesPartOpen ? (
         <SavedSparesPart nodes={nodes} />

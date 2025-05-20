@@ -24,7 +24,7 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
   const handleLogOut = () => {
     dispatch(logOut());
-    localStorage.removeItem('date');
+    sessionStorage.removeItem('date');
     dispatch(clearChosenDate());
   };
 
