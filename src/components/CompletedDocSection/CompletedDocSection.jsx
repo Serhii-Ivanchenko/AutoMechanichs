@@ -34,7 +34,7 @@ export default function CompletedDocSection() {
     id: Math.random(),
   }));
 
-  console.log('completedDiagWithId', completedDiagWithId);
+  // console.log('completedDiagWithId', completedDiagWithId);
 
   return (
     <div className={css.wrapper}>
