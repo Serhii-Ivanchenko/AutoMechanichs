@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import {
   createDiagnostic,
   createNewCar,
+  editVINorMileage,
   getAllCars,
   getDiagnostic,
   getNodesAndParts,
@@ -55,6 +56,22 @@ const carsSlice = createSlice({
       .addCase(recognizeLicensePlate.rejected, (state, action) => {
         state.isRecognitionLoading = false;
         state.error = action.payload;
+      })
+
+      // Edit VIN or mileage
+      .addCase(editVINorMileage.pending, handlePending)
+      .addCase(editVINorMileage.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const { car_id, vin, mileage } = action.meta.arg;
+
+        const carToEdit = state.cars.find(car => car.car_id === car_id);
+
+        if (carToEdit && vin) {
+          carToEdit.vin = vin;
+        }
+        if (carToEdit && mileage) {
+          carToEdit.mileage = mileage;
+        }
       })
 
       //! DIAGNOSTICS

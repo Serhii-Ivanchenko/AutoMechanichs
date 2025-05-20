@@ -60,6 +60,38 @@ export const recognizeLicensePlate = createAsyncThunk(
   }
 );
 
+// Edit VIN or mileage
+export const editVINorMileage = createAsyncThunk(
+  'cars/editVINorMileage',
+  async (newData, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const { car_id, vin, mileage } = newData;
+      const response = await axiosInstance.post(
+        `/crm/edit_vin_or_mileage`,
+        null,
+        {
+          params: { car_id, vin, mileage },
+          headers: {
+            // "X-Api-Key": "YA7NxysJ",
+            'company-id': serviceId,
+          },
+        }
+      );
+      console.log('editVINorMileage', response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
 // ! Diagnostics
 
 // Get Nodes and Parts list
