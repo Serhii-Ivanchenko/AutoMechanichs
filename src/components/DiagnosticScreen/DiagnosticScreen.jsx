@@ -287,10 +287,6 @@ export default function DiagnosticScreen() {
       });
   };
 
-  // useEffect(() => {
-  //   dispatch(getDiagnostic(105596));
-  // });
-
   // console.log('chosenPoints', chosenPoints);
 
   const visiblePoints = togglePoints.filter(category => {
