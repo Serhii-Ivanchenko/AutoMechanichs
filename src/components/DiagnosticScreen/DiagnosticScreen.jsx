@@ -21,6 +21,7 @@ import {
 } from '../../redux/cars/operations';
 import toast from 'react-hot-toast';
 import Filter from './Filter/Filter';
+import AudioRecorder from '../AudioRecorder/AudioRecorder';
 
 export default function DiagnosticScreen() {
   const [chosenPoints, setChosenPoints] = useState([]);
@@ -31,6 +32,7 @@ export default function DiagnosticScreen() {
   const [spares, setSpares] = useState([]);
   const [savedSparesPartOpen, setSavedSparesPartOpen] = useState(false);
   const [filter, setFilter] = useState('');
+  const [recordAudio, setRecordAudio] = useState(false);
   const containerRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -372,27 +374,32 @@ export default function DiagnosticScreen() {
         />
       )}
 
-      <BottomPart
-        back={
-          subcatOpen
-            ? () => setSubcatOpen(false)
-            : savedSparesPartOpen
-            ? handleCloseSavedScreen()
-            : '/main'
-        }
-        button={subcatOpen}
-        btnToggle={true}
-        // next="diagnostics-subcategories"
-        categ={subcatOpen && !savedSparesPartOpen}
-        next={
-          !subcatOpen
-            ? () => setSubcatOpen(true)
-            : () => setSavedSparesPartOpen(true)
-        }
-        chosenPoints={chosenPoints}
-        savedPartBottom={savedSparesPartOpen}
-        handleCreateDiag={() => handleCreateDiag()}
-      />
+      {recordAudio ? (
+        <AudioRecorder setRecordAudio={setRecordAudio} />
+      ) : (
+        <BottomPart
+          back={
+            subcatOpen
+              ? () => setSubcatOpen(false)
+              : savedSparesPartOpen
+              ? handleCloseSavedScreen()
+              : '/main'
+          }
+          button={subcatOpen}
+          btnToggle={true}
+          // next="diagnostics-subcategories"
+          categ={subcatOpen && !savedSparesPartOpen}
+          next={
+            !subcatOpen
+              ? () => setSubcatOpen(true)
+              : () => setSavedSparesPartOpen(true)
+          }
+          chosenPoints={chosenPoints}
+          savedPartBottom={savedSparesPartOpen}
+          handleCreateDiag={() => handleCreateDiag()}
+          setRecordAudio={setRecordAudio}
+        />
+      )}
     </div>
   );
 }
