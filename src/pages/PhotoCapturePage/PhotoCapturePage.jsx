@@ -4,7 +4,7 @@ import { IoMdClose, IoMdCheckmark } from 'react-icons/io';
 import { BsCameraFill, BsTrash } from 'react-icons/bs';
 import { useEffect, useRef, useState } from 'react';
 
-export default function PhotoCapturePage() {
+export default function PhotoCapturePage({ diag, carId, setOpenCamera }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
@@ -71,10 +71,15 @@ export default function PhotoCapturePage() {
   };
 
   return (
-    <div className={css.wrapper}>
+    <div className={`${css.wrapper} ${diag && css.wrapperDiag}`}>
       {isCameraOpen ? (
-        <div className={css.video}>
-          <video ref={videoRef} autoPlay playsInline className={css.video} />
+        <div className={`${css.video} ${diag && css.videoDiag}`}>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            className={`${css.video} ${diag && css.videoDiag}`}
+          />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
       ) : (
@@ -94,9 +99,18 @@ export default function PhotoCapturePage() {
       )}
       <div className={`${css.btnsWrapper} ${stream ? css.cameraOn : ''}`}>
         {!isCameraOpen ? (
-          <Link className={css.cancelBtn} to="/add-car">
-            <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-          </Link>
+          diag ? (
+            <button
+              className={css.cancelBtn}
+              onClick={() => setOpenCamera(false)}
+            >
+              <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+            </button>
+          ) : (
+            <Link className={css.cancelBtn} to="/add-car">
+              <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+            </Link>
+          )
         ) : (
           <button className={css.cancelBtn} onClick={handleCloseCamera}>
             <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
@@ -115,19 +129,18 @@ export default function PhotoCapturePage() {
           <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
             <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
           </Link>
+        ) : photos.length > 0 ? (
+          <div className={css.photoPreviewWrapper}>
+            <img
+              src={photoPreview}
+              alt="photo preview"
+              className={css.photoPreview}
+            />
+            <p className={css.photoQuantity}>{photos?.length}</p>
+          </div>
         ) : (
-          photos.length > 0 ? (
-            <div className={css.photoPreviewWrapper}>
-              <img
-                src={photoPreview}
-                alt="photo preview"
-                className={css.photoPreview}
-              />
-              <p className={css.photoQuantity}>{photos?.length}</p>
-            </div>
-            ) : (
-                <div className={css.emptyDiv}></div>
-        ))}
+          <div className={css.emptyDiv}></div>
+        )}
       </div>
     </div>
   );

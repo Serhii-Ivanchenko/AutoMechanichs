@@ -20,6 +20,7 @@ export default function BottomPart({
   savedPartBottom,
   handleCreateDiag,
   savedPartScreen,
+  setOpenCamera,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -49,7 +50,7 @@ export default function BottomPart({
           <div className={css.greyCircle}>
             <BsFillMicFill className={css.icon} />
           </div>
-          <div className={css.greyCircle}>
+          <div className={css.greyCircle} onClick={() => setOpenCamera(true)}>
             <BsCameraFill className={css.icon} />
           </div>
           <div className={css.greyCircle}>

@@ -21,6 +21,8 @@ import {
 } from '../../redux/cars/operations';
 import toast from 'react-hot-toast';
 import Filter from './Filter/Filter';
+import AddCarPhoto from '../AddCarPhoto/AddCarPhoto';
+import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage';
 
 export default function DiagnosticScreen() {
   const [chosenPoints, setChosenPoints] = useState([]);
@@ -35,6 +37,7 @@ export default function DiagnosticScreen() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { carId } = useParams();
+  const [openCamera, setOpenCamera] = useState(false);
   // console.log('carId', carId);
 
   const cars = useSelector(selectCars);
@@ -337,29 +340,37 @@ export default function DiagnosticScreen() {
       ) : savedSparesPartOpen ? (
         <SavedSparesPart nodes={nodes} dataToSend={dataToSend} />
       ) : subcatOpen ? (
-        <>
-          <Filter filter={filter} setFilter={setFilter} />
-          <ul className={css.list} ref={containerRef}>
-            {visibleSubcategories?.map(point => (
-              <SubcategoriesPart
-                key={point.id}
-                point={point}
-                setCategoryForDetailsPart={setCategoryForDetailsPart}
-                chosenPoints={chosenPoints}
-                togglePoints={togglePoints}
-                setOpenDetails={setOpenDetails}
-                openDetails={openDetails}
-                categoryForDetailsPart={categoryForDetailsPart}
-                spares={spares}
-                setSpares={setSpares}
-                setChosenSpares={setChosenSpares}
-                chosenSpares={chosenSpares}
-                containerRef={containerRef}
-                filter={filter}
-              />
-            ))}
-          </ul>
-        </>
+        openCamera ? (
+          <PhotoCapturePage
+            diag={true}
+            carId={carId}
+            setOpenCamera={setOpenCamera}
+          />
+        ) : (
+          <>
+            <Filter filter={filter} setFilter={setFilter} />
+            <ul className={css.list} ref={containerRef}>
+              {visibleSubcategories?.map(point => (
+                <SubcategoriesPart
+                  key={point.id}
+                  point={point}
+                  setCategoryForDetailsPart={setCategoryForDetailsPart}
+                  chosenPoints={chosenPoints}
+                  togglePoints={togglePoints}
+                  setOpenDetails={setOpenDetails}
+                  openDetails={openDetails}
+                  categoryForDetailsPart={categoryForDetailsPart}
+                  spares={spares}
+                  setSpares={setSpares}
+                  setChosenSpares={setChosenSpares}
+                  chosenSpares={chosenSpares}
+                  containerRef={containerRef}
+                  filter={filter}
+                />
+              ))}
+            </ul>
+          </>
+        )
       ) : (
         <TogglePoints
           togglePoints={togglePoints}
@@ -368,27 +379,30 @@ export default function DiagnosticScreen() {
         />
       )}
 
-      <BottomPart
-        back={
-          subcatOpen
-            ? () => setSubcatOpen(false)
-            : savedSparesPartOpen
-            ? handleCloseSavedScreen()
-            : '/main'
-        }
-        button={subcatOpen}
-        btnToggle={true}
-        // next="diagnostics-subcategories"
-        categ={subcatOpen && !savedSparesPartOpen}
-        next={
-          !subcatOpen
-            ? () => setSubcatOpen(true)
-            : () => setSavedSparesPartOpen(true)
-        }
-        chosenPoints={chosenPoints}
-        savedPartBottom={savedSparesPartOpen}
-        handleCreateDiag={() => handleCreateDiag()}
-      />
+      {!openCamera && (
+        <BottomPart
+          back={
+            subcatOpen
+              ? () => setSubcatOpen(false)
+              : savedSparesPartOpen
+              ? handleCloseSavedScreen()
+              : '/main'
+          }
+          button={subcatOpen}
+          btnToggle={true}
+          // next="diagnostics-subcategories"
+          categ={subcatOpen && !savedSparesPartOpen}
+          next={
+            !subcatOpen
+              ? () => setSubcatOpen(true)
+              : () => setSavedSparesPartOpen(true)
+          }
+          chosenPoints={chosenPoints}
+          savedPartBottom={savedSparesPartOpen}
+          handleCreateDiag={() => handleCreateDiag()}
+          setOpenCamera={setOpenCamera}
+        />
+      )}
     </div>
   );
 }

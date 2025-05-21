@@ -164,3 +164,17 @@
 .iconWrench {
   fill: var(--red);
 }
+
+.itemSaved {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btnBoxCompleted {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+}
