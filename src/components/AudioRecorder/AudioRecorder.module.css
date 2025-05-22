@@ -9,10 +9,10 @@
   height: 75px;
   width: 100%;
   max-width: 378px;
-  padding-right: 10px;
+  /* padding-right: 10px;
   padding-left: 10px;
-  padding-top: 4px;
-
+  padding-top: 4px; */
+  padding: 0 9px;
   border-top: 1px dashed var(--main-gray);
 
   /* place-items: center; */
@@ -57,6 +57,28 @@
   fill: var(--red);
 }
 
+.cancel {
+  width: 41px;
+  height: 41px;
+  flex-shrink: 0;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  color: var(--bg-secondary);
+
+  border: none;
+  background-color: var(--red);
+}
+
+.cancel svg {
+  width: 24px;
+  height: 24px;
+}
+
 .microBtn {
   width: 30px;
   height: 30px;
@@ -67,6 +89,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.active {
+  border: 1px solid var(--red);
+}
+
+.active .icon {
+  fill: var(--red);
 }
 
 @keyframes pulse {
@@ -92,18 +122,24 @@
 }
 
 .btnCheck {
-  width: 26px;
-  height: 26px;
-  border-radius: 26px;
+  width: 41px;
+  height: 41px;
+  flex-shrink: 0;
+  border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--green);
+
+  cursor: pointer;
+  color: var(--bg-secondary);
+
   border: none;
+  background-color: var(--green);
 }
 .iconCheck {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   fill: var(--light-gray);
 }
 

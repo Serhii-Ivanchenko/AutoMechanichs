@@ -3,9 +3,9 @@ import { BsFillMicFill } from 'react-icons/bs';
 import { BsFillDoorOpenFill } from 'react-icons/bs';
 import { GiSoundWaves } from 'react-icons/gi';
 import { MdGraphicEq } from 'react-icons/md';
-import { FaPlay, FaPause } from 'react-icons/fa';
+import { FaPlay, FaPause, FaArrowLeft } from 'react-icons/fa';
 import { RxCrossCircled } from 'react-icons/rx';
-import { BsCheckLg } from 'react-icons/bs';
+import { BsCheckLg, BsFillStopFill } from 'react-icons/bs';
 
 import css from './AudioRecorder.module.css';
 import { useEffect, useRef, useState } from 'react';
@@ -111,11 +111,11 @@ export default function AudioRecorder({ setRecordAudio }) {
               ''
             )}
             <button
-              className={css.microBtn}
+              className={`${css.microBtn} ${isRecording ? css.active : ''}`}
               onClick={isRecording ? stopRecording : startRecording}
             >
               {isRecording ? (
-                <BsRecordCircle className={css.icon} />
+                <BsFillStopFill className={css.icon} />
               ) : (
                 <BsFillMicFill className={css.icon} />
               )}
@@ -152,12 +152,17 @@ export default function AudioRecorder({ setRecordAudio }) {
             <BsCheckLg className={css.iconCheck} />
           </button>
         ) : (
-          ''
+          // <button className={css.btn} onClick={() => setRecordAudio(false)}>
+          //   <BsFillDoorOpenFill className={css.iconDoor} />
+          // </button>
+          <button
+            type="button"
+            onClick={() => setRecordAudio(false)}
+            className={css.cancel}
+          >
+            <FaArrowLeft  />
+          </button>
         )}
-
-        <button className={css.btn} onClick={() => setRecordAudio(false)}>
-          <BsFillDoorOpenFill className={css.iconDoor} />
-        </button>
       </div>
     </div>
   );
