@@ -176,6 +176,65 @@ export const createDiagnostic = createAsyncThunk(
   }
 );
 
+// ! Repair
+
+// Get repair info
+export const getRepair = createAsyncThunk(
+  "cars/getRepair",
+  async (repair_id, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const response = await axiosInstance.get(`/acc/get_repair/${repair_id}`, {
+        headers: {
+          // "X-Api-Key": "YA7NxysJ",
+          "company-id": serviceId,
+        },
+      });
+      console.log("getRepair", response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
+// Update Repair Info
+export const updateRepair = createAsyncThunk(
+  "cars/updateRepair",
+  async (updatedRepairData, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const { repair_id, ...repairData } = updatedRepairData;
+      const response = await axiosInstance.patch(
+        `/acc/update_repair/${repair_id}`,
+        repairData,
+        {
+          headers: {
+            // "X-Api-Key": "YA7NxysJ",
+            "company-id": serviceId,
+          },
+        }
+      );
+      console.log("updateRepair", response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
 // ! New car
 
 // Create new car

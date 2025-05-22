@@ -7,7 +7,9 @@ import {
   getAllCars,
   getDiagnostic,
   getNodesAndParts,
+  getRepair,
   recognizeLicensePlate,
+  updateRepair,
   uploadCarPhotos,
 } from './operations.js';
 
@@ -40,7 +42,7 @@ const carsSlice = createSlice({
       .addCase(getAllCars.pending, handlePending)
       .addCase(getAllCars.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cars = action.payload.records;
+        state.cars = action.payload;
       })
       .addCase(getAllCars.rejected, handleRejected)
 
@@ -104,6 +106,33 @@ const carsSlice = createSlice({
       })
       .addCase(createDiagnostic.rejected, (state, action) => {
         state.isDiagCreateLoading = false;
+        state.error = action.payload;
+      })
+
+      // ! Repair
+
+      .addCase(getRepair.pending, (state, action) => {
+        state.isRepairLoading = true;
+        state.error = null;
+      })
+      .addCase(getRepair.fulfilled, (state, action) => {
+        state.isRepairLoading = false;
+        state.repairDetails = action.payload;
+      })
+      .addCase(getRepair.rejected, (state, action) => {
+        state.isRepairLoading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(updateRepair.pending, (state, action) => {
+        state.isRepairLoading = true;
+        state.error = null;
+      })
+      .addCase(updateRepair.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(updateRepair.rejected, (state, action) => {
+        state.isRepairLoading = false;
         state.error = action.payload;
       })
 
