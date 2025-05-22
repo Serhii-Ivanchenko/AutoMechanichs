@@ -30,8 +30,8 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
   console.log('cars', cars);
 
-  const carsInWork = cars.filter(car => car?.status !== 'complete');
-  const carsDone = cars.filter(car => car?.status === 'complete');
+  const carsInWork = cars?.filter(car => car?.status !== 'complete');
+  const carsDone = cars?.filter(car => car?.status === 'complete');
   // console.log('carsInWork', carsInWork);
   // console.log('carsDone', carsDone);
 
