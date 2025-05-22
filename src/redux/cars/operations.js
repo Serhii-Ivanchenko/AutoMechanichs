@@ -299,3 +299,32 @@ export const uploadCarPhotos = createAsyncThunk(
     }
   }
 );
+
+// Update existing car
+
+export const updateCar = createAsyncThunk(
+  "cars/updateCar",
+  async (carDataToUpdate, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      const { car_id, ...dataToUpdate } = carDataToUpdate;
+
+      const response = await axiosInstance.patch(
+        `/crm/update_car/${car_id}`,
+        dataToUpdate,
+        {
+          headers: {
+            // "X-Api-Key": "YA7NxysJ",
+            "company-id": serviceId,
+          },
+        }
+      );
+      console.log("updateCar", response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);

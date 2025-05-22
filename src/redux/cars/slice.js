@@ -9,6 +9,7 @@ import {
   getNodesAndParts,
   getRepair,
   recognizeLicensePlate,
+  updateCar,
   updateRepair,
   uploadCarPhotos,
 } from './operations.js';
@@ -159,6 +160,24 @@ const carsSlice = createSlice({
         state.isSavingCarLoading = false;
       })
       .addCase(uploadCarPhotos.rejected, (state, action) => {
+        state.isSavingCarLoading = false;
+        state.error = action.payload;
+      })
+
+      // Update existing car
+      .addCase(updateCar.pending, (state, action) => {
+        state.isSavingCarLoading = true;
+        state.error = null;
+      })
+      .addCase(updateCar.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.cars = state.cars.map(car =>
+          car.id === action.payload.car_id
+            ? { ...car, ...action.payload.updated_fields } 
+            : car
+        );
+      })
+      .addCase(updateCar.rejected, (state, action) => {
         state.isSavingCarLoading = false;
         state.error = action.payload;
       }),
