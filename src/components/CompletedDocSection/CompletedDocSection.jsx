@@ -9,6 +9,7 @@ import css from './CompletedDocSection.module.css';
 import { BsUiRadiosGrid, BsWrench } from 'react-icons/bs';
 import { useEffect } from 'react';
 import { getDiagnostic } from '../../redux/cars/operations';
+import { clearDiag } from '../../redux/cars/slice';
 
 export default function CompletedDocSection() {
   const { carId } = useParams();
@@ -22,11 +23,12 @@ export default function CompletedDocSection() {
 
   const dispatch = useDispatch();
 
-  const id = '682ce6104f095bf3de2739ef';
+  // const id = '682ce6104f095bf3de2739ef';
+  const id = particularCar?.diagnostic_id;
 
   useEffect(() => {
     dispatch(getDiagnostic(id));
-  }, [id, dispatch]);
+  }, [id, dispatch, particularCar]);
 
   const completedDiag = useSelector(selectDiagnostic);
   const completedDiagWithId = completedDiag?.nodes?.map(diag => ({
@@ -35,6 +37,9 @@ export default function CompletedDocSection() {
   }));
 
   // console.log('completedDiagWithId', completedDiagWithId);
+  useEffect(() => {
+    dispatch(clearDiag());
+  }, [id, dispatch]);
 
   return (
     <div className={css.wrapper}>

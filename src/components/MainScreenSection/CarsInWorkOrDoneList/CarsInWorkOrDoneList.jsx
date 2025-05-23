@@ -38,12 +38,12 @@ export default function CarsInWorkOrDoneList({ done, list }) {
             >
               <Link
                 to={
-                  item?.status === 'diagnostic'
+                  item?.diagnostic_id
+                    ? `/car/${item.car_id}/completed-doc`
+                    : item?.status === 'diagnostic'
                     ? `/car/${item.car_id}/diagnostics`
                     : item?.status === 'repair'
                     ? `/car/${item.car_id}/repair`
-                    : item?.status === 'complete'
-                    ? `/car/${item.car_id}/completed-doc`
                     : ''
                 }
                 // to={`/car/${item.car_id}/update-car`}
