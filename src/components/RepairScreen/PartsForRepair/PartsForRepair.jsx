@@ -30,70 +30,87 @@ export default function PartsForRepair({
 
   return (
     <div className={css.wrapper}>
-      <p className={css.title}>Запчастини</p>
-      <ul
-        className={`${css.listOfItems} ${css.listParts} ${
-          completedRepair && css.listCopmleted
-        }`}
-      >
-        {statusParts?.map((part, index) => (
-          <li
-            key={index}
-            className={`${css.item} ${completedRepair && css.itemCompleted}`}
+      {statusParts?.length > 0 && (
+        <>
+          {' '}
+          <p className={css.title}>Запчастини</p>
+          <ul
+            className={`${css.listOfItems} ${css.listParts} ${
+              completedRepair && css.listCopmleted
+            }`}
           >
-            <p className={css.name}>{part.name}</p>
-            {completedRepair ? (
-              <BsWrench
-                size={18}
-                className={`${css.icon} ${
-                  part?.status_repair === 1 ? css.iconGreen : css.iconRed
+            {statusParts?.map((part, index) => (
+              <li
+                key={index}
+                className={`${css.item} ${
+                  completedRepair && css.itemCompleted
                 }`}
-              />
-            ) : (
-              <button
-                type="button"
-                className={`${css.btn} ${
-                  part?.status_repair === 1 ? css.btnGreen : ''
-                }`}
-                onClick={() => handleChangeStatus(part?.id)}
               >
-                <BsWrench size={18} className={css.icon} />
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
-      <p className={css.title}>Послуги</p>
-      <ul
-        className={`${css.listOfItems} ${completedRepair && css.listCopmleted}`}
-      >
-        {statusServices?.map((service, index) => (
-          <li
-            key={index}
-            className={`${css.item} ${completedRepair && css.itemCompleted}`}
+                <p className={css.name}>{part.name}</p>
+                {completedRepair ? (
+                  <BsWrench
+                    size={18}
+                    className={`${css.icon} ${
+                      part?.status_repair === 1 ? css.iconGreen : css.iconRed
+                    }`}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    className={`${css.btn} ${
+                      part?.status_repair === 1 ? css.btnGreen : ''
+                    }`}
+                    onClick={() => handleChangeStatus(part?.id)}
+                  >
+                    <BsWrench size={18} className={css.icon} />
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {statusServices?.length > 0 && (
+        <>
+          {' '}
+          <p className={css.title}>Послуги</p>
+          <ul
+            className={`${css.listOfItems} ${
+              completedRepair && css.listCopmleted
+            }`}
           >
-            <p className={css.name}>{service.name}</p>
-            {completedRepair ? (
-              <BsWrench
-                size={18}
-                className={`${css.icon} ${
-                  service?.status_repair === 1 ? css.iconGreen : css.iconRed
+            {statusServices?.map((service, index) => (
+              <li
+                key={index}
+                className={`${css.item} ${
+                  completedRepair && css.itemCompleted
                 }`}
-              />
-            ) : (
-              <button
-                type="button"
-                className={`${css.btn} ${
-                  service?.status_repair === 1 ? css.btnGreen : ''
-                }`}
-                onClick={() => handleChangeStatusService(service?.id)}
               >
-                <BsWrench size={18} className={css.icon} />
-              </button>
-            )}{' '}
-          </li>
-        ))}
-      </ul>
+                <p className={css.name}>{service.name}</p>
+                {completedRepair ? (
+                  <BsWrench
+                    size={18}
+                    className={`${css.icon} ${
+                      service?.status_repair === 1 ? css.iconGreen : css.iconRed
+                    }`}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    className={`${css.btn} ${
+                      service?.status_repair === 1 ? css.btnGreen : ''
+                    }`}
+                    onClick={() => handleChangeStatusService(service?.id)}
+                  >
+                    <BsWrench size={18} className={css.icon} />
+                  </button>
+                )}{' '}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 }
