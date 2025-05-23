@@ -32,6 +32,24 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
   const date = sessionStorage.getItem('date');
 
+  const checkDate = dayOfRecord => {
+    const currentDate = new Date(date);
+    // const dateOfRecord = time;
+
+    // const [hours, minutes] = timeOfRecord.split(':').map(Number);
+    const dateOfRecord = new Date(dayOfRecord);
+    // dateOfRecord.setHours(hours, minutes, 0, 0);
+
+    console.log(
+      'dateOfRecord > currentTime',
+      new Date(dateOfRecord) > new Date(currentDate)
+    );
+    // console.log('dateOfRecord', new Date(dateOfRecord));
+    // console.log('currentTime', new Date(currentTime));
+
+    return new Date(dateOfRecord) > new Date(currentDate);
+  };
+
   const carsInWork = cars?.filter(car =>
     car?.status === 'diagnostic' ? !car?.diagnostic_id : !car.complete_date
   );
@@ -40,6 +58,9 @@ export default function MainScreenSection({ array1, array2, wage }) {
   );
   // console.log('carsInWork', carsInWork);
   console.log('carsDone', carsDone);
+
+  const filteredCarsInWork = carsInWork.filter(car => !checkDate(car.date));
+  console.log('filteredCarsInWork', filteredCarsInWork);
 
   const carsDoneForParticularDay = carsDone?.filter(
     car => car.complete_date === date
@@ -74,7 +95,7 @@ export default function MainScreenSection({ array1, array2, wage }) {
         <DiagnosticScreen setDiagOpen={setDiagOpen} />
       ) : (
         <> */}
-      <CarsInWorkOrDoneList list={carsInWork} />
+      <CarsInWorkOrDoneList list={filteredCarsInWork} />
 
       <Link to="/add-car" className={css.btnAddPhoto}>
         <IoCarSport className={css.icon} />

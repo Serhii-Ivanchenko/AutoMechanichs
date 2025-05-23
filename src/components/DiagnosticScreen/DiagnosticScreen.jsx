@@ -63,6 +63,12 @@ export default function DiagnosticScreen() {
 
   // console.log('chosenSpares', chosenSpares);
   // console.log('spares', spares);
+  // const pointsForCategories = togglePoints?.map(point => ({ id: point.id, label: point.name }))
+  useEffect(() => {
+    setChosenPoints(
+      togglePoints?.map(point => ({ id: point.id, label: point.name }))
+    );
+  }, [togglePoints]);
 
   const handleCheckboxChange = (event, id, label) => {
     setChosenPoints(prevPoints => {
