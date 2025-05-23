@@ -36,9 +36,14 @@ const carsSlice = createSlice({
     clearChosenDate: state => {
       state.chosenDate = '';
     },
+    deleteCarInfo: state => {
+      state.carInfo = {};
+      state.isRecognitionLoading = false;
+      state.error = null;
+    },
     clearDiag: state => {
-      state.diagnostic = {}
-    }
+      state.diagnostic = {};
+    },
   },
   extraReducers: builder =>
     builder
@@ -176,7 +181,7 @@ const carsSlice = createSlice({
         state.isLoading = false;
         state.cars = state.cars.map(car =>
           car.id === action.payload.car_id
-            ? { ...car, ...action.payload.updated_fields } 
+            ? { ...car, ...action.payload.updated_fields }
             : car
         );
       })
@@ -185,6 +190,7 @@ const carsSlice = createSlice({
         state.error = action.payload;
       }),
 });
-export const { setChosenDate, clearChosenDate, clearDiag } = carsSlice.actions;
+export const { setChosenDate, clearChosenDate, deleteCarInfo, clearDiag } =
+  carsSlice.actions;
 
 export default carsSlice.reducer;
