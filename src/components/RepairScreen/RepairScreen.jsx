@@ -8,16 +8,21 @@ import { useEffect, useRef, useState } from 'react';
 import SubcategoriesPart from '../DiagnosticScreen/SubcategoriesPart/SubcategoriesPart';
 import css from './RepairScreen.module.css';
 import SavedSparesPart from '../DiagnosticScreen/SavedSparesPart/SavedSparesPart.jsx';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectCars,
   selectNodesAndPartsForDiagnostics,
   selectRepair,
 } from '../../redux/cars/selectors.js';
-import { getNodesAndParts, getRepair } from '../../redux/cars/operations.js';
+import {
+  getNodesAndParts,
+  getRepair,
+  updateRepair,
+} from '../../redux/cars/operations.js';
 import Filter from '../DiagnosticScreen/Filter/Filter.jsx';
 import PartsForRepair from './PartsForRepair/PartsForRepair.jsx';
+import toast from 'react-hot-toast';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -34,6 +39,8 @@ export default function RepairScreen() {
   const [statusServices, setStatusServices] = useState([]);
   const [completedRepair, setCompletedRepair] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { carId } = useParams();
   // console.log('carId', carId);
 
@@ -42,7 +49,7 @@ export default function RepairScreen() {
 
   const particularCar = cars?.find(car => car?.car_id === Number(carId));
 
-  const id = '6814e2fa5efa551c3ce8baf2';
+  const id = '6830857da0bfeec5d409915b';
 
   useEffect(() => {
     dispatch(getRepair(id));
@@ -74,6 +81,20 @@ export default function RepairScreen() {
     };
 
     console.log('dataToUpdate', dataToUpdate);
+
+    dispatch(updateRepair(dataToUpdate))
+      .unwrap()
+      .then(() => {
+        toast.success('Ремонт успішно оновлено', {
+          position: 'top-center',
+          duration: 3000,
+          style: {
+            background: 'var(--bg-input)',
+            color: 'var(--white)',
+          },
+        });
+        navigate('/main');
+      });
   };
 
   // console.log('particularCar', particularCar);
