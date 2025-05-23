@@ -62,9 +62,15 @@ export default function MainScreenSection({ array1, array2, wage }) {
   const filteredCarsInWork = carsInWork.filter(car => !checkDate(car.date));
   console.log('filteredCarsInWork', filteredCarsInWork);
 
-  const carsDoneForParticularDay = carsDone?.filter(
-    car => car.complete_date === date
+  const carsArray = filteredCarsInWork.filter(
+    car => new Date(car.date) < new Date() || car.date.split('T')[0] === date
   );
+
+  console.log('carsArray', carsArray);
+
+  // const carsDoneForParticularDay = carsDone?.filter(
+  //   car => car.complete_date === date
+  // );
 
   return (
     <div className={css.sectionWrapper}>
@@ -95,7 +101,7 @@ export default function MainScreenSection({ array1, array2, wage }) {
         <DiagnosticScreen setDiagOpen={setDiagOpen} />
       ) : (
         <> */}
-      <CarsInWorkOrDoneList list={filteredCarsInWork} />
+      <CarsInWorkOrDoneList list={carsArray} />
 
       <Link to="/add-car" className={css.btnAddPhoto}>
         <IoCarSport className={css.icon} />
