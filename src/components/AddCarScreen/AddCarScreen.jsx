@@ -6,7 +6,7 @@ import {
   BsFillCaretDownFill,
   BsCameraFill,
 } from 'react-icons/bs';
-import { IoLogoAndroid, IoMdClose } from 'react-icons/io';
+import { IoMdClose } from 'react-icons/io';
 import { IoMdCheckmark } from 'react-icons/io';
 import { SlSpeedometer } from 'react-icons/sl';
 import carData from '../../utils/output.json';
@@ -25,8 +25,9 @@ import {
   selectIsRecognitionLoading,
 } from '../../redux/cars/selectors';
 import LoaderSvg from '../Loader/LoaderSvg.jsx';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { deleteCarInfo } from '../../redux/cars/slice.js';
 
 export default function AddCarScreen() {
   const [chosenMake, setChosenMake] = useState({});
@@ -347,6 +348,11 @@ export default function AddCarScreen() {
       });
   };
 
+  const onCloseBtnClick = () => {
+    dispatch(deleteCarInfo());
+    navigate(`/main`);
+  };
+
   return isRecoginitionLoading ? (
     <LoaderSvg />
   ) : (
@@ -567,9 +573,10 @@ export default function AddCarScreen() {
       </div>
       <div className={`${css.btnsWrapper} ${cameraOn ? css.isCameraOn : ''}`}>
         {!cameraOn ? (
-          <Link className={css.cancelBtn} to="/main">
-            <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-          </Link>
+          <IoMdClose
+            className={`${css.cancelBtn} ${css.cross}`}
+            onClick={onCloseBtnClick}
+          />
         ) : (
           <button className={css.cancelBtn} onClick={stopCamera}>
             <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
@@ -577,12 +584,6 @@ export default function AddCarScreen() {
         )}
 
         <div>
-          {/* <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            style={{ display: 'none' }}
-          /> */}
           <canvas ref={canvasRef} style={{ display: 'none' }} />
           <button
             type="button"
@@ -599,13 +600,11 @@ export default function AddCarScreen() {
         mileage &&
         vin &&
         plate ? (
-          // <Link className={css.acceptBtn} to="/car/:carId/photos">
           <IoMdCheckmark
             className={`${css.acceptBtn} ${css.check}`}
             onClick={onCheckmarkBtnClick}
           />
         ) : (
-          // </Link>
           <div className={css.emptyDiv}></div>
         )}
       </div>
