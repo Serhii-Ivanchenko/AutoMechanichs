@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   createNewCar,
   recognizeLicensePlate,
+  updateCar,
 } from '../../redux/cars/operations';
 import {
   // selectCarId,
@@ -111,7 +112,7 @@ export default function AddCarScreen() {
     }
   };
 
-  console.log(cars);
+  console.log('cars', cars);
 
   useEffect(() => {
     if (!carId || cars?.length === 0) return;
@@ -119,6 +120,7 @@ export default function AddCarScreen() {
     const displayedCar = cars?.find(
       car => Number(car?.car_id) === Number(carId)
     );
+    console.log('displayedCar', displayedCar);
 
     const existedMake = carData?.find(
       car => car?.make?.toLocaleLowerCase() === displayedCar?.make.toLowerCase()
@@ -139,12 +141,14 @@ export default function AddCarScreen() {
     });
 
     setChosenYear(displayedCar?.year);
-    setMileage(displayedCar?.mileage);
+    setMileage(Number(displayedCar?.mileage) / 1000);
     setPlate(displayedCar?.plate);
+    setVin(displayedCar?.vin);
     setPhoto(existedPhoto);
   }, [carId]);
 
   useEffect(() => {
+    if (Object.keys(carInfo).length === 0) return;
     setPlate(carInfo?.license_plate);
     setChosenYear(carInfo?.year);
     setVin(carInfo?.vin || null);
@@ -292,37 +296,24 @@ export default function AddCarScreen() {
     )
       return;
 
-    const carData = {
-      license_plate: plate,
-      make: chosenMake?.make,
-      model: chosenModel?.model_name,
-      year: Number(chosenYear),
-      color: carInfo?.color ? carInfo?.color : '',
-      capacity: carInfo?.capacity ? carInfo?.capacity : '',
-      vin: vin,
-      mileage: Number(mileage) * 1000,
-      photo: photo,
-    };
+    if (carId) {
+      const carData = {
+        car_id: carId,
+        plate,
+        vin,
+        year: Number(chosenYear),
+        make: chosenMake?.make,
+        model: chosenModel?.model_name,
+        photo_url: photo,
+        mileage: Number(mileage) * 1000,
+      };
 
-    console.log('carData', carData);
-    dispatch(createNewCar(carData))
-      .unwrap()
-      .then(result => {
-        console.log('result', result);
+      console.log('carDataWithId', carData);
 
-        if (
-          result.message === 'Авто з таким номером уже існує в процесі обробки.'
-        ) {
-          toast.error('Авто з таким номером вже існує', {
-            position: 'top-center',
-            style: {
-              background: 'var(--bg-input)',
-              color: 'var(--white)FFF',
-            },
-          });
-        }
-        if (result.car_id) {
-          toast.success('Авто успішно створене', {
+      dispatch(updateCar(carData))
+        .unwrap()
+        .then(() => {
+          toast.success('Інформація про авто успішно оновлена', {
             position: 'top-center',
             duration: 3000,
             style: {
@@ -330,22 +321,77 @@ export default function AddCarScreen() {
               color: 'var(--white)FFF',
             },
           });
-          navigate(`/car/${result.car_id}/photos`);
-        } else {
-          console.error('ID не найден в ответе сервера:', result);
-        }
-      })
-      .catch(err => {
-        console.log(err);
+          navigate(`/car/${carId}/photos`);
+        })
+        .catch(err => {
+          console.log(err);
 
-        toast.error('Щось сталося, спробуйте ще раз', {
-          position: 'top-center',
-          style: {
-            background: 'var(--bg-input)',
-            color: 'var(--white)FFF',
-          },
+          toast.error('Щось сталося, спробуйте ще раз', {
+            position: 'top-center',
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)FFF',
+            },
+          });
         });
-      });
+    } else {
+      const carData = {
+        license_plate: plate,
+        make: chosenMake?.make,
+        model: chosenModel?.model_name,
+        year: Number(chosenYear),
+        color: carInfo?.color ? carInfo?.color : '',
+        capacity: carInfo?.capacity ? carInfo?.capacity : '',
+        vin: vin,
+        mileage: Number(mileage) * 1000,
+        photo: photo,
+      };
+
+      console.log('carDataWithoutId', carData);
+
+      dispatch(createNewCar(carData))
+        .unwrap()
+        .then(result => {
+          console.log('result', result);
+
+          if (
+            result.message ===
+            'Авто з таким номером уже існує в процесі обробки.'
+          ) {
+            toast.error('Авто з таким номером вже існує', {
+              position: 'top-center',
+              style: {
+                background: 'var(--bg-input)',
+                color: 'var(--white)FFF',
+              },
+            });
+          }
+          if (result.car_id) {
+            toast.success('Авто успішно створене', {
+              position: 'top-center',
+              duration: 3000,
+              style: {
+                background: 'var(--bg-input)',
+                color: 'var(--white)FFF',
+              },
+            });
+            navigate(`/car/${result.car_id}/photos`);
+          } else {
+            console.error('ID не найден в ответе сервера:', result);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+
+          toast.error('Щось сталося, спробуйте ще раз', {
+            position: 'top-center',
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)FFF',
+            },
+          });
+        });
+    }
   };
 
   const onCloseBtnClick = () => {

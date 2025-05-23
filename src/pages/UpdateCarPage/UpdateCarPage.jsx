@@ -1,3 +1,5 @@
+import AddCarScreen from '../../components/AddCarScreen/AddCarScreen';
+
 export default function UpdateCarPage() {
-    return <div>UpdateCarPage</div>;
-};
+  return <AddCarScreen />;
+}
