@@ -12,10 +12,12 @@ import SavedSparesPart from './SavedSparesPart/SavedSparesPart';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectCars,
+  selectDate,
   selectNodesAndPartsForDiagnostics,
 } from '../../redux/cars/selectors';
 import {
   createDiagnostic,
+  getAllCars,
   getDiagnostic,
   getNodesAndParts,
 } from '../../redux/cars/operations';
@@ -45,6 +47,8 @@ export default function DiagnosticScreen() {
   const particularCar = cars?.find(car => car?.car_id === Number(carId));
   // console.log('particularCar', particularCar);
   //
+
+  const date = sessionStorage.getItem('date');
 
   useEffect(() => {
     dispatch(getNodesAndParts());
@@ -276,16 +280,18 @@ export default function DiagnosticScreen() {
     dispatch(createDiagnostic(dataToSend))
       .unwrap()
       .then(() => {
-        console.log('Діагностика успішно створена');
-        toast.success('Діагностика успішно створена', {
-          position: 'top-center',
-          duration: 3000,
-          style: {
-            background: 'var(--bg-input)',
-            color: 'var(--white)',
-          },
+        dispatch(getAllCars({ date, mechanic_id: 1 })).then(() => {
+          console.log('Діагностика успішно створена');
+          toast.success('Діагностика успішно створена', {
+            position: 'top-center',
+            duration: 3000,
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)',
+            },
+          });
+          navigate('/main');
         });
-        navigate('/main');
       });
   };
 
