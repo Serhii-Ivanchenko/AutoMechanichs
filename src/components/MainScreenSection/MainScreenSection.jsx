@@ -63,7 +63,9 @@ export default function MainScreenSection({ array1, array2, wage }) {
   console.log('filteredCarsInWork', filteredCarsInWork);
 
   const carsArray = filteredCarsInWork.filter(
-    car => new Date(car.date) < new Date() || car.date.split('T')[0] === date
+    car =>
+      car.date.split('T')[0] < new Date().toISOString().split('T')[0] ||
+      car.date.split('T')[0] === date
   );
 
   console.log('carsArray', carsArray);
