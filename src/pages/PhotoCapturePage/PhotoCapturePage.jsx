@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadCarPhotos } from '../../redux/cars/operations';
+import autoPhoto from '../../assets/images/absentAutoImg.webp';
+
 
 export default function PhotoCapturePage() {
   const videoRef = useRef(null);
@@ -168,9 +170,13 @@ export default function PhotoCapturePage() {
         photos.length > 0 ? (
           <div className={css.photoPreviewWrapper}>
             <img
-              src={photoPreview}
+              src={photoPreview || autoPhoto}
               alt="photo preview"
               className={css.photoPreview}
+              onError={e => {
+                e.target.onerror = null;
+                e.target.src = autoPhoto;
+              }}
             />
             <p className={css.photoQuantity}>{photos?.length}</p>
           </div>

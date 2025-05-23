@@ -54,7 +54,7 @@ export default function AddCarScreen() {
   const videoRef = useRef(null);
 
   const carInfo = useSelector(selectCarInfo);
-  const isRecoginitionLoading = useSelector(selectIsRecognitionLoading);
+  const isRecognitionLoading = useSelector(selectIsRecognitionLoading);
   // const newCarId = useSelector(selectCarId);
 
   const cars = useSelector(selectCars);
@@ -148,7 +148,8 @@ export default function AddCarScreen() {
   }, [carId]);
 
   useEffect(() => {
-    if (Object.keys(carInfo).length === 0) return;
+    if (!carInfo || Object.keys(carInfo).length === 0) return;
+
     setPlate(carInfo?.license_plate);
     setChosenYear(carInfo?.year);
     setVin(carInfo?.vin || null);
@@ -377,7 +378,7 @@ export default function AddCarScreen() {
             });
             navigate(`/car/${result.car_id}/photos`);
           } else {
-            console.error('ID не найден в ответе сервера:', result);
+            console.error('ID не знайдено:', result);
           }
         })
         .catch(err => {
@@ -399,7 +400,7 @@ export default function AddCarScreen() {
     navigate(`/main`);
   };
 
-  return isRecoginitionLoading ? (
+  return isRecognitionLoading ? (
     <LoaderSvg />
   ) : (
     <>
@@ -410,9 +411,25 @@ export default function AddCarScreen() {
           <>
             <div className={css.carPhoto}>
               {photo ? (
-                <img src={photo} alt="car photo" className={css.carImg} />
+                <img
+                  src={photo || autoPhoto}
+                  alt="car photo"
+                  className={css.carImg}
+                  onError={e => {
+                    e.target.onerror = null;
+                    e.target.src = autoPhoto;
+                  }}
+                />
               ) : (
-                <img src={autoPhoto} alt="car photo" className={css.carImg} />
+                <img
+                  src={autoPhoto || autoPhoto}
+                  alt="car photo"
+                  className={css.carImg}
+                  onError={e => {
+                    e.target.onerror = null;
+                    e.target.src = autoPhoto;
+                  }}
+                />
               )}
             </div>
 
