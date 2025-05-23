@@ -6,29 +6,29 @@ import {
   BsFillCaretDownFill,
   BsCameraFill,
 } from 'react-icons/bs';
+import { IoLogoAndroid, IoMdClose } from 'react-icons/io';
+import { IoMdCheckmark } from 'react-icons/io';
 import { SlSpeedometer } from 'react-icons/sl';
 import carData from '../../utils/output.json';
 import { useEffect, useRef, useState } from 'react';
 import AddCarPopup from './AddCarPopup/AddCarPopup';
 import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { recognizeLicensePlate } from '../../redux/cars/operations';
 import {
+  createNewCar,
+  recognizeLicensePlate,
+} from '../../redux/cars/operations';
+import {
+  // selectCarId,
   selectCarInfo,
   selectCars,
   selectIsRecognitionLoading,
 } from '../../redux/cars/selectors';
 import LoaderSvg from '../Loader/LoaderSvg.jsx';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
-export default function AddCarScreen({
-  photo,
-  setPhoto,
-  stream,
-  setCarMake,
-  setCarModel,
-  setCarYear,
-  setCarMileage,
-}) {
+export default function AddCarScreen() {
   const [chosenMake, setChosenMake] = useState({});
   const [chosenModel, setChosenModel] = useState({});
   const [makePopupOpen, setMakePopupOpen] = useState(false);
@@ -42,6 +42,7 @@ export default function AddCarScreen({
   const [displayedYearArr, setDisplayedYearArr] = useState([]);
   const [chosenYear, setChosenYear] = useState('');
   const [mileage, setMileage] = useState('');
+  const [vin, setVin] = useState('');
   const [plate, setPlate] = useState('');
   const dispatch = useDispatch();
 
@@ -52,11 +53,64 @@ export default function AddCarScreen({
 
   const carInfo = useSelector(selectCarInfo);
   const isRecoginitionLoading = useSelector(selectIsRecognitionLoading);
+  // const newCarId = useSelector(selectCarId);
 
   const cars = useSelector(selectCars);
-  const carId = null;
+  const params = useParams();
+  const carId = params?.carId;
   console.log('carInfo', carInfo);
-  console.log("cars",cars);
+  // console.log('cars', cars);
+  console.log('carId', carId);
+
+  const canvasRef = useRef(null);
+  const [cameraOn, setCameraOn] = useState(false);
+  const [videoStream, setVideoStream] = useState(null);
+  const [photo, setPhoto] = useState(null);
+
+  const navigate = useNavigate();
+
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setVideoStream(stream);
+      setCameraOn(true);
+    } catch (err) {
+      console.error('Ошибка при доступе к камере', err);
+    }
+  };
+
+  const stopCamera = () => {
+    setCameraOn(false);
+    setVideoStream(null);
+    const tracks = videoRef.current?.srcObject?.getTracks();
+    tracks?.forEach(track => track.stop());
+  };
+
+  const takePhoto = setState => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+    const dataUrl = canvas.toDataURL('image/jpeg');
+    // setPhoto(dataUrl);
+    setState(dataUrl);
+    stopCamera();
+  };
+
+  const handleClick = setState => {
+    if (!cameraOn) {
+      startCamera();
+    } else {
+      takePhoto(setState);
+    }
+  };
+
+  console.log(cars);
 
   useEffect(() => {
     if (!carId || cars?.length === 0) return;
@@ -86,14 +140,29 @@ export default function AddCarScreen({
     setChosenYear(displayedCar?.year);
     setMileage(displayedCar?.mileage);
     setPlate(displayedCar?.plate);
-
-    setCarMake(existedMake?.make);
-    setCarModel(existedModel?.model_name);
-    setCarYear(displayedCar?.year);
-    setCarMileage(displayedCar?.mileage);
-
     setPhoto(existedPhoto);
   }, [carId]);
+
+  useEffect(() => {
+    setPlate(carInfo?.license_plate);
+    setChosenYear(carInfo?.year);
+    setVin(carInfo?.vin || null);
+    setMileage(carInfo?.mileage || null);
+
+    const existedMake = carData?.find(
+      car => car?.make?.toLocaleLowerCase() === carInfo?.make?.toLowerCase()
+    );
+    setChosenMake({ id: existedMake?.id, make: existedMake?.make || '' });
+
+    const existedModel = existedMake?.models?.find(
+      model =>
+        model?.model_name?.toLowerCase() === carInfo?.model?.toLowerCase()
+    );
+    setChosenModel({
+      id: existedModel?.id,
+      model_name: existedModel?.model_name || '',
+    });
+  }, [carInfo]);
 
   const makeInputClick = e => {
     e.stopPropagation();
@@ -188,17 +257,10 @@ export default function AddCarScreen({
   }, [chosenModel, yearSearchQuery, chosenMake]);
 
   useEffect(() => {
-    if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
+    if (videoRef.current && videoStream) {
+      videoRef.current.srcObject = videoStream;
     }
-  }, [stream]);
-
-  useEffect(() => {
-    setCarMake(chosenMake?.make ? chosenMake?.make : ''),
-      setCarModel(chosenModel?.model_name ? chosenModel?.model_name : ''),
-      setCarYear(chosenYear ? chosenYear : ''),
-      setCarMileage(mileage ? mileage : '');
-  }, [chosenMake, chosenModel, chosenYear, mileage]);
+  }, [videoStream]);
 
   const handleSend = () => {
     if (!photo) {
@@ -215,201 +277,338 @@ export default function AddCarScreen({
     };
 
     const photoToSend = dataURLtoBlob(photo);
-    console.log('photoToSend', photoToSend);
     dispatch(recognizeLicensePlate(photoToSend));
+  };
+
+  const onCheckmarkBtnClick = () => {
+    if (
+      !chosenMake?.make ||
+      !chosenModel?.model_name ||
+      !plate ||
+      !chosenYear ||
+      !mileage ||
+      !vin
+    )
+      return;
+
+    const carData = {
+      license_plate: plate,
+      make: chosenMake?.make,
+      model: chosenModel?.model_name,
+      year: Number(chosenYear),
+      color: carInfo?.color ? carInfo?.color : '',
+      capacity: carInfo?.capacity ? carInfo?.capacity : '',
+      vin: vin,
+      mileage: Number(mileage) * 1000,
+      photo: photo,
+    };
+
+    console.log('carData', carData);
+    dispatch(createNewCar(carData))
+      .unwrap()
+      .then(result => {
+        console.log('result', result);
+
+        if (
+          result.message === 'Авто з таким номером уже існує в процесі обробки.'
+        ) {
+          toast.error('Авто з таким номером вже існує', {
+            position: 'top-center',
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)FFF',
+            },
+          });
+        }
+        if (result.car_id) {
+          toast.success('Авто успішно створене', {
+            position: 'top-center',
+            duration: 3000,
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)FFF',
+            },
+          });
+          navigate(`/car/${result.car_id}/photos`);
+        } else {
+          console.error('ID не найден в ответе сервера:', result);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+
+        toast.error('Щось сталося, спробуйте ще раз', {
+          position: 'top-center',
+          style: {
+            background: 'var(--bg-input)',
+            color: 'var(--white)FFF',
+          },
+        });
+      });
   };
 
   return isRecoginitionLoading ? (
     <LoaderSvg />
   ) : (
-    <div className={`${css.wrapper} ${stream ? css.cameraOn : ''}`}>
-      {stream ? (
-        <video ref={videoRef} autoPlay playsInline className={css.video} />
-      ) : (
-        <>
-          <div className={css.carPhoto}>
-            {photo ? (
-              <img src={photo} alt="car photo" className={css.carImg} />
-            ) : (
-              <img src={autoPhoto} alt="car photo" className={css.carImg} />
-            )}
-          </div>
-
-          <div className={css.topWrapper}>
-            <div className={css.carNumberWrapper}>
-              <div className={css.numberWrapper}>
-                <img src={flag} alt="flag image" />
-                <p className={css.flagText}>UA</p>
-              </div>
-              <p className={css.number}>{plate ?? '- - - -'}</p>
-            </div>
-            <button type="button" className={css.btn} onClick={handleSend}>
-              <BsFillCpuFill className={css.btnIcon} />
-              Розпізнати
-            </button>
-          </div>
-          <div className={css.bottomWrapper}>
-            <div
-              onClick={makeInputClick}
-              ref={buttonMakeRef}
-              className={css.inputWithPopup}
-            >
-              <div className={css.inputWrapper} onClick={makeInputClick}>
-                {makePopupOpen ? (
-                  <input
-                    type="text"
-                    value={makeSearchQuery}
-                    onChange={e => setMakeSearchQuery(e.target.value)}
-                    className={`${css.input} ${css.text} ${css.textColor}`}
-                    onClick={e => e.stopPropagation()}
-                    placeholder="Марка авто"
-                  />
-                ) : (
-                  <p
-                    className={clsx(
-                      css.text,
-                      chosenMake?.make ? css.textColor : css.placeholderColor
-                    )}
-                  >
-                    {chosenMake?.make || 'Марка авто'}
-                  </p>
-                )}
-                <button
-                  type="button"
-                  className={css.arrow}
-                  onClick={makeInputClick}
-                >
-                  <BsFillCaretDownFill
-                    className={clsx(
-                      css.arrowIcon,
-                      makePopupOpen && css.arrowIconOpen
-                    )}
-                  />
-                </button>
-              </div>
-
-              {makePopupOpen && (
-                <AddCarPopup
-                  arr={displayedMakeArr}
-                  fieldKey="make"
-                  setFieldValue={setChosenMake}
-                  buttonRef={buttonMakeRef}
-                  onClose={() => setMakePopupOpen(false)}
-                  isOpen={makePopupOpen}
-                />
+    <>
+      <div className={`${css.wrapper} ${videoStream ? css.cameraOn : ''}`}>
+        {videoStream ? (
+          <video ref={videoRef} autoPlay playsInline className={css.video} />
+        ) : (
+          <>
+            <div className={css.carPhoto}>
+              {photo ? (
+                <img src={photo} alt="car photo" className={css.carImg} />
+              ) : (
+                <img src={autoPhoto} alt="car photo" className={css.carImg} />
               )}
             </div>
-            <div
-              onClick={modelInputClick}
-              ref={buttonModelRef}
-              className={css.inputWithPopup}
-            >
-              <div className={css.inputWrapper} onClick={modelInputClick}>
-                {modelPopupOpen ? (
-                  <input
-                    type="text"
-                    value={modelSearchQuery}
-                    onChange={e => setModelSearchQuery(e.target.value)}
-                    className={`${css.input} ${css.text} ${css.textColor}`}
-                    onClick={e => e.stopPropagation()}
-                    placeholder="Модель авто"
-                  />
-                ) : (
-                  <p
-                    className={clsx(
-                      css.text,
-                      chosenModel?.model_name
-                        ? css.textColor
-                        : css.placeholderColor
-                    )}
-                  >
-                    {chosenModel?.model_name || 'Модель авто'}
-                  </p>
-                )}
-                <button
-                  type="button"
-                  className={css.arrow}
-                  onClick={modelInputClick}
-                >
-                  <BsFillCaretDownFill
-                    className={clsx(
-                      css.arrowIcon,
-                      modelPopupOpen && css.arrowIconOpen
-                    )}
-                  />
-                </button>
-              </div>
-              {modelPopupOpen && (
-                <AddCarPopup
-                  arr={displayedModelArr}
-                  fieldKey="model_name"
-                  setFieldValue={setChosenModel}
-                  buttonRef={buttonModelRef}
-                  onClose={() => setModelPopupOpen(false)}
-                  isOpen={modelPopupOpen}
-                />
-              )}
-            </div>
-            <div
-              onClick={yearInputClick}
-              ref={buttonYearRef}
-              className={css.inputWithPopup}
-            >
-              <div className={css.inputWrapper} onClick={yearInputClick}>
-                {yearPopupOpen ? (
-                  <input
-                    type="text"
-                    value={yearSearchQuery}
-                    onChange={e => setYearSearchQuery(e.target.value)}
-                    className={`${css.input} ${css.text} ${css.textColor}`}
-                    onClick={e => e.stopPropagation()}
-                    placeholder="Рік випуску"
-                  />
-                ) : (
-                  <p
-                    className={clsx(
-                      css.text,
-                      chosenYear ? css.textColor : css.placeholderColor
-                    )}
-                  >
-                    {chosenYear || 'Рік випуску'}
-                  </p>
-                )}
-                <button
-                  type="button"
-                  className={css.arrow}
-                  onClick={yearInputClick}
-                >
-                  <BsFillCaretDownFill
-                    className={clsx(
-                      css.arrowIcon,
-                      yearPopupOpen && css.arrowIconOpen
-                    )}
-                  />
-                </button>
-              </div>
 
-              {yearPopupOpen && (
-                <AddCarPopup
-                  arr={displayedYearArr}
-                  // fieldKey="make"
-                  setFieldValue={setChosenYear}
-                  buttonRef={buttonYearRef}
-                  onClose={() => setYearPopupOpen(false)}
-                  isOpen={yearPopupOpen}
+            <div className={css.topWrapper}>
+              <div className={css.carNumberWrapper}>
+                <div className={css.numberWrapper}>
+                  <img src={flag} alt="flag image" />
+                  <p className={css.flagText}>UA</p>
+                </div>
+                <input
+                  className={css.number}
+                  type="text"
+                  value={plate}
+                  onChange={e => setPlate(e.target.value)}
+                  placeholder="BA1234BA"
                 />
-              )}
+              </div>
+              <button
+                type="button"
+                className={css.btn}
+                onClick={handleSend}
+                disabled={!photo}
+              >
+                <BsFillCpuFill className={css.btnIcon} />
+                Розпізнати
+              </button>
             </div>
-            <div className={css.mileageWrapper}>
-              <SlSpeedometer className={css.mileageIcon} />
-              <p className={css.mileage}>
-                {mileage || ''} <span className={css.mileageText}>тис. км</span>
-              </p>
-              <BsCameraFill className={css.cameraIcon} />
+            <div className={css.bottomWrapper}>
+              <div
+                onClick={makeInputClick}
+                ref={buttonMakeRef}
+                className={css.inputWithPopup}
+              >
+                <div className={css.inputWrapper} onClick={makeInputClick}>
+                  {makePopupOpen ? (
+                    <input
+                      type="text"
+                      value={makeSearchQuery}
+                      onChange={e => setMakeSearchQuery(e.target.value)}
+                      className={`${css.input} ${css.text} ${css.textColor}`}
+                      onClick={e => e.stopPropagation()}
+                      placeholder="Марка авто"
+                    />
+                  ) : (
+                    <p
+                      className={clsx(
+                        css.text,
+                        chosenMake?.make ? css.textColor : css.placeholderColor
+                      )}
+                    >
+                      {chosenMake?.make || 'Марка авто'}
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    className={css.arrow}
+                    onClick={makeInputClick}
+                  >
+                    <BsFillCaretDownFill
+                      className={clsx(
+                        css.arrowIcon,
+                        makePopupOpen && css.arrowIconOpen
+                      )}
+                    />
+                  </button>
+                </div>
+
+                {makePopupOpen && (
+                  <AddCarPopup
+                    arr={displayedMakeArr}
+                    fieldKey="make"
+                    setFieldValue={setChosenMake}
+                    buttonRef={buttonMakeRef}
+                    onClose={() => setMakePopupOpen(false)}
+                    isOpen={makePopupOpen}
+                  />
+                )}
+              </div>
+              <div
+                onClick={modelInputClick}
+                ref={buttonModelRef}
+                className={css.inputWithPopup}
+              >
+                <div className={css.inputWrapper} onClick={modelInputClick}>
+                  {modelPopupOpen ? (
+                    <input
+                      type="text"
+                      value={modelSearchQuery}
+                      onChange={e => setModelSearchQuery(e.target.value)}
+                      className={`${css.input} ${css.text} ${css.textColor}`}
+                      onClick={e => e.stopPropagation()}
+                      placeholder="Модель авто"
+                    />
+                  ) : (
+                    <p
+                      className={clsx(
+                        css.text,
+                        chosenModel?.model_name
+                          ? css.textColor
+                          : css.placeholderColor
+                      )}
+                    >
+                      {chosenModel?.model_name || 'Модель авто'}
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    className={css.arrow}
+                    onClick={modelInputClick}
+                  >
+                    <BsFillCaretDownFill
+                      className={clsx(
+                        css.arrowIcon,
+                        modelPopupOpen && css.arrowIconOpen
+                      )}
+                    />
+                  </button>
+                </div>
+                {modelPopupOpen && (
+                  <AddCarPopup
+                    arr={displayedModelArr}
+                    fieldKey="model_name"
+                    setFieldValue={setChosenModel}
+                    buttonRef={buttonModelRef}
+                    onClose={() => setModelPopupOpen(false)}
+                    isOpen={modelPopupOpen}
+                  />
+                )}
+              </div>
+              <div
+                onClick={yearInputClick}
+                ref={buttonYearRef}
+                className={css.inputWithPopup}
+              >
+                <div className={css.inputWrapper} onClick={yearInputClick}>
+                  {yearPopupOpen ? (
+                    <input
+                      type="text"
+                      value={yearSearchQuery}
+                      onChange={e => setYearSearchQuery(e.target.value)}
+                      className={`${css.input} ${css.text} ${css.textColor}`}
+                      onClick={e => e.stopPropagation()}
+                      placeholder="Рік випуску"
+                    />
+                  ) : (
+                    <p
+                      className={clsx(
+                        css.text,
+                        chosenYear ? css.textColor : css.placeholderColor
+                      )}
+                    >
+                      {chosenYear || 'Рік випуску'}
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    className={css.arrow}
+                    onClick={yearInputClick}
+                  >
+                    <BsFillCaretDownFill
+                      className={clsx(
+                        css.arrowIcon,
+                        yearPopupOpen && css.arrowIconOpen
+                      )}
+                    />
+                  </button>
+                </div>
+
+                {yearPopupOpen && (
+                  <AddCarPopup
+                    arr={displayedYearArr}
+                    // fieldKey="make"
+                    setFieldValue={setChosenYear}
+                    buttonRef={buttonYearRef}
+                    onClose={() => setYearPopupOpen(false)}
+                    isOpen={yearPopupOpen}
+                  />
+                )}
+              </div>
+              <div className={css.mileageWrapper}>
+                <SlSpeedometer className={css.mileageIcon} />
+                <input
+                  className={css.mileage}
+                  type="text"
+                  value={mileage}
+                  onChange={e => setMileage(e.target.value)}
+                  placeholder="123"
+                />
+
+                <p className={css.mileageText}>тис. км</p>
+
+                <BsCameraFill className={css.cameraVinIcon} />
+              </div>
+              <input
+                className={css.vin}
+                type="text"
+                value={vin}
+                onChange={e => setVin(e.target.value)}
+                placeholder="vin"
+              />
             </div>
-          </div>
-        </>
-      )}
-    </div>
+          </>
+        )}
+      </div>
+      <div className={`${css.btnsWrapper} ${cameraOn ? css.isCameraOn : ''}`}>
+        {!cameraOn ? (
+          <Link className={css.cancelBtn} to="/main">
+            <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+          </Link>
+        ) : (
+          <button className={css.cancelBtn} onClick={stopCamera}>
+            <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+          </button>
+        )}
+
+        <div>
+          {/* <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            style={{ display: 'none' }}
+          /> */}
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
+          <button
+            type="button"
+            className={css.cameraBtn}
+            onClick={() => handleClick(setPhoto)}
+          >
+            <BsCameraFill className={css.cameraIcon} />
+          </button>
+        </div>
+        {!cameraOn &&
+        chosenMake?.make &&
+        chosenModel?.model_name &&
+        chosenYear &&
+        mileage &&
+        vin &&
+        plate ? (
+          // <Link className={css.acceptBtn} to="/car/:carId/photos">
+          <IoMdCheckmark
+            className={`${css.acceptBtn} ${css.check}`}
+            onClick={onCheckmarkBtnClick}
+          />
+        ) : (
+          // </Link>
+          <div className={css.emptyDiv}></div>
+        )}
+      </div>
+    </>
   );
 }
