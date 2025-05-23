@@ -21,6 +21,7 @@ export default function BottomPart({
   handleCreateDiag,
   savedPartScreen,
   setRecordAudio,
+  repair,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -69,7 +70,7 @@ export default function BottomPart({
       {button || btnToggle || buttonSpares ? (
         <button
           type="button"
-          onClick={savedPartBottom ? handleCreateDiag : next}
+          onClick={savedPartBottom && !repair ? handleCreateDiag : next}
           className={`${css.confirm} ${isDisabled && css.confirmDisabled} ${
             savedPartScreen ? css.savedScreen : ''
           }`}

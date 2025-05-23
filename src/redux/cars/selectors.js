@@ -9,6 +9,8 @@ export const selectDiagnostic = state => state.cars.diagnostic;
 
 export const selectDate = state => state.cars.chosenDate;
 
+export const selectRepair = state => state.cars.repairDetails
+
 // Loaders
 
 export const selectIsLoading = state => state.cars.isLoading;

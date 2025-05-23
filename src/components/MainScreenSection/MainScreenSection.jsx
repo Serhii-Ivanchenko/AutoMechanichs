@@ -30,10 +30,20 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
   console.log('cars', cars);
 
-  const carsInWork = cars?.filter(car => car?.status !== 'complete');
-  const carsDone = cars?.filter(car => car?.status === 'complete');
+  const date = sessionStorage.getItem('date');
+
+  const carsInWork = cars?.filter(car =>
+    car?.status === 'diagnostic' ? !car?.diagnostic_id : !car.complete_date
+  );
+  const carsDone = cars?.filter(car =>
+    car?.status === 'diagnostic' ? car?.diagnostic_id : car.complete_date
+  );
   // console.log('carsInWork', carsInWork);
-  // console.log('carsDone', carsDone);
+  console.log('carsDone', carsDone);
+
+  const carsDoneForParticularDay = carsDone?.filter(
+    car => car.complete_date === date
+  );
 
   return (
     <div className={css.sectionWrapper}>

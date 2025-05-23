@@ -36,6 +36,9 @@ const carsSlice = createSlice({
     clearChosenDate: state => {
       state.chosenDate = '';
     },
+    clearDiag: state => {
+      state.diagnostic = {}
+    }
   },
   extraReducers: builder =>
     builder
@@ -118,7 +121,7 @@ const carsSlice = createSlice({
       })
       .addCase(getRepair.fulfilled, (state, action) => {
         state.isRepairLoading = false;
-        state.repairDetails = action.payload;
+        state.repairDetails = action.payload.repair;
       })
       .addCase(getRepair.rejected, (state, action) => {
         state.isRepairLoading = false;
@@ -182,6 +185,6 @@ const carsSlice = createSlice({
         state.error = action.payload;
       }),
 });
-export const { setChosenDate, clearChosenDate } = carsSlice.actions;
+export const { setChosenDate, clearChosenDate, clearDiag } = carsSlice.actions;
 
 export default carsSlice.reducer;
