@@ -5,6 +5,13 @@
   align-items: center;
 }
 
+.btnBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 42px;
+}
+
 .buttons {
   display: inline-flex;
   padding: 10px 16px;
@@ -26,6 +33,10 @@
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 14px;
+}
+
+.buttonActive {
+  border: 1px solid var(--light-gray);
 }
 
 .indicator {

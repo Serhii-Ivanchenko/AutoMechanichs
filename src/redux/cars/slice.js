@@ -42,8 +42,11 @@ const carsSlice = createSlice({
       state.error = null;
     },
     clearDiag: state => {
-      state.diagnostic = {};
+      state.diagnostic = {}
     },
+    clearRepair: state => {
+      state.repairDetails ={}
+    }
   },
   extraReducers: builder =>
     builder
@@ -190,7 +193,7 @@ const carsSlice = createSlice({
         state.error = action.payload;
       }),
 });
-export const { setChosenDate, clearChosenDate, deleteCarInfo, clearDiag } =
+export const { setChosenDate, clearChosenDate, deleteCarInfo, clearDiag, clearRepair } =
   carsSlice.actions;
 
 export default carsSlice.reducer;

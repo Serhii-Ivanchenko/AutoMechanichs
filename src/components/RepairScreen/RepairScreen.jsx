@@ -23,6 +23,7 @@ import {
 import Filter from '../DiagnosticScreen/Filter/Filter.jsx';
 import PartsForRepair from './PartsForRepair/PartsForRepair.jsx';
 import toast from 'react-hot-toast';
+import { clearRepair } from '../../redux/cars/slice.js';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -93,6 +94,7 @@ export default function RepairScreen() {
             color: 'var(--white)',
           },
         });
+        dispatch(clearRepair());
         navigate('/main');
       });
   };
