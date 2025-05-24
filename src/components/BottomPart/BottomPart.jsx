@@ -20,6 +20,7 @@ export default function BottomPart({
   savedPartBottom,
   handleCreateDiag,
   savedPartScreen,
+  setOpenCamera,
   setRecordAudio,
   repair,
 }) {
@@ -51,7 +52,7 @@ export default function BottomPart({
           <div className={css.greyCircle} onClick={() => setRecordAudio(true)}>
             <BsFillMicFill className={css.icon} />
           </div>
-          <div className={css.greyCircle}>
+          <div className={css.greyCircle} onClick={() => setOpenCamera(true)}>
             <BsCameraFill className={css.icon} />
           </div>
           <div className={css.greyCircle}>

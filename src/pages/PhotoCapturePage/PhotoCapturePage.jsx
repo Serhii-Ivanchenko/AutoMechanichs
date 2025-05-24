@@ -9,7 +9,9 @@ import { uploadCarPhotos } from '../../redux/cars/operations';
 import autoPhoto from '../../assets/images/absentAutoImg.webp';
 
 
-export default function PhotoCapturePage() {
+export default function PhotoCapturePage({ diag,
+  // carId,
+  setOpenCamera }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
@@ -120,10 +122,15 @@ export default function PhotoCapturePage() {
   };
 
   return (
-    <div className={css.wrapper}>
+    <div className={`${css.wrapper} ${diag && css.wrapperDiag}`}>
       {isCameraOpen ? (
-        <div className={css.video}>
-          <video ref={videoRef} autoPlay playsInline className={css.video} />
+        <div className={`${css.video} ${diag && css.videoDiag}`}>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            className={`${css.video} ${diag && css.videoDiag}`}
+          />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
       ) : (
@@ -143,9 +150,18 @@ export default function PhotoCapturePage() {
       )}
       <div className={`${css.btnsWrapper} ${stream ? css.cameraOn : ''}`}>
         {!isCameraOpen ? (
-          <Link className={css.cancelBtn} to="/add-car">
-            <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-          </Link>
+          diag ? (
+            <button
+              className={css.cancelBtn}
+              onClick={() => setOpenCamera(false)}
+            >
+              <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+            </button>
+          ) : (
+            <Link className={css.cancelBtn} to="/add-car">
+              <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+            </Link>
+          )
         ) : (
           <button className={css.cancelBtn} onClick={handleCloseCamera}>
             <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
@@ -161,16 +177,22 @@ export default function PhotoCapturePage() {
         </button>
 
         {!isCameraOpen ? (
-          // <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
-          <IoMdCheckmark
-            className={`${css.acceptBtn} ${css.check}`}
-            onClick={onCheckmarkBtnClick}
-          />
-        ) : // {/* </Link> */}
-        photos.length > 0 ? (
+          <Link className={css.acceptBtn} to={`/car/${carId}/diagnostics`}>
+            <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
+          </Link>
+        )
+        //  {!isCameraOpen ? (
+        //   // <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
+        //   <IoMdCheckmark
+        //     className={`${css.acceptBtn} ${css.check}`}
+        //     onClick={onCheckmarkBtnClick}
+        //   />
+        //   // {/* </Link> */}
+        // )
+          : photos.length > 0 ? (
           <div className={css.photoPreviewWrapper}>
             <img
-              src={photoPreview || autoPhoto}
+              src={photoPreview}
               alt="photo preview"
               className={css.photoPreview}
               onError={e => {
