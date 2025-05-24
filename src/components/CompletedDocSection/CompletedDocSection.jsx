@@ -58,11 +58,6 @@ export default function CompletedDocSection() {
       {/* <WorksSwitcher disabled={true} /> */}
       {
         // particularCar.diagnostic_id && particularCar.repair_id
-          >
-            <p>Діагностика</p>
-            <div className={css.indicator}>
-              <BsUiRadiosGrid />
-            </div>
         id && idRepair ? (
           <div className={css.btnBox}>
             <button
