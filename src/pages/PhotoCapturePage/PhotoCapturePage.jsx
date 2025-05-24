@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadCarPhotos } from '../../redux/cars/operations';
+import { selectCars } from '../../redux/cars/selectors';
 
 export default function PhotoCapturePage() {
   const videoRef = useRef(null);
@@ -14,6 +15,7 @@ export default function PhotoCapturePage() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [photoPreview, setPhotoPreview] = useState('');
+  const cars = useSelector(selectCars);
 
   const params = useParams();
   const carId = params?.carId;
@@ -21,7 +23,10 @@ export default function PhotoCapturePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const displayedCar = cars?.find(car => Number(car?.car_id === Number(carId)));
+
   console.log('photos', photos);
+  console.log('displayedCar', displayedCar);
 
   useEffect(() => {
     const openCamera = async () => {
@@ -84,37 +89,43 @@ export default function PhotoCapturePage() {
   const onCheckmarkBtnClick = () => {
     if (!carId) return;
 
-    const carData = {
-      car_id: carId,
-      photos,
-    };
+    if (photos?.length === 0) {
+      displayedCar?.status === 'repair'
+        ? navigate(`/car/${carId}/repair`)
+        : navigate(`/car/${carId}/diagnostics`);
+    } else {
+      const carData = {
+        car_id: carId,
+        photos,
+      };
 
-    console.log('carData', carData);
+      dispatch(uploadCarPhotos(carData))
+        .unwrap()
+        .then(() => {
+          toast.success('Фото успішно додані', {
+            position: 'top-center',
+            duration: 3000,
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)FFF',
+            },
+          });
+          displayedCar?.status === 'repair'
+            ? navigate(`/car/${carId}/repair`)
+            : navigate(`/car/${carId}/diagnostics`);
+        })
+        .catch(err => {
+          console.log(err);
 
-    dispatch(uploadCarPhotos(carData))
-      .unwrap()
-      .then(() => {
-        toast.success('Фото успішно додані', {
-          position: 'top-center',
-          duration: 3000,
-          style: {
-            background: 'var(--bg-input)',
-            color: 'var(--white)FFF',
-          },
+          toast.error('Щось сталося, спробуйте ще раз', {
+            position: 'top-center',
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)FFF',
+            },
+          });
         });
-        navigate(`/car/${carId}/diagnostics`);
-      })
-      .catch(err => {
-        console.log(err);
-
-        toast.error('Щось сталося, спробуйте ще раз', {
-          position: 'top-center',
-          style: {
-            background: 'var(--bg-input)',
-            color: 'var(--white)FFF',
-          },
-        });
-      });
+    }
   };
 
   return (
@@ -141,7 +152,7 @@ export default function PhotoCapturePage() {
       )}
       <div className={`${css.btnsWrapper} ${stream ? css.cameraOn : ''}`}>
         {!isCameraOpen ? (
-          <Link className={css.cancelBtn} to="/add-car">
+          <Link className={css.cancelBtn} to={`/car/${carId}/update-car`}>
             <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
           </Link>
         ) : (
