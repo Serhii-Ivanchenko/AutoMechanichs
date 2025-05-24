@@ -23,7 +23,7 @@ import {
 } from '../../redux/cars/operations';
 import toast from 'react-hot-toast';
 import Filter from './Filter/Filter';
-import AddCarPhoto from '../AddCarPhoto/AddCarPhoto';
+// import AddCarPhoto from '../AddCarPhoto/AddCarPhoto';
 import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage';
 import AudioRecorder from '../AudioRecorder/AudioRecorder';
 

@@ -9,7 +9,9 @@ import { uploadCarPhotos } from '../../redux/cars/operations';
 import autoPhoto from '../../assets/images/absentAutoImg.webp';
 
 
-export default function PhotoCapturePage({ diag, carId, setOpenCamera }) {
+export default function PhotoCapturePage({ diag,
+  // carId,
+  setOpenCamera }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
@@ -175,10 +177,19 @@ export default function PhotoCapturePage({ diag, carId, setOpenCamera }) {
         </button>
 
         {!isCameraOpen ? (
-          <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
+          <Link className={css.acceptBtn} to={`/car/${carId}/diagnostics`}>
             <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
           </Link>
-        ) : photos.length > 0 ? (
+        )
+        //  {!isCameraOpen ? (
+        //   // <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
+        //   <IoMdCheckmark
+        //     className={`${css.acceptBtn} ${css.check}`}
+        //     onClick={onCheckmarkBtnClick}
+        //   />
+        //   // {/* </Link> */}
+        // )
+          : photos.length > 0 ? (
           <div className={css.photoPreviewWrapper}>
             <img
               src={photoPreview}
