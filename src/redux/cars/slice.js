@@ -7,7 +7,10 @@ import {
   getAllCars,
   getDiagnostic,
   getNodesAndParts,
+  getRepair,
   recognizeLicensePlate,
+  updateCar,
+  updateRepair,
   uploadCarPhotos,
 } from './operations.js';
 
@@ -33,6 +36,14 @@ const carsSlice = createSlice({
     clearChosenDate: state => {
       state.chosenDate = '';
     },
+    deleteCarInfo: state => {
+      state.carInfo = {};
+      state.isRecognitionLoading = false;
+      state.error = null;
+    },
+    clearDiag: state => {
+      state.diagnostic = {};
+    },
   },
   extraReducers: builder =>
     builder
@@ -40,7 +51,7 @@ const carsSlice = createSlice({
       .addCase(getAllCars.pending, handlePending)
       .addCase(getAllCars.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cars = action.payload.records;
+        state.cars = action.payload;
       })
       .addCase(getAllCars.rejected, handleRejected)
 
@@ -107,6 +118,33 @@ const carsSlice = createSlice({
         state.error = action.payload;
       })
 
+      // ! Repair
+
+      .addCase(getRepair.pending, (state, action) => {
+        state.isRepairLoading = true;
+        state.error = null;
+      })
+      .addCase(getRepair.fulfilled, (state, action) => {
+        state.isRepairLoading = false;
+        state.repairDetails = action.payload.repair;
+      })
+      .addCase(getRepair.rejected, (state, action) => {
+        state.isRepairLoading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(updateRepair.pending, (state, action) => {
+        state.isRepairLoading = true;
+        state.error = null;
+      })
+      .addCase(updateRepair.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(updateRepair.rejected, (state, action) => {
+        state.isRepairLoading = false;
+        state.error = action.payload;
+      })
+
       // ! New car
       // create new car
       .addCase(createNewCar.pending, (state, action) => {
@@ -132,8 +170,27 @@ const carsSlice = createSlice({
       .addCase(uploadCarPhotos.rejected, (state, action) => {
         state.isSavingCarLoading = false;
         state.error = action.payload;
+      })
+
+      // Update existing car
+      .addCase(updateCar.pending, (state, action) => {
+        state.isSavingCarLoading = true;
+        state.error = null;
+      })
+      .addCase(updateCar.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.cars = state.cars.map(car =>
+          car.id === action.payload.car_id
+            ? { ...car, ...action.payload.updated_fields }
+            : car
+        );
+      })
+      .addCase(updateCar.rejected, (state, action) => {
+        state.isSavingCarLoading = false;
+        state.error = action.payload;
       }),
 });
-export const { setChosenDate, clearChosenDate } = carsSlice.actions;
+export const { setChosenDate, clearChosenDate, deleteCarInfo, clearDiag } =
+  carsSlice.actions;
 
 export default carsSlice.reducer;

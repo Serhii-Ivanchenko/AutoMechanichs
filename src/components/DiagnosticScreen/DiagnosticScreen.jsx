@@ -12,10 +12,12 @@ import SavedSparesPart from './SavedSparesPart/SavedSparesPart';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectCars,
+  selectDate,
   selectNodesAndPartsForDiagnostics,
 } from '../../redux/cars/selectors';
 import {
   createDiagnostic,
+  getAllCars,
   getDiagnostic,
   getNodesAndParts,
 } from '../../redux/cars/operations';
@@ -23,6 +25,7 @@ import toast from 'react-hot-toast';
 import Filter from './Filter/Filter';
 import AddCarPhoto from '../AddCarPhoto/AddCarPhoto';
 import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage';
+import AudioRecorder from '../AudioRecorder/AudioRecorder';
 
 export default function DiagnosticScreen() {
   const [chosenPoints, setChosenPoints] = useState([]);
@@ -33,6 +36,7 @@ export default function DiagnosticScreen() {
   const [spares, setSpares] = useState([]);
   const [savedSparesPartOpen, setSavedSparesPartOpen] = useState(false);
   const [filter, setFilter] = useState('');
+  const [recordAudio, setRecordAudio] = useState(false);
   const containerRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,6 +50,8 @@ export default function DiagnosticScreen() {
   const particularCar = cars?.find(car => car?.car_id === Number(carId));
   // console.log('particularCar', particularCar);
   //
+
+  const date = sessionStorage.getItem('date');
 
   useEffect(() => {
     dispatch(getNodesAndParts());
@@ -277,16 +283,18 @@ export default function DiagnosticScreen() {
     dispatch(createDiagnostic(dataToSend))
       .unwrap()
       .then(() => {
-        console.log('Діагностика успішно створена');
-        toast.success('Діагностика успішно створена', {
-          position: 'top-center',
-          duration: 3000,
-          style: {
-            background: 'var(--bg-input)',
-            color: 'var(--white)',
-          },
+        dispatch(getAllCars({ date, mechanic_id: 1 })).then(() => {
+          console.log('Діагностика успішно створена');
+          toast.success('Діагностика успішно створена', {
+            position: 'top-center',
+            duration: 3000,
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)',
+            },
+          });
+          navigate('/main');
         });
-        navigate('/main');
       });
   };
 
@@ -380,28 +388,33 @@ export default function DiagnosticScreen() {
       )}
 
       {!openCamera && (
-        <BottomPart
-          back={
-            subcatOpen
-              ? () => setSubcatOpen(false)
-              : savedSparesPartOpen
-              ? handleCloseSavedScreen()
-              : '/main'
-          }
-          button={subcatOpen}
-          btnToggle={true}
-          // next="diagnostics-subcategories"
-          categ={subcatOpen && !savedSparesPartOpen}
-          next={
-            !subcatOpen
-              ? () => setSubcatOpen(true)
-              : () => setSavedSparesPartOpen(true)
-          }
-          chosenPoints={chosenPoints}
-          savedPartBottom={savedSparesPartOpen}
-          handleCreateDiag={() => handleCreateDiag()}
-          setOpenCamera={setOpenCamera}
-        />
+        recordAudio ? (
+          <AudioRecorder setRecordAudio={setRecordAudio} />
+        ) : (
+          <BottomPart
+            back={
+              subcatOpen
+                ? () => setSubcatOpen(false)
+                : savedSparesPartOpen
+                ? handleCloseSavedScreen
+                : '/main'
+            }
+            button={subcatOpen}
+            btnToggle={true}
+            // next="diagnostics-subcategories"
+            categ={subcatOpen && !savedSparesPartOpen}
+            next={
+              !subcatOpen
+                ? () => setSubcatOpen(true)
+                : () => setSavedSparesPartOpen(true)
+            }
+            chosenPoints={chosenPoints}
+            savedPartBottom={savedSparesPartOpen}
+            handleCreateDiag={() => handleCreateDiag()}
+            setOpenCamera={setOpenCamera}
+            setRecordAudio={setRecordAudio}
+          />
+        )
       )}
     </div>
   );

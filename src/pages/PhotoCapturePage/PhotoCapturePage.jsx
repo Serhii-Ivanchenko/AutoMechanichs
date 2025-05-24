@@ -1,8 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import css from './PhotoCapturePage.module.css';
 import { IoMdClose, IoMdCheckmark } from 'react-icons/io';
 import { BsCameraFill, BsTrash } from 'react-icons/bs';
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { uploadCarPhotos } from '../../redux/cars/operations';
+import autoPhoto from '../../assets/images/absentAutoImg.webp';
+
 
 export default function PhotoCapturePage({ diag, carId, setOpenCamera }) {
   const videoRef = useRef(null);
@@ -11,6 +16,14 @@ export default function PhotoCapturePage({ diag, carId, setOpenCamera }) {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [photoPreview, setPhotoPreview] = useState('');
+
+  const params = useParams();
+  const carId = params?.carId;
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  console.log('photos', photos);
 
   useEffect(() => {
     const openCamera = async () => {
@@ -68,6 +81,42 @@ export default function PhotoCapturePage({ diag, carId, setOpenCamera }) {
 
   const handlePhotoDelete = index => {
     setPhotos(prev => prev.filter((item, idx) => idx !== index));
+  };
+
+  const onCheckmarkBtnClick = () => {
+    if (!carId) return;
+
+    const carData = {
+      car_id: carId,
+      photos,
+    };
+
+    console.log('carData', carData);
+
+    dispatch(uploadCarPhotos(carData))
+      .unwrap()
+      .then(() => {
+        toast.success('Фото успішно додані', {
+          position: 'top-center',
+          duration: 3000,
+          style: {
+            background: 'var(--bg-input)',
+            color: 'var(--white)FFF',
+          },
+        });
+        navigate(`/car/${carId}/diagnostics`);
+      })
+      .catch(err => {
+        console.log(err);
+
+        toast.error('Щось сталося, спробуйте ще раз', {
+          position: 'top-center',
+          style: {
+            background: 'var(--bg-input)',
+            color: 'var(--white)FFF',
+          },
+        });
+      });
   };
 
   return (
@@ -135,6 +184,10 @@ export default function PhotoCapturePage({ diag, carId, setOpenCamera }) {
               src={photoPreview}
               alt="photo preview"
               className={css.photoPreview}
+              onError={e => {
+                e.target.onerror = null;
+                e.target.src = autoPhoto;
+              }}
             />
             <p className={css.photoQuantity}>{photos?.length}</p>
           </div>

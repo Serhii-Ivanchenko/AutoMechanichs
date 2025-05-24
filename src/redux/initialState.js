@@ -14,13 +14,15 @@ export const initialState = {
     carInfo: {},
     nodesAndPartsForDiagnostics: [],
     diagnostic: {},
-    chosenDate:"",
+    repairDetails: {},
+    chosenDate: '',
 
     isLoading: false,
     isRecognitionLoading: false,
     isDiagLoading: false,
     isDiagCreateLoading: false,
     isSavingCarLoading: false,
+    isRepairLoading: false,
     error: null,
   },
 };
