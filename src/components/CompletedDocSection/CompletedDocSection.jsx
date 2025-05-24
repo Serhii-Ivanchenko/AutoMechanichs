@@ -29,8 +29,8 @@ export default function CompletedDocSection() {
 
   const dispatch = useDispatch();
 
-  // const id = '682ce6104f095bf3de2739ef';
-  const id = particularCar?.diagnostic_id;
+  const id = '682ce6104f095bf3de2739ef';
+  // const id = particularCar?.diagnostic_id;
   const idRepair = '6830857da0bfeec5d409915b';
 
   useEffect(() => {
@@ -56,7 +56,10 @@ export default function CompletedDocSection() {
     <div className={css.wrapper}>
       <CarDetailsPart particularCar={particularCar} />
       {/* <WorksSwitcher disabled={true} /> */}
-      {particularCar.diagnostic_id && particularCar.repair_id ? (
+      {
+        // particularCar.diagnostic_id && particularCar.repair_id
+        id && idRepair
+        ? (
         <div className={css.btnBox}>
           <button
             className={`${css.buttons} ${page === 'diag' && css.buttonActive}`}

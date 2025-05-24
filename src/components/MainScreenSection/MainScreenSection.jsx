@@ -56,8 +56,8 @@ export default function MainScreenSection({ array1, array2, wage }) {
   const carsDone = cars?.filter(car =>
     car?.status === 'diagnostic' ? car?.diagnostic_id : car.complete_date
   );
-  // console.log('carsInWork', carsInWork);
-  console.log('carsDone', carsDone);
+  console.log('carsInWork', carsInWork);
+  // console.log('carsDone', carsDone);
 
   const filteredCarsInWork = carsInWork.filter(car => !checkDate(car.date));
   console.log('filteredCarsInWork', filteredCarsInWork);
