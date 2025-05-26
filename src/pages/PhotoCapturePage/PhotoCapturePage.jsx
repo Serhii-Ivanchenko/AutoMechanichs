@@ -176,19 +176,19 @@ export default function PhotoCapturePage({ diag,
           <BsCameraFill className={css.cameraIcon} />
         </button>
 
-        {!isCameraOpen ? (
+        {/* {!isCameraOpen ? (
           <Link className={css.acceptBtn} to={`/car/${carId}/diagnostics`}>
             <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
           </Link>
+        ) */}
+         {!isCameraOpen ? (
+          // <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
+          <IoMdCheckmark
+            className={`${css.acceptBtn} ${css.check}`}
+            onClick={onCheckmarkBtnClick}
+          />
+          // {/* </Link> */}
         )
-        //  {!isCameraOpen ? (
-        //   // <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
-        //   <IoMdCheckmark
-        //     className={`${css.acceptBtn} ${css.check}`}
-        //     onClick={onCheckmarkBtnClick}
-        //   />
-        //   // {/* </Link> */}
-        // )
           : photos.length > 0 ? (
           <div className={css.photoPreviewWrapper}>
             <img
