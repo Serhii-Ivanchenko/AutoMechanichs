@@ -21,6 +21,7 @@ export default function AudioRecorder({ setRecordAudio }) {
   const streamRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(null);
+  const [currentTime, setCurrentTime] = useState(0);
 
   console.log('audioUrl', audioURL);
 
@@ -74,8 +75,12 @@ export default function AudioRecorder({ setRecordAudio }) {
     const mins = Math.floor(time / 60)
       .toString()
       .padStart(2, '0');
-    const secs = (time % 60).toString().padStart(2, '0');
-    return `${mins}: ${secs}`;
+    const secs = Math.floor(time % 60)
+      .toString()
+      .padStart(2, '0');
+    console.log('secs', secs);
+
+    return `${mins}:${secs}`;
   };
 
   const togglePlay = () => {
@@ -104,10 +109,25 @@ export default function AudioRecorder({ setRecordAudio }) {
   console.log('duration', duration);
   console.log('seconds', audioRef?.current?.duration);
 
+  // useEffect(() => {
+  //   if (audioRef.current?.duration) {
+  //     setDuration(formatTime(audioRef.current.duration));
+  //   }
+  // }, [audioURL]);
+
   useEffect(() => {
-    if (audioRef.current?.duration) {
-      setDuration(formatTime(audioRef.current.duration));
-    }
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateCurrentTime = () => {
+      setCurrentTime(audio.currentTime);
+    };
+
+    audio.addEventListener('timeupdate', updateCurrentTime);
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateCurrentTime);
+    };
   }, [audioURL]);
 
   return (
@@ -153,11 +173,17 @@ export default function AudioRecorder({ setRecordAudio }) {
               // onLoadedMetadata={handleLoadedMetadata}
               onEnded={() => setIsPlaying(false)}
             />
-            <p>{duration}</p>
+            <p>
+              {formatTime(currentTime)} / {duration}
+            </p>
             <RxCrossCircled
               size={24}
               className={css.iconCross}
-              onClick={() => setAudioURL(null)}
+              onClick={() => {
+                setAudioURL(null);
+                setDuration(null);
+                setCurrentTime(0);
+              }}
             />
           </>
         )}
