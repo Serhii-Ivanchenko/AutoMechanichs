@@ -24,6 +24,16 @@ export default function SavedSparesPart({ nodes, completed }) {
 
   return (
     <div>
+      {completed && (
+        <div className={css.btnBoxCompleted}>
+          <div className={css.circle}>
+            <BsFillMicFill className={css.icon} />
+          </div>
+          <div className={css.circle}>
+            <BsCameraFill className={css.icon} />
+          </div>
+        </div>
+      )}
       <ul className={css.SavedSparesList}>
         {nodes?.length === 0 ? (
           <p className={css.noProblems}>
@@ -108,7 +118,19 @@ export default function SavedSparesPart({ nodes, completed }) {
         ) : (
           nodes?.map((node, index) => (
             <li key={index}>
-              <p className={css.nodeName}>{node.node_name}</p>
+              <div className={css.itemSaved}>
+                <p className={css.nodeName}>{node.node_name}</p>
+                {index === 0 && (
+                  <div className={css.btnBox}>
+                    <div className={css.circle}>
+                      <BsFillMicFill className={css.icon} />
+                    </div>
+                    <div className={css.circle}>
+                      <BsCameraFill className={css.icon} />
+                    </div>
+                  </div>
+                )}
+              </div>
               <ul className={css.subcatList}>
                 {node.node_subcat.map((item, index) => (
                   <li key={index} className={css.item}>
@@ -147,12 +169,12 @@ export default function SavedSparesPart({ nodes, completed }) {
                           >
                             <BsCheckLg className={css.iconCheck} />
                           </div>
-                          <div className={css.circle}>
+                          {/* <div className={css.circle}>
                             <BsFillMicFill className={css.icon} />
                           </div>
                           <div className={css.circle}>
                             <BsCameraFill className={css.icon} />
-                          </div>
+                          </div> */}
                           <BsFillCaretDownFill
                             className={`${css.icon} ${
                               expandedMap[item.id] === item.id

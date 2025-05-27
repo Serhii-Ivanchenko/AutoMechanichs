@@ -20,7 +20,9 @@ export default function BottomPart({
   savedPartBottom,
   handleCreateDiag,
   savedPartScreen,
+  setOpenCamera,
   setRecordAudio,
+  repair,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -50,7 +52,7 @@ export default function BottomPart({
           <div className={css.greyCircle} onClick={() => setRecordAudio(true)}>
             <BsFillMicFill className={css.icon} />
           </div>
-          <div className={css.greyCircle}>
+          <div className={css.greyCircle} onClick={() => setOpenCamera(true)}>
             <BsCameraFill className={css.icon} />
           </div>
           <div className={css.greyCircle}>
@@ -69,7 +71,7 @@ export default function BottomPart({
       {button || btnToggle || buttonSpares ? (
         <button
           type="button"
-          onClick={savedPartBottom ? handleCreateDiag : next}
+          onClick={savedPartBottom && !repair ? handleCreateDiag : next}
           className={`${css.confirm} ${isDisabled && css.confirmDisabled} ${
             savedPartScreen ? css.savedScreen : ''
           }`}
