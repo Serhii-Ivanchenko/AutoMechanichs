@@ -24,7 +24,7 @@ export default function BottomPart({
   setRecordAudio,
   repair,
   audioURL,
-  photosFromDiag,
+  photosFromWorksPart,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -59,7 +59,7 @@ export default function BottomPart({
           </div>
           <div
             className={`${css.greyCircle} ${
-              photosFromDiag?.length > 0 && css.greenCircle
+              photosFromWorksPart?.length > 0 && css.greenCircle
             }`}
             onClick={() => setOpenCamera(true)}
           >

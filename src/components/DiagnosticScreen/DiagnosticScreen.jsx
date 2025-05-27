@@ -311,20 +311,24 @@ export default function DiagnosticScreen() {
   const handleCreateDiag = async () => {
     // Форматування аудіо
     try {
-      const response = await fetch(audioURL);
-      const blob = await response.blob();
+      let base64data = null;
 
-      const base64data = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
+      if (audioURL) {
+        const response = await fetch(audioURL);
+        const blob = await response.blob();
+
+        base64data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      }
 
       const dataToSend = {
         car_id: carId,
         mechanic_id: 1,
-        audios: [base64data],
+        audios: audioURL ? [base64data] : [],
         photos: photosFromDiag,
         nodes: nodesToCreateDiag,
       };
@@ -480,7 +484,7 @@ export default function DiagnosticScreen() {
             setOpenCamera={setOpenCamera}
             setRecordAudio={setRecordAudio}
             audioURL={audioURL}
-            photosFromDiag={photosFromDiag}
+            photosFromWorksPart={photosFromDiag}
           />
         ))}
     </div>

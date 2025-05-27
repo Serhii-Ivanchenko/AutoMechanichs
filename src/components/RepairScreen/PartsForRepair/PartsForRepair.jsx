@@ -9,6 +9,8 @@ export default function PartsForRepair({
   statusServices,
   setStatusServices,
   completedRepair,
+  photosFromRepair,
+  audioURL,
 }) {
   const handleChangeStatus = id => {
     setStatusParts(prev =>
@@ -39,10 +41,16 @@ export default function PartsForRepair({
             <p className={css.title}>Запчастини</p>
             {completedRepair && statusParts?.length > 0 && (
               <div className={css.btnBoxCompleted}>
-                <div className={css.circle}>
+                <div
+                  className={`${css.circle} ${audioURL && css.circleFilled}`}
+                >
                   <BsFillMicFill className={css.iconMedia} />
                 </div>
-                <div className={css.circle}>
+                <div
+                  className={`${css.circle} ${
+                    photosFromRepair?.length > 0 && css.circleFilled
+                  }`}
+                >
                   <BsCameraFill className={css.iconMedia} />
                 </div>
               </div>
