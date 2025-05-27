@@ -10,9 +10,13 @@ import { BsCheckLg, BsFillStopFill } from 'react-icons/bs';
 import css from './AudioRecorder.module.css';
 import { useEffect, useRef, useState } from 'react';
 
-export default function AudioRecorder({ setRecordAudio }) {
+export default function AudioRecorder({
+  setRecordAudio,
+  audioURL,
+  setAudioURL,
+}) {
   const mediaRecorderRef = useRef(null);
-  const [audioURL, setAudioURL] = useState(null);
+  // const [audioURL, setAudioURL] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const audioChunks = useRef([]);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -191,7 +195,10 @@ export default function AudioRecorder({ setRecordAudio }) {
       </div>
       <div className={css.btnBox}>
         {audioURL ? (
-          <button className={css.btnCheck}>
+          <button
+            className={css.btnCheck}
+            onClick={() => setRecordAudio(false)}
+          >
             <BsCheckLg className={css.iconCheck} />
           </button>
         ) : (

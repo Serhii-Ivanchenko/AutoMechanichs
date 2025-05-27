@@ -24,6 +24,7 @@ import Filter from '../DiagnosticScreen/Filter/Filter.jsx';
 import PartsForRepair from './PartsForRepair/PartsForRepair.jsx';
 import toast from 'react-hot-toast';
 import { clearRepair } from '../../redux/cars/slice.js';
+import AudioRecorder from '../AudioRecorder/AudioRecorder.jsx';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -39,6 +40,8 @@ export default function RepairScreen() {
   const [statusParts, setStatusParts] = useState([]);
   const [statusServices, setStatusServices] = useState([]);
   const [completedRepair, setCompletedRepair] = useState(false);
+  const [recordAudio, setRecordAudio] = useState(false);
+  const [audioURL, setAudioURL] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -341,24 +344,32 @@ export default function RepairScreen() {
           chosenPoints={chosenPoints}
         />
       )} */}
-
-      <BottomPart
-        back={completedRepair ? () => setCompletedRepair(false) : '/main'}
-        button={completedRepair}
-        btnToggle={true}
-        // next="diagnostics-subcategories"
-        categ={!completedRepair}
-        next={
-          !completedRepair
-            ? () => setCompletedRepair(true)
-            : completedRepair
-            ? handleUpdateStatuses
-            : undefined
-        }
-        // chosenPoints={chosenPoints}
-        savedPartBottom={completedRepair}
-        repair={true}
-      />
+      {recordAudio ? (
+        <AudioRecorder
+          setRecordAudio={setRecordAudio}
+          audioURL={audioURL}
+          setAudioURL={setAudioURL}
+        />
+      ) : (
+        <BottomPart
+          back={completedRepair ? () => setCompletedRepair(false) : '/main'}
+          button={completedRepair}
+          btnToggle={true}
+          // next="diagnostics-subcategories"
+          categ={!completedRepair}
+          next={
+            !completedRepair
+              ? () => setCompletedRepair(true)
+              : completedRepair
+              ? handleUpdateStatuses
+              : undefined
+          }
+          // chosenPoints={chosenPoints}
+          savedPartBottom={completedRepair}
+          repair={true}
+          setRecordAudio={setRecordAudio}
+        />
+      )}
     </div>
   );
 }

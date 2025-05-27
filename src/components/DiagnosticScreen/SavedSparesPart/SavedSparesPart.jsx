@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { createDiagnostic } from '../../../redux/cars/operations';
 import { useState } from 'react';
 
-export default function SavedSparesPart({ nodes, completed }) {
+export default function SavedSparesPart({ nodes, completed, audioURL }) {
   const [expandedMap, setExpandedMap] = useState({});
 
   const handleAccordionToggle = (categoryId, nodeId) => (event, isExpanded) => {
@@ -122,7 +122,11 @@ export default function SavedSparesPart({ nodes, completed }) {
                 <p className={css.nodeName}>{node.node_name}</p>
                 {index === 0 && (
                   <div className={css.btnBox}>
-                    <div className={css.circle}>
+                    <div
+                      className={`${css.circle} ${
+                        audioURL && css.circleFilled
+                      }`}
+                    >
                       <BsFillMicFill className={css.icon} />
                     </div>
                     <div className={css.circle}>

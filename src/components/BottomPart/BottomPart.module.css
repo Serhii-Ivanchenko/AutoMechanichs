@@ -85,6 +85,10 @@
   cursor: pointer;
 }
 
+.greenCircle {
+  background-color: var(--green);
+}
+
 .greyCircle .icon,
 .home .icon {
   fill: var(--light-gray);

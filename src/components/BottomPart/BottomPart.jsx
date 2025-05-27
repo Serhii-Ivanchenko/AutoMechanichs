@@ -23,6 +23,7 @@ export default function BottomPart({
   setOpenCamera,
   setRecordAudio,
   repair,
+  audioURL,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -49,7 +50,10 @@ export default function BottomPart({
           <NavLink to="/main" className={css.home}>
             <TiHome className={css.icon} />
           </NavLink>
-          <div className={css.greyCircle} onClick={() => setRecordAudio(true)}>
+          <div
+            className={`${css.greyCircle} ${audioURL && css.greenCircle}`}
+            onClick={() => setRecordAudio(true)}
+          >
             <BsFillMicFill className={css.icon} />
           </div>
           <div className={css.greyCircle} onClick={() => setOpenCamera(true)}>

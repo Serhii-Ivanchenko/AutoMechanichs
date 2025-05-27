@@ -42,6 +42,8 @@ export default function DiagnosticScreen() {
   const navigate = useNavigate();
   const { carId } = useParams();
   const [openCamera, setOpenCamera] = useState(false);
+  const [audioURL, setAudioURL] = useState(null);
+
   // console.log('carId', carId);
 
   const cars = useSelector(selectCars);
@@ -276,32 +278,74 @@ export default function DiagnosticScreen() {
     })
     .filter(Boolean);
 
-  // console.log("dataToSend", nodes);
-  const dataToSend = {
+  // Трансформація аудіо в base64
+
+  // fetch(audioURL)
+  //   .then(response => response.blob())
+  //   .then(blob => {
+  //     // Читаємо blob як Data URL (base64)
+  //     const reader = new FileReader();
+  //     reader.onloadend = function () {
+  //       const base64data = reader.result;
+  //       console.log(base64data); // Ось тут твоє аудіо у форматі base64
+  //     };
+  //     reader.readAsDataURL(blob);
+  //   })
+  //   .catch(error => console.error('Помилка завантаження Blob:', error));
+
+  // // console.log("dataToSend", nodes);
+  const dataForSavedParts = {
     car_id: carId,
     mechanic_id: 1,
+    audio_file: audioURL,
+    photo_files: [],
     nodes: nodesToCreateDiag,
   };
 
   // console.log('dataToSend', dataToSend);
 
-  const handleCreateDiag = () => {
-    dispatch(createDiagnostic(dataToSend))
-      .unwrap()
-      .then(() => {
-        dispatch(getAllCars({ date, mechanic_id: 1 })).then(() => {
-          console.log('Діагностика успішно створена');
-          toast.success('Діагностика успішно створена', {
-            position: 'top-center',
-            duration: 3000,
-            style: {
-              background: 'var(--bg-input)',
-              color: 'var(--white)',
-            },
-          });
-          navigate('/main');
-        });
+  const handleCreateDiag = async () => {
+    // Форматування аудіо
+    try {
+      const response = await fetch(audioURL);
+      const blob = await response.blob();
+
+      const base64data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
       });
+
+      const dataToSend = {
+        car_id: carId,
+        mechanic_id: 1,
+        audio_file: base64data,
+        photo_files: [],
+        nodes: nodesToCreateDiag,
+      };
+      console.log('dataToSend', dataToSend);
+
+      await dispatch(createDiagnostic(dataToSend)).unwrap();
+      await dispatch(getAllCars({ date, mechanic_id: 1 }));
+
+      console.log('Діагностика успішно створена');
+      toast.success('Діагностика успішно створена', {
+        position: 'top-center',
+        duration: 3000,
+        style: {
+          background: 'var(--bg-input)',
+          color: 'var(--white)',
+        },
+      });
+      navigate('/main');
+    } catch (error) {
+      console.error('Помилка при створенні діагностики:', error);
+      toast.error('Помилка створення діагностики', {
+        position: 'top-center',
+        duration: 3000,
+      });
+    }
   };
 
   // console.log('chosenPoints', chosenPoints);
@@ -352,7 +396,11 @@ export default function DiagnosticScreen() {
       {particularCar?.status === 'complete' ? (
         <SavedSparesPart />
       ) : savedSparesPartOpen ? (
-        <SavedSparesPart nodes={nodes} dataToSend={dataToSend} />
+        <SavedSparesPart
+          nodes={nodes}
+          dataToSend={dataForSavedParts}
+          audioURL={audioURL}
+        />
       ) : subcatOpen ? (
         openCamera ? (
           <PhotoCapturePage
@@ -395,7 +443,11 @@ export default function DiagnosticScreen() {
 
       {!openCamera &&
         (recordAudio ? (
-          <AudioRecorder setRecordAudio={setRecordAudio} />
+          <AudioRecorder
+            setRecordAudio={setRecordAudio}
+            audioURL={audioURL}
+            setAudioURL={setAudioURL}
+          />
         ) : (
           <BottomPart
             back={
@@ -420,6 +472,7 @@ export default function DiagnosticScreen() {
             handleCreateDiag={() => handleCreateDiag()}
             setOpenCamera={setOpenCamera}
             setRecordAudio={setRecordAudio}
+            audioURL={audioURL}
           />
         ))}
     </div>
