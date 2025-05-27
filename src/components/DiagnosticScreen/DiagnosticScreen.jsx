@@ -12,15 +12,19 @@ import SavedSparesPart from './SavedSparesPart/SavedSparesPart';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectCars,
+  selectDate,
   selectNodesAndPartsForDiagnostics,
 } from '../../redux/cars/selectors';
 import {
   createDiagnostic,
+  getAllCars,
   getDiagnostic,
   getNodesAndParts,
 } from '../../redux/cars/operations';
 import toast from 'react-hot-toast';
 import Filter from './Filter/Filter';
+// import AddCarPhoto from '../AddCarPhoto/AddCarPhoto';
+import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage';
 import AudioRecorder from '../AudioRecorder/AudioRecorder';
 
 export default function DiagnosticScreen() {
@@ -37,6 +41,7 @@ export default function DiagnosticScreen() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { carId } = useParams();
+  const [openCamera, setOpenCamera] = useState(false);
   // console.log('carId', carId);
 
   const cars = useSelector(selectCars);
@@ -45,6 +50,8 @@ export default function DiagnosticScreen() {
   const particularCar = cars?.find(car => car?.car_id === Number(carId));
   // console.log('particularCar', particularCar);
   //
+
+  const date = sessionStorage.getItem('date');
 
   useEffect(() => {
     dispatch(getNodesAndParts());
@@ -59,6 +66,12 @@ export default function DiagnosticScreen() {
 
   // console.log('chosenSpares', chosenSpares);
   // console.log('spares', spares);
+  // const pointsForCategories = togglePoints?.map(point => ({ id: point.id, label: point.name }))
+  useEffect(() => {
+    setChosenPoints(
+      togglePoints?.map(point => ({ id: point.id, label: point.name }))
+    );
+  }, [togglePoints]);
 
   const handleCheckboxChange = (event, id, label) => {
     setChosenPoints(prevPoints => {
@@ -276,16 +289,18 @@ export default function DiagnosticScreen() {
     dispatch(createDiagnostic(dataToSend))
       .unwrap()
       .then(() => {
-        console.log('Діагностика успішно створена');
-        toast.success('Діагностика успішно створена', {
-          position: 'top-center',
-          duration: 3000,
-          style: {
-            background: 'var(--bg-input)',
-            color: 'var(--white)',
-          },
+        dispatch(getAllCars({ date, mechanic_id: 1 })).then(() => {
+          console.log('Діагностика успішно створена');
+          toast.success('Діагностика успішно створена', {
+            position: 'top-center',
+            duration: 3000,
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)',
+            },
+          });
+          navigate('/main');
         });
-        navigate('/main');
       });
   };
 
@@ -339,29 +354,37 @@ export default function DiagnosticScreen() {
       ) : savedSparesPartOpen ? (
         <SavedSparesPart nodes={nodes} dataToSend={dataToSend} />
       ) : subcatOpen ? (
-        <>
-          <Filter filter={filter} setFilter={setFilter} />
-          <ul className={css.list} ref={containerRef}>
-            {visibleSubcategories?.map(point => (
-              <SubcategoriesPart
-                key={point.id}
-                point={point}
-                setCategoryForDetailsPart={setCategoryForDetailsPart}
-                chosenPoints={chosenPoints}
-                togglePoints={togglePoints}
-                setOpenDetails={setOpenDetails}
-                openDetails={openDetails}
-                categoryForDetailsPart={categoryForDetailsPart}
-                spares={spares}
-                setSpares={setSpares}
-                setChosenSpares={setChosenSpares}
-                chosenSpares={chosenSpares}
-                containerRef={containerRef}
-                filter={filter}
-              />
-            ))}
-          </ul>
-        </>
+        openCamera ? (
+          <PhotoCapturePage
+            diag={true}
+            carId={carId}
+            setOpenCamera={setOpenCamera}
+          />
+        ) : (
+          <>
+            <Filter filter={filter} setFilter={setFilter} />
+            <ul className={css.list} ref={containerRef}>
+              {visibleSubcategories?.map(point => (
+                <SubcategoriesPart
+                  key={point.id}
+                  point={point}
+                  setCategoryForDetailsPart={setCategoryForDetailsPart}
+                  chosenPoints={chosenPoints}
+                  togglePoints={togglePoints}
+                  setOpenDetails={setOpenDetails}
+                  openDetails={openDetails}
+                  categoryForDetailsPart={categoryForDetailsPart}
+                  spares={spares}
+                  setSpares={setSpares}
+                  setChosenSpares={setChosenSpares}
+                  chosenSpares={chosenSpares}
+                  containerRef={containerRef}
+                  filter={filter}
+                />
+              ))}
+            </ul>
+          </>
+        )
       ) : (
         <TogglePoints
           togglePoints={togglePoints}
@@ -370,31 +393,34 @@ export default function DiagnosticScreen() {
         />
       )}
 
-      {recordAudio ? (
-        <AudioRecorder setRecordAudio={setRecordAudio} />
-      ) : (
-        <BottomPart
-          back={
-            subcatOpen
-              ? () => setSubcatOpen(false)
-              : savedSparesPartOpen
-              ? handleCloseSavedScreen()
-              : '/main'
-          }
-          button={subcatOpen}
-          btnToggle={true}
-          // next="diagnostics-subcategories"
-          categ={subcatOpen && !savedSparesPartOpen}
-          next={
-            !subcatOpen
-              ? () => setSubcatOpen(true)
-              : () => setSavedSparesPartOpen(true)
-          }
-          chosenPoints={chosenPoints}
-          savedPartBottom={savedSparesPartOpen}
-          handleCreateDiag={() => handleCreateDiag()}
-          setRecordAudio={setRecordAudio}
-        />
+      {!openCamera && (
+        recordAudio ? (
+          <AudioRecorder setRecordAudio={setRecordAudio} />
+        ) : (
+          <BottomPart
+            back={
+              subcatOpen
+                ? () => setSubcatOpen(false)
+                : savedSparesPartOpen
+                ? handleCloseSavedScreen
+                : '/main'
+            }
+            button={subcatOpen}
+            btnToggle={true}
+            // next="diagnostics-subcategories"
+            categ={subcatOpen && !savedSparesPartOpen}
+            next={
+              !subcatOpen
+                ? () => setSubcatOpen(true)
+                : () => setSavedSparesPartOpen(true)
+            }
+            chosenPoints={chosenPoints}
+            savedPartBottom={savedSparesPartOpen}
+            handleCreateDiag={() => handleCreateDiag()}
+            setOpenCamera={setOpenCamera}
+            setRecordAudio={setRecordAudio}
+          />
+        )
       )}
     </div>
   );

@@ -30,10 +30,49 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
   console.log('cars', cars);
 
-  const carsInWork = cars?.filter(car => car?.status !== 'complete');
-  const carsDone = cars?.filter(car => car?.status === 'complete');
-  // console.log('carsInWork', carsInWork);
+  const date = sessionStorage.getItem('date');
+
+  const checkDate = dayOfRecord => {
+    const currentDate = new Date(date);
+    // const dateOfRecord = time;
+
+    // const [hours, minutes] = timeOfRecord.split(':').map(Number);
+    const dateOfRecord = new Date(dayOfRecord);
+    // dateOfRecord.setHours(hours, minutes, 0, 0);
+
+    console.log(
+      'dateOfRecord > currentTime',
+      new Date(dateOfRecord) > new Date(currentDate)
+    );
+    // console.log('dateOfRecord', new Date(dateOfRecord));
+    // console.log('currentTime', new Date(currentTime));
+
+    return new Date(dateOfRecord) > new Date(currentDate);
+  };
+
+  const carsInWork = cars?.filter(car =>
+    car?.status === 'diagnostic' ? !car?.diagnostic_id : !car.complete_date
+  );
+  const carsDone = cars?.filter(car =>
+    car?.status === 'diagnostic' ? car?.diagnostic_id : car.complete_date
+  );
+  console.log('carsInWork', carsInWork);
   // console.log('carsDone', carsDone);
+
+  const filteredCarsInWork = carsInWork.filter(car => !checkDate(car.date));
+  console.log('filteredCarsInWork', filteredCarsInWork);
+
+  const carsArray = filteredCarsInWork.filter(
+    car =>
+      car.date.split('T')[0] < new Date().toISOString().split('T')[0] ||
+      car.date.split('T')[0] === date
+  );
+
+  console.log('carsArray', carsArray);
+
+  // const carsDoneForParticularDay = carsDone?.filter(
+  //   car => car.complete_date === date
+  // );
 
   return (
     <div className={css.sectionWrapper}>
@@ -64,7 +103,7 @@ export default function MainScreenSection({ array1, array2, wage }) {
         <DiagnosticScreen setDiagOpen={setDiagOpen} />
       ) : (
         <> */}
-      <CarsInWorkOrDoneList list={carsInWork} />
+      <CarsInWorkOrDoneList list={carsArray} />
 
       <Link to="/add-car" className={css.btnAddPhoto}>
         <IoCarSport className={css.icon} />

@@ -8,7 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { uploadCarPhotos } from '../../redux/cars/operations';
 import { selectCars } from '../../redux/cars/selectors';
 
-export default function PhotoCapturePage() {
+export default function PhotoCapturePage({
+  diag,
+  // carId,
+  setOpenCamera,
+}) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
@@ -129,10 +133,15 @@ export default function PhotoCapturePage() {
   };
 
   return (
-    <div className={css.wrapper}>
+    <div className={`${css.wrapper} ${diag && css.wrapperDiag}`}>
       {isCameraOpen ? (
-        <div className={css.video}>
-          <video ref={videoRef} autoPlay playsInline className={css.video} />
+        <div className={`${css.video} ${diag && css.videoDiag}`}>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            className={`${css.video} ${diag && css.videoDiag}`}
+          />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
       ) : (
@@ -169,6 +178,11 @@ export default function PhotoCapturePage() {
           <BsCameraFill className={css.cameraIcon} />
         </button>
 
+        {/* {!isCameraOpen ? (
+          <Link className={css.acceptBtn} to={`/car/${carId}/diagnostics`}>
+            <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
+          </Link>
+        ) */}
         {!isCameraOpen ? (
           // <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
           <IoMdCheckmark
@@ -182,6 +196,10 @@ export default function PhotoCapturePage() {
               src={photoPreview}
               alt="photo preview"
               className={css.photoPreview}
+              onError={e => {
+                e.target.onerror = null;
+                e.target.src = autoPhoto;
+              }}
             />
             <p className={css.photoQuantity}>{photos?.length}</p>
           </div>

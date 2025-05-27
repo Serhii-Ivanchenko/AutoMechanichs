@@ -116,7 +116,7 @@ export default function SubcategoriesPart({
       );
     }
   });
-  console.log('visiblePoints', visiblePoints);
+  // console.log('visiblePoints', visiblePoints);
 
   return (
     // <ul>

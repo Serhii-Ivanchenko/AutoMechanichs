@@ -180,7 +180,7 @@ export const createDiagnostic = createAsyncThunk(
 
 // Get repair info
 export const getRepair = createAsyncThunk(
-  "cars/getRepair",
+  'cars/getRepair',
   async (repair_id, thunkAPI) => {
     const state = thunkAPI.getState();
     const serviceId = state.auth.userData.selectedServiceId;
@@ -188,10 +188,10 @@ export const getRepair = createAsyncThunk(
       const response = await axiosInstance.get(`/acc/get_repair/${repair_id}`, {
         headers: {
           // "X-Api-Key": "YA7NxysJ",
-          "company-id": serviceId,
+          'company-id': serviceId,
         },
       });
-      console.log("getRepair", response.data);
+      console.log('getRepair', response.data);
 
       return response.data;
     } catch (error) {
@@ -206,7 +206,7 @@ export const getRepair = createAsyncThunk(
 
 // Update Repair Info
 export const updateRepair = createAsyncThunk(
-  "cars/updateRepair",
+  'cars/updateRepair',
   async (updatedRepairData, thunkAPI) => {
     const state = thunkAPI.getState();
     const serviceId = state.auth.userData.selectedServiceId;
@@ -218,11 +218,11 @@ export const updateRepair = createAsyncThunk(
         {
           headers: {
             // "X-Api-Key": "YA7NxysJ",
-            "company-id": serviceId,
+            'company-id': serviceId,
           },
         }
       );
-      console.log("updateRepair", response.data);
+      console.log('updateRepair', response.data);
 
       return response.data;
     } catch (error) {
@@ -270,20 +270,20 @@ export const uploadCarPhotos = createAsyncThunk(
     const serviceId = state.auth.userData.selectedServiceId;
     try {
       const { car_id, photos } = carData;
-      const formData = new FormData();
+      // const formData = new FormData();
 
-      photos.forEach(photo => {
-        formData.append('photos', photo);
-      });
-      formData.append('car_id', car_id);
-      formData.append('company_id', serviceId);
-      const response = await axiosInstancePhotos.post(
-        `/mb/upload_car_photos/`,
-        formData,
+      // photos.forEach(photo => {
+      //   formData.append('photos', photo);
+      // });
+      // formData.append('car_id', car_id);
+      // formData.append('company_id', serviceId);
+      const response = await axiosInstance.post(
+        `/mb/upload_car_photos/?car_id=${car_id}`,
+        photos,
         {
           headers: {
-            // 'company-id': serviceId,
-            'Content-Type': 'multipart/form-data',
+            'company-id': serviceId,
+            // 'Content-Type': 'multipart/form-data',
           },
         }
       );
@@ -303,7 +303,7 @@ export const uploadCarPhotos = createAsyncThunk(
 // Update existing car
 
 export const updateCar = createAsyncThunk(
-  "cars/updateCar",
+  'cars/updateCar',
   async (carDataToUpdate, thunkAPI) => {
     const state = thunkAPI.getState();
     const serviceId = state.auth.userData.selectedServiceId;
@@ -316,11 +316,11 @@ export const updateCar = createAsyncThunk(
         {
           headers: {
             // "X-Api-Key": "YA7NxysJ",
-            "company-id": serviceId,
+            'company-id': serviceId,
           },
         }
       );
-      console.log("updateCar", response.data);
+      console.log('updateCar', response.data);
 
       return response.data;
     } catch (error) {

@@ -41,6 +41,12 @@ const carsSlice = createSlice({
       state.isRecognitionLoading = false;
       state.error = null;
     },
+    clearDiag: state => {
+      state.diagnostic = {}
+    },
+    clearRepair: state => {
+      state.repairDetails ={}
+    }
   },
   extraReducers: builder =>
     builder
@@ -123,7 +129,7 @@ const carsSlice = createSlice({
       })
       .addCase(getRepair.fulfilled, (state, action) => {
         state.isRepairLoading = false;
-        state.repairDetails = action.payload;
+        state.repairDetails = action.payload.repair;
       })
       .addCase(getRepair.rejected, (state, action) => {
         state.isRepairLoading = false;
@@ -187,7 +193,7 @@ const carsSlice = createSlice({
         state.error = action.payload;
       }),
 });
-export const { setChosenDate, clearChosenDate, deleteCarInfo } =
+export const { setChosenDate, clearChosenDate, deleteCarInfo, clearDiag, clearRepair } =
   carsSlice.actions;
 
 export default carsSlice.reducer;
