@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadCarPhotos } from '../../redux/cars/operations';
 import { selectCars } from '../../redux/cars/selectors';
+import autoPhoto from '../../assets/images/absentAutoImg.webp';
 
 export default function PhotoCapturePage({
   diag,
@@ -165,6 +166,20 @@ export default function PhotoCapturePage({
             <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
           </Link>
         ) : (
+          //   diag ? (
+          //     <button
+          //       className={css.cancelBtn}
+          //       onClick={() => setOpenCamera(false)}
+          //     >
+          //       <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+          //     </button>
+          // )
+          // : (
+          //     <Link className={css.cancelBtn} to="/add-car">
+          //       <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+          //     </Link>
+          //   )
+          // )
           <button className={css.cancelBtn} onClick={handleCloseCamera}>
             <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
           </button>
