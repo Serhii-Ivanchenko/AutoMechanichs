@@ -371,3 +371,7 @@
   width: 8.706vh;
   height: 8.706vh;
 }
+
+.error {
+  color: var(--red);
+}

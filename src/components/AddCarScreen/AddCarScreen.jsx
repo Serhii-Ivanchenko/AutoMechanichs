@@ -46,6 +46,7 @@ export default function AddCarScreen() {
   const [mileage, setMileage] = useState('');
   const [vin, setVin] = useState('');
   const [plate, setPlate] = useState('');
+  const [vinError, setVinError] = useState('');
   const dispatch = useDispatch();
 
   const buttonMakeRef = useRef(null);
@@ -443,6 +444,18 @@ export default function AddCarScreen() {
     navigate(`/main`);
   };
 
+  const validate = val => {
+    const regex = /^[A-Za-z0-9]{17}$/;
+
+    if (!regex.test(val)) {
+      setVinError(
+        'VIN може складатись з латинських букв чи цифр та містити 17 символів'
+      );
+    } else {
+      setVinError('');
+    }
+  };
+
   return isRecognitionLoading ? (
     <LoaderSvg />
   ) : (
@@ -660,7 +673,9 @@ export default function AddCarScreen() {
                   className={css.mileage}
                   type="text"
                   value={mileage}
-                  onChange={e => setMileage(e.target.value)}
+                  onChange={e => {
+                    setMileage(e.target.value);
+                  }}
                   placeholder="123"
                 />
 
@@ -672,9 +687,13 @@ export default function AddCarScreen() {
                 className={css.vin}
                 type="text"
                 value={vin}
-                onChange={e => setVin(e.target.value)}
+                onChange={e => {
+                  setVin(e.target.value);
+                  validate(e.target.value);
+                }}
                 placeholder="vin"
               />
+              {vinError && <p className={css.error}>{vinError}</p>}
             </div>
           </>
         )}
@@ -707,6 +726,7 @@ export default function AddCarScreen() {
         chosenYear &&
         mileage &&
         vin &&
+        !vinError &&
         plate ? (
           <IoMdCheckmark
             className={`${css.acceptBtn} ${css.check}`}

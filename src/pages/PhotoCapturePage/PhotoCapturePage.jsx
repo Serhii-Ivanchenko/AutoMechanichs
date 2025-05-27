@@ -31,7 +31,7 @@ export default function PhotoCapturePage({
   const displayedCar = cars?.find(car => Number(car?.car_id === Number(carId)));
 
   console.log('photos', photos);
-  console.log('displayedCar', displayedCar);
+  // console.log('displayedCar', displayedCar);
 
   useEffect(() => {
     const openCamera = async () => {
@@ -73,8 +73,9 @@ export default function PhotoCapturePage({
 
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       const photoData = canvas.toDataURL('image/png');
+      const base64String = photoData.split(',')[1];
 
-      setPhotos(prev => [...prev, photoData]);
+      setPhotos(prev => [...prev, base64String]);
       setPhotoPreview(photoData);
     }
   };
@@ -101,8 +102,11 @@ export default function PhotoCapturePage({
     } else {
       const carData = {
         car_id: carId,
-        photos,
+        photos: {
+          photos_base64: photos,
+        },
       };
+      console.log(carData);
 
       dispatch(uploadCarPhotos(carData))
         .unwrap()
