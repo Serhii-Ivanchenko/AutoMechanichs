@@ -52,6 +52,9 @@ export default function AddCarScreen() {
   const buttonModelRef = useRef(null);
   const buttonYearRef = useRef(null);
   const videoRef = useRef(null);
+  const modelInputRef = useRef(null);
+  const makeInputRef = useRef(null);
+  const yearInputRef = useRef(null);
 
   const carInfo = useSelector(selectCarInfo);
   const isRecognitionLoading = useSelector(selectIsRecognitionLoading);
@@ -69,7 +72,27 @@ export default function AddCarScreen() {
   const [videoStream, setVideoStream] = useState(null);
   const [photo, setPhoto] = useState(null);
 
+  const originalDataRef = useRef({});
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (modelInputRef.current) {
+      modelInputRef.current.focus();
+    }
+  }, [modelPopupOpen]);
+
+  useEffect(() => {
+    if (makeInputRef.current) {
+      makeInputRef.current.focus();
+    }
+  }, [makePopupOpen]);
+
+  useEffect(() => {
+    if (yearInputRef.current) {
+      yearInputRef.current.focus();
+    }
+  }, [yearPopupOpen]);
 
   const startCamera = async () => {
     try {
@@ -112,15 +135,12 @@ export default function AddCarScreen() {
     }
   };
 
-  console.log('cars', cars);
-
   useEffect(() => {
     if (!carId || cars?.length === 0) return;
 
     const displayedCar = cars?.find(
       car => Number(car?.car_id) === Number(carId)
     );
-    console.log('displayedCar', displayedCar);
 
     const existedMake = carData?.find(
       car => car?.make?.toLocaleLowerCase() === displayedCar?.make.toLowerCase()
@@ -141,10 +161,20 @@ export default function AddCarScreen() {
     });
 
     setChosenYear(displayedCar?.year);
-    setMileage(Number(displayedCar?.mileage) / 1000);
+    setMileage(Number(displayedCar?.mileage));
     setPlate(displayedCar?.plate);
     setVin(displayedCar?.vin);
     setPhoto(existedPhoto);
+
+    originalDataRef.current = {
+      carMake: existedMake?.make,
+      carModel: existedModel?.model_name,
+      carYear: displayedCar?.year,
+      carMileage: Number(displayedCar?.mileage),
+      carPlate: displayedCar?.plate,
+      carVin: displayedCar?.vin,
+      carPhoto: existedPhoto,
+    };
   }, [carId]);
 
   useEffect(() => {
@@ -298,43 +328,56 @@ export default function AddCarScreen() {
       return;
 
     if (carId) {
-      const carData = {
-        car_id: carId,
-        plate,
-        vin,
-        year: Number(chosenYear),
-        make: chosenMake?.make,
-        model: chosenModel?.model_name,
-        photo_url: photo,
-        mileage: Number(mileage) * 1000,
-      };
+      const hasChanges =
+        chosenMake?.make !== originalDataRef.current.carMake ||
+        chosenModel?.model_name !== originalDataRef.current.carModel ||
+        plate !== originalDataRef.current.carPlate ||
+        vin !== originalDataRef.current.carVin ||
+        chosenYear !== originalDataRef.current.carYear ||
+        mileage !== originalDataRef.current.carMileage ||
+        photo !== originalDataRef.current.carPhoto;
 
-      console.log('carDataWithId', carData);
+      if (!hasChanges) {
+        navigate(`/car/${carId}/photos`);
+      } else {
+        const carData = {
+          car_id: carId,
+          plate,
+          vin,
+          year: Number(chosenYear),
+          make: chosenMake?.make,
+          model: chosenModel?.model_name,
+          photo_url: photo,
+          mileage: Number(mileage),
+        };
 
-      dispatch(updateCar(carData))
-        .unwrap()
-        .then(() => {
-          toast.success('Інформація про авто успішно оновлена', {
-            position: 'top-center',
-            duration: 3000,
-            style: {
-              background: 'var(--bg-input)',
-              color: 'var(--white)FFF',
-            },
+        console.log('carDataWithId', carData);
+
+        dispatch(updateCar(carData))
+          .unwrap()
+          .then(() => {
+            toast.success('Інформація про авто успішно оновлена', {
+              position: 'top-center',
+              duration: 3000,
+              style: {
+                background: 'var(--bg-input)',
+                color: 'var(--white)FFF',
+              },
+            });
+            navigate(`/car/${carId}/photos`);
+          })
+          .catch(err => {
+            console.log(err);
+
+            toast.error('Щось сталося, спробуйте ще раз', {
+              position: 'top-center',
+              style: {
+                background: 'var(--bg-input)',
+                color: 'var(--white)FFF',
+              },
+            });
           });
-          navigate(`/car/${carId}/photos`);
-        })
-        .catch(err => {
-          console.log(err);
-
-          toast.error('Щось сталося, спробуйте ще раз', {
-            position: 'top-center',
-            style: {
-              background: 'var(--bg-input)',
-              color: 'var(--white)FFF',
-            },
-          });
-        });
+      }
     } else {
       const carData = {
         license_plate: plate,
@@ -344,7 +387,7 @@ export default function AddCarScreen() {
         color: carInfo?.color ? carInfo?.color : '',
         capacity: carInfo?.capacity ? carInfo?.capacity : '',
         vin: vin,
-        mileage: Number(mileage) * 1000,
+        mileage: Number(mileage),
         photo: photo,
       };
 
@@ -472,6 +515,7 @@ export default function AddCarScreen() {
                       className={`${css.input} ${css.text} ${css.textColor}`}
                       onClick={e => e.stopPropagation()}
                       placeholder="Марка авто"
+                      ref={makeInputRef}
                     />
                   ) : (
                     <p
@@ -522,6 +566,7 @@ export default function AddCarScreen() {
                       className={`${css.input} ${css.text} ${css.textColor}`}
                       onClick={e => e.stopPropagation()}
                       placeholder="Модель авто"
+                      ref={modelInputRef}
                     />
                   ) : (
                     <p
@@ -573,6 +618,7 @@ export default function AddCarScreen() {
                       className={`${css.input} ${css.text} ${css.textColor}`}
                       onClick={e => e.stopPropagation()}
                       placeholder="Рік випуску"
+                      ref={yearInputRef}
                     />
                   ) : (
                     <p
@@ -601,7 +647,6 @@ export default function AddCarScreen() {
                 {yearPopupOpen && (
                   <AddCarPopup
                     arr={displayedYearArr}
-                    // fieldKey="make"
                     setFieldValue={setChosenYear}
                     buttonRef={buttonYearRef}
                     onClose={() => setYearPopupOpen(false)}
@@ -619,7 +664,7 @@ export default function AddCarScreen() {
                   placeholder="123"
                 />
 
-                <p className={css.mileageText}>тис. км</p>
+                <p className={css.mileageText}>км</p>
 
                 <BsCameraFill className={css.cameraVinIcon} />
               </div>
