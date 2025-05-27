@@ -31,7 +31,7 @@ export default function CompletedDocSection() {
 
   const id = '682ce6104f095bf3de2739ef';
   // const id = particularCar?.diagnostic_id;
-  const idRepair = '6830857da0bfeec5d409915b';
+  const idRepair = '6830155a926bc65393d0eff6';
 
   useEffect(() => {
     id && dispatch(getDiagnostic(id));
@@ -106,7 +106,7 @@ export default function CompletedDocSection() {
         )
       }
 
-      {particularCar?.diagnostic_id && particularCar.repair_id ? (
+      {particularCar?.diagnostic_id && particularCar?.repair_id ? (
         page === 'diag' ? (
           <SavedSparesPart
             nodes={completedDiag ? completedDiagWithId : []}
@@ -121,12 +121,12 @@ export default function CompletedDocSection() {
         ) : (
           ''
         )
-      ) : particularCar.diagnostic_id ? (
+      ) : particularCar?.diagnostic_id ? (
         <SavedSparesPart
           nodes={completedDiag ? completedDiagWithId : []}
           completed={true}
         />
-      ) : particularCar.repair_id ? (
+      ) : particularCar?.repair_id ? (
         <PartsForRepair
           completedRepair={true}
           parts={repair?.parts}

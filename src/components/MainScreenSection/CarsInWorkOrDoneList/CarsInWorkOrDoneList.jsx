@@ -37,16 +37,17 @@ export default function CarsInWorkOrDoneList({ done, list }) {
               // className={css.listItem}
             >
               <Link
-                // to={
-                //   item?.diagnostic_id
-                //     ? `/car/${item.car_id}/completed-doc`
-                //     : item?.status === 'diagnostic'
-                //     ? `/car/${item.car_id}/diagnostics`
-                //     : item?.status === 'repair'
-                //     ? `/car/${item.car_id}/repair`
-                //     : ''
-                // }
-                to={`/car/${item.car_id}/update-car`}
+                to={
+                  item?.diagnostic_id
+                    ? `/car/${item.car_id}/completed-doc`
+                    : `/car/${item.car_id}/update-car`
+                  // item?.status === 'diagnostic'
+                  // ? `/car/${item.car_id}/diagnostics`
+                  // : item?.status === 'repair'
+                  // ? `/car/${item.car_id}/repair`
+                  // : ''
+                }
+                // to={`/car/${item.car_id}/update-car`}
               >
                 <div className={css.listItem}>
                   {done ? (

@@ -183,6 +183,7 @@ export default function AudioRecorder({ setRecordAudio }) {
                 setAudioURL(null);
                 setDuration(null);
                 setCurrentTime(0);
+                setIsPlaying(false);
               }}
             />
           </>
@@ -199,7 +200,10 @@ export default function AudioRecorder({ setRecordAudio }) {
           // </button>
           <button
             type="button"
-            onClick={() => setRecordAudio(false)}
+            onClick={() => {
+              setRecordAudio(false);
+              setIsPlaying(false);
+            }}
             className={css.cancel}
           >
             <FaArrowLeft />
