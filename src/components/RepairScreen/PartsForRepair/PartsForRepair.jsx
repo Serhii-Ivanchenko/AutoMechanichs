@@ -1,5 +1,7 @@
 import css from './PartsForRepair.module.css';
 import { BsWrench } from 'react-icons/bs';
+import { BsFillMicFill } from 'react-icons/bs';
+import { BsCameraFill } from 'react-icons/bs';
 
 export default function PartsForRepair({
   statusParts,
@@ -33,7 +35,19 @@ export default function PartsForRepair({
       {statusParts?.length > 0 && (
         <>
           {' '}
-          <p className={css.title}>Запчастини</p>
+          <div className={css.titleBox}>
+            <p className={css.title}>Запчастини</p>
+            {completedRepair && statusParts?.length > 0 && (
+              <div className={css.btnBoxCompleted}>
+                <div className={css.circle}>
+                  <BsFillMicFill className={css.iconMedia} />
+                </div>
+                <div className={css.circle}>
+                  <BsCameraFill className={css.iconMedia} />
+                </div>
+              </div>
+            )}
+          </div>
           <ul
             className={`${css.listOfItems} ${css.listParts} ${
               completedRepair && css.listCopmleted
@@ -74,7 +88,19 @@ export default function PartsForRepair({
       {statusServices?.length > 0 && (
         <>
           {' '}
-          <p className={css.title}>Послуги</p>
+          <div className={css.titleBox}>
+            <p className={css.title}>Послуги</p>
+            {completedRepair && statusParts?.length === 0 && (
+              <div className={css.btnBoxCompleted}>
+                <div className={css.circle}>
+                  <BsFillMicFill className={css.iconMedia} />
+                </div>
+                <div className={css.circle}>
+                  <BsCameraFill className={css.iconMedia} />
+                </div>
+              </div>
+            )}
+          </div>
           <ul
             className={`${css.listOfItems} ${
               completedRepair && css.listCopmleted
