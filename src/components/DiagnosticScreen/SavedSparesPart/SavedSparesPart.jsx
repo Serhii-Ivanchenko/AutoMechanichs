@@ -9,7 +9,13 @@ import { useDispatch } from 'react-redux';
 import { createDiagnostic } from '../../../redux/cars/operations';
 import { useState } from 'react';
 
-export default function SavedSparesPart({ nodes, completed, audioURL }) {
+export default function SavedSparesPart({
+  nodes,
+  completed,
+  audioURL,
+  photosFromDiag,
+  completedDiag,
+}) {
   const [expandedMap, setExpandedMap] = useState({});
 
   const handleAccordionToggle = (categoryId, nodeId) => (event, isExpanded) => {
@@ -22,14 +28,24 @@ export default function SavedSparesPart({ nodes, completed, audioURL }) {
     // setCategoryForDetailsPart(isExpanded ? name : '');
   };
 
+  console.log('completedDiag', completedDiag);
+
   return (
     <div>
       {completed && (
         <div className={css.btnBoxCompleted}>
-          <div className={css.circle}>
+          <div
+            className={`${css.circle} ${
+              completedDiag?.audio_files?.length > 0 && css.circleFilled
+            }`}
+          >
             <BsFillMicFill className={css.icon} />
           </div>
-          <div className={css.circle}>
+          <div
+            className={`${css.circle} ${
+              completedDiag?.photo_files?.length > 0 && css.circleFilled
+            }`}
+          >
             <BsCameraFill className={css.icon} />
           </div>
         </div>
@@ -129,7 +145,11 @@ export default function SavedSparesPart({ nodes, completed, audioURL }) {
                     >
                       <BsFillMicFill className={css.icon} />
                     </div>
-                    <div className={css.circle}>
+                    <div
+                      className={`${css.circle} ${
+                        photosFromDiag?.length > 0 && css.circleFilled
+                      }`}
+                    >
                       <BsCameraFill className={css.icon} />
                     </div>
                   </div>

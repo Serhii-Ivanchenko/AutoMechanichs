@@ -28,7 +28,12 @@ import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage';
 import AudioRecorder from '../AudioRecorder/AudioRecorder';
 
 export default function DiagnosticScreen() {
-  const [chosenPoints, setChosenPoints] = useState([]);
+  const togglePoints = useSelector(selectNodesAndPartsForDiagnostics);
+
+  const [chosenPoints, setChosenPoints] = useState(
+    togglePoints &&
+      togglePoints?.map(point => ({ id: point.id, label: point.name }))
+  );
   const [categoryForDetailsPart, setCategoryForDetailsPart] = useState('');
   const [subcatOpen, setSubcatOpen] = useState(false);
   const [openDetails, setOpenDetails] = useState(null);
@@ -43,6 +48,7 @@ export default function DiagnosticScreen() {
   const { carId } = useParams();
   const [openCamera, setOpenCamera] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
+  const [photosFromDiag, setPhotosFromDiag] = useState([]);
 
   // console.log('carId', carId);
 
@@ -58,8 +64,6 @@ export default function DiagnosticScreen() {
   useEffect(() => {
     dispatch(getNodesAndParts());
   }, [dispatch]);
-
-  const togglePoints = useSelector(selectNodesAndPartsForDiagnostics);
 
   const handleCloseSavedScreen = () => {
     setSavedSparesPartOpen(false);
@@ -320,8 +324,8 @@ export default function DiagnosticScreen() {
       const dataToSend = {
         car_id: carId,
         mechanic_id: 1,
-        audio_file: base64data,
-        photo_files: [],
+        audios: [base64data],
+        photos: photosFromDiag,
         nodes: nodesToCreateDiag,
       };
       console.log('dataToSend', dataToSend);
@@ -400,6 +404,7 @@ export default function DiagnosticScreen() {
           nodes={nodes}
           dataToSend={dataForSavedParts}
           audioURL={audioURL}
+          photosFromDiag={photosFromDiag}
         />
       ) : subcatOpen ? (
         openCamera ? (
@@ -407,6 +412,8 @@ export default function DiagnosticScreen() {
             diag={true}
             carId={carId}
             setOpenCamera={setOpenCamera}
+            setPhotosFromWorksPart={setPhotosFromDiag}
+            photosFromWorksPart={photosFromDiag}
           />
         ) : (
           <>
@@ -473,6 +480,7 @@ export default function DiagnosticScreen() {
             setOpenCamera={setOpenCamera}
             setRecordAudio={setRecordAudio}
             audioURL={audioURL}
+            photosFromDiag={photosFromDiag}
           />
         ))}
     </div>

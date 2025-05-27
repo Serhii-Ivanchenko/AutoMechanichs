@@ -24,6 +24,7 @@ export default function BottomPart({
   setRecordAudio,
   repair,
   audioURL,
+  photosFromDiag,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -56,7 +57,12 @@ export default function BottomPart({
           >
             <BsFillMicFill className={css.icon} />
           </div>
-          <div className={css.greyCircle} onClick={() => setOpenCamera(true)}>
+          <div
+            className={`${css.greyCircle} ${
+              photosFromDiag?.length > 0 && css.greenCircle
+            }`}
+            onClick={() => setOpenCamera(true)}
+          >
             <BsCameraFill className={css.icon} />
           </div>
           <div className={css.greyCircle}>

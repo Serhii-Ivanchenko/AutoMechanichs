@@ -79,9 +79,15 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
   // console.log('carsArray', carsArray);
 
-  // const carsDoneForParticularDay = carsDone?.filter(
-  //   car => car.complete_date === date
-  // );
+  const carsDoneForParticularDay = carsDone?.filter(car =>
+    car?.status === 'diagnostic'
+      ? car?.diagnostic_created_at.split('T')[0] === date
+      : car?.status === 'repair'
+      ? car?.repair_created_at.split('T')[0] === date
+      : ''
+  );
+
+  console.log('carsDoneForParticularDay', carsDoneForParticularDay);
 
   return (
     <div className={css.sectionWrapper}>
@@ -122,7 +128,7 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
       <CarsInWorkOrDoneList
         done={true}
-        list={carsDone}
+        list={carsDoneForParticularDay}
         // setDiagOpen={setDiagOpen}
       />
 

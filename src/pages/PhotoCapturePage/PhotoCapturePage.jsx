@@ -9,10 +9,13 @@ import { uploadCarPhotos } from '../../redux/cars/operations';
 import { selectCars } from '../../redux/cars/selectors';
 import autoPhoto from '../../assets/images/absentAutoImg.webp';
 
-
-export default function PhotoCapturePage({ diag,
+export default function PhotoCapturePage({
+  diag,
   // carId,
-  setOpenCamera }) {
+  setOpenCamera,
+  setPhotosFromWorksPart,
+  photosFromWorksPart,
+}) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
@@ -73,7 +76,12 @@ export default function PhotoCapturePage({ diag,
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       const photoData = canvas.toDataURL('image/png');
 
-      setPhotos(prev => [...prev, photoData]);
+      if (!diag) {
+        setPhotos(prev => [...prev, photoData]);
+      } else {
+        setPhotosFromWorksPart(prev => [...prev, photoData]);
+      }
+
       setPhotoPreview(photoData);
     }
   };
@@ -93,7 +101,9 @@ export default function PhotoCapturePage({ diag,
   const onCheckmarkBtnClick = () => {
     if (!carId) return;
 
-    if (photos?.length === 0) {
+    if (diag) {
+      setOpenCamera(false);
+    } else if (photos?.length === 0) {
       displayedCar?.status === 'repair'
         ? navigate(`/car/${carId}/repair`)
         : navigate(`/car/${carId}/diagnostics`);
@@ -132,6 +142,8 @@ export default function PhotoCapturePage({ diag,
     }
   };
 
+  const photosToDisplay = diag ? photosFromWorksPart : photos;
+
   return (
     <div className={`${css.wrapper} ${diag && css.wrapperDiag}`}>
       {isCameraOpen ? (
@@ -146,7 +158,7 @@ export default function PhotoCapturePage({ diag,
         </div>
       ) : (
         <div className={css.photoSectionWrapper}>
-          {photos?.map((src, index) => (
+          {photosToDisplay?.map((src, index) => (
             <div key={index} className={css.photoWrapper}>
               <img src={src} alt="car photo" className={css.photo} />
               <button type="button" className={css.deleteBtn}>
@@ -161,24 +173,22 @@ export default function PhotoCapturePage({ diag,
       )}
       <div className={`${css.btnsWrapper} ${stream ? css.cameraOn : ''}`}>
         {!isCameraOpen ? (
-          <Link className={css.cancelBtn} to={`/car/${carId}/update-car`}>
-            <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-          </Link>)
-        //   diag ? (
-        //     <button
-        //       className={css.cancelBtn}
-        //       onClick={() => setOpenCamera(false)}
-        //     >
-        //       <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-        //     </button>
-        // )
-        // : (
-        //     <Link className={css.cancelBtn} to="/add-car">
-        //       <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-        //     </Link>
-        //   )
-        // )
-        : (
+          diag ? (
+            <button
+              className={css.cancelBtn}
+              onClick={() => {
+                setOpenCamera(false);
+                setPhotosFromWorksPart([]);
+              }}
+            >
+              <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+            </button>
+          ) : (
+            <Link className={css.cancelBtn} to={`/car/${carId}/update-car`}>
+              <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+            </Link>
+          )
+        ) : (
           <button className={css.cancelBtn} onClick={handleCloseCamera}>
             <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
           </button>
@@ -197,15 +207,14 @@ export default function PhotoCapturePage({ diag,
             <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
           </Link>
         ) */}
-         {!isCameraOpen ? (
+        {!isCameraOpen ? (
           // <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
           <IoMdCheckmark
             className={`${css.acceptBtn} ${css.check}`}
             onClick={onCheckmarkBtnClick}
           />
-          // {/* </Link> */}
-        )
-          : photos.length > 0 ? (
+        ) : // {/* </Link> */}
+        photosToDisplay.length > 0 ? (
           <div className={css.photoPreviewWrapper}>
             <img
               src={photoPreview}
@@ -216,7 +225,7 @@ export default function PhotoCapturePage({ diag,
                 e.target.src = autoPhoto;
               }}
             />
-            <p className={css.photoQuantity}>{photos?.length}</p>
+            <p className={css.photoQuantity}>{photosToDisplay?.length}</p>
           </div>
         ) : (
           <div className={css.emptyDiv}></div>
