@@ -5,14 +5,15 @@ import { BsCameraFill, BsTrash } from 'react-icons/bs';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
-import { uploadCarPhotos } from '../../redux/cars/operations';
+import { getAllCars, uploadCarPhotos } from '../../redux/cars/operations';
 import { selectCars } from '../../redux/cars/selectors';
 import autoPhoto from '../../assets/images/absentAutoImg.webp';
 
-
-export default function PhotoCapturePage({ diag,
+export default function PhotoCapturePage({
+  diag,
   // carId,
-  setOpenCamera }) {
+  setOpenCamera,
+}) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
@@ -29,8 +30,8 @@ export default function PhotoCapturePage({ diag,
 
   const displayedCar = cars?.find(car => Number(car?.car_id === Number(carId)));
 
-  console.log('photos', photos);
-  console.log('displayedCar', displayedCar);
+  // console.log('photos', photos);
+  // console.log('displayedCar', displayedCar);
 
   useEffect(() => {
     const openCamera = async () => {
@@ -72,8 +73,9 @@ export default function PhotoCapturePage({ diag,
 
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       const photoData = canvas.toDataURL('image/png');
+      const base64String = photoData.split(',')[1];
 
-      setPhotos(prev => [...prev, photoData]);
+      setPhotos(prev => [...prev, base64String]);
       setPhotoPreview(photoData);
     }
   };
@@ -90,6 +92,8 @@ export default function PhotoCapturePage({ diag,
     setPhotos(prev => prev.filter((item, idx) => idx !== index));
   };
 
+  const formattedDate = new Date().toISOString().split('T')[0];
+
   const onCheckmarkBtnClick = () => {
     if (!carId) return;
 
@@ -100,8 +104,11 @@ export default function PhotoCapturePage({ diag,
     } else {
       const carData = {
         car_id: carId,
-        photos,
+        photos: {
+          photos_base64: photos,
+        },
       };
+      console.log(carData);
 
       dispatch(uploadCarPhotos(carData))
         .unwrap()
@@ -114,6 +121,7 @@ export default function PhotoCapturePage({ diag,
               color: 'var(--white)FFF',
             },
           });
+          dispatch(getAllCars({ date: formattedDate, mechanic_id: 1 }));
           displayedCar?.status === 'repair'
             ? navigate(`/car/${carId}/repair`)
             : navigate(`/car/${carId}/diagnostics`);
@@ -146,6 +154,15 @@ export default function PhotoCapturePage({ diag,
         </div>
       ) : (
         <div className={css.photoSectionWrapper}>
+          {displayedCar?.cars_photo?.length > 0 &&
+            displayedCar?.cars_photo?.map((src, index) => (
+              <img
+                key={index}
+                src={src}
+                alt="car photo"
+                className={css.existedPhoto}
+              />
+            ))}
           {photos?.map((src, index) => (
             <div key={index} className={css.photoWrapper}>
               <img src={src} alt="car photo" className={css.photo} />
@@ -163,22 +180,22 @@ export default function PhotoCapturePage({ diag,
         {!isCameraOpen ? (
           <Link className={css.cancelBtn} to={`/car/${carId}/update-car`}>
             <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-          </Link>)
-        //   diag ? (
-        //     <button
-        //       className={css.cancelBtn}
-        //       onClick={() => setOpenCamera(false)}
-        //     >
-        //       <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-        //     </button>
-        // )
-        // : (
-        //     <Link className={css.cancelBtn} to="/add-car">
-        //       <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-        //     </Link>
-        //   )
-        // )
-        : (
+          </Link>
+        ) : (
+          //   diag ? (
+          //     <button
+          //       className={css.cancelBtn}
+          //       onClick={() => setOpenCamera(false)}
+          //     >
+          //       <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+          //     </button>
+          // )
+          // : (
+          //     <Link className={css.cancelBtn} to="/add-car">
+          //       <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+          //     </Link>
+          //   )
+          // )
           <button className={css.cancelBtn} onClick={handleCloseCamera}>
             <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
           </button>
@@ -197,15 +214,14 @@ export default function PhotoCapturePage({ diag,
             <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
           </Link>
         ) */}
-         {!isCameraOpen ? (
+        {!isCameraOpen ? (
           // <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
           <IoMdCheckmark
             className={`${css.acceptBtn} ${css.check}`}
             onClick={onCheckmarkBtnClick}
           />
-          // {/* </Link> */}
-        )
-          : photos.length > 0 ? (
+        ) : // {/* </Link> */}
+        photos.length > 0 ? (
           <div className={css.photoPreviewWrapper}>
             <img
               src={photoPreview}

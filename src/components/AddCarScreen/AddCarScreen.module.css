@@ -278,6 +278,7 @@
   color: var(--light-gray);
   font-size: 20px;
   font-style: normal;
+  text-transform: uppercase;
   font-weight: 400;
   line-height: normal;
   width: 100%;
@@ -370,4 +371,8 @@
   max-height: 70px;
   width: 8.706vh;
   height: 8.706vh;
+}
+
+.error {
+  color: var(--red);
 }

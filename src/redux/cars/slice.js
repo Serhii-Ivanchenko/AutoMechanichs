@@ -156,6 +156,7 @@ const carsSlice = createSlice({
       })
       .addCase(createNewCar.fulfilled, (state, action) => {
         state.isSavingCarLoading = false;
+        state.newCar = action.payload.car_data;
       })
       .addCase(createNewCar.rejected, (state, action) => {
         state.isSavingCarLoading = false;
