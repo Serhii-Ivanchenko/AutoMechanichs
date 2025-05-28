@@ -25,6 +25,7 @@ export default function BottomPart({
   repair,
   audioURL,
   photosFromWorksPart,
+  setOpenComment,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -65,7 +66,7 @@ export default function BottomPart({
           >
             <BsCameraFill className={css.icon} />
           </div>
-          <div className={css.greyCircle}>
+          <div className={css.greyCircle} onClick={() => setOpenComment(true)}>
             <BiSolidMessageDetail className={css.icon} />
           </div>
         </>

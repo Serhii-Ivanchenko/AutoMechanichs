@@ -39,7 +39,7 @@ export default function PartsForRepair({
           {' '}
           <div className={css.titleBox}>
             <p className={css.title}>Запчастини</p>
-            {completedRepair && statusParts?.length > 0 && (
+            {statusParts?.length > 0 && (
               <div className={css.btnBoxCompleted}>
                 <div
                   className={`${css.circle} ${audioURL && css.circleFilled}`}
@@ -98,7 +98,7 @@ export default function PartsForRepair({
           {' '}
           <div className={css.titleBox}>
             <p className={css.title}>Послуги</p>
-            {completedRepair && statusParts?.length === 0 && (
+            {statusParts?.length === 0 && (
               <div className={css.btnBoxCompleted}>
                 <div className={css.circle}>
                   <BsFillMicFill className={css.iconMedia} />

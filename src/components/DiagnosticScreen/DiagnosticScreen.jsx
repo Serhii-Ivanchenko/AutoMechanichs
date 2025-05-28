@@ -26,6 +26,8 @@ import Filter from './Filter/Filter';
 // import AddCarPhoto from '../AddCarPhoto/AddCarPhoto';
 import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage';
 import AudioRecorder from '../AudioRecorder/AudioRecorder';
+import Modal from '../Modal/Modal';
+import ModalForComments from '../ModalForComments/ModalForComments';
 
 export default function DiagnosticScreen() {
   const togglePoints = useSelector(selectNodesAndPartsForDiagnostics);
@@ -49,6 +51,7 @@ export default function DiagnosticScreen() {
   const [openCamera, setOpenCamera] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
   const [photosFromDiag, setPhotosFromDiag] = useState([]);
+  const [openComment, setOpenComment] = useState(false);
 
   // console.log('carId', carId);
 
@@ -418,6 +421,7 @@ export default function DiagnosticScreen() {
             setOpenCamera={setOpenCamera}
             setPhotosFromWorksPart={setPhotosFromDiag}
             photosFromWorksPart={photosFromDiag}
+            openCamera={openCamera}
           />
         ) : (
           <>
@@ -485,8 +489,15 @@ export default function DiagnosticScreen() {
             setRecordAudio={setRecordAudio}
             audioURL={audioURL}
             photosFromWorksPart={photosFromDiag}
+            setOpenComment={setOpenComment}
           />
         ))}
+
+      {openComment && (
+        <Modal isOpen={openComment} onClose={() => setOpenComment(false)}>
+          <ModalForComments onClose={() => setOpenComment(false)} />
+        </Modal>
+      )}
     </div>
   );
 }

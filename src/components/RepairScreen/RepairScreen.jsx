@@ -26,6 +26,8 @@ import toast from 'react-hot-toast';
 import { clearRepair } from '../../redux/cars/slice.js';
 import AudioRecorder from '../AudioRecorder/AudioRecorder.jsx';
 import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage.jsx';
+import Modal from '../Modal/Modal.jsx';
+import ModalForComments from '../ModalForComments/ModalForComments.jsx';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -45,6 +47,8 @@ export default function RepairScreen() {
   const [audioURL, setAudioURL] = useState(null);
   const [openCamera, setOpenCamera] = useState(false);
   const [photosFromRepair, setPhotosFromRepair] = useState([]);
+  const [openComment, setOpenComment] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -409,8 +413,15 @@ export default function RepairScreen() {
             setOpenCamera={setOpenCamera}
             photosFromWorksPart={photosFromRepair}
             audioURL={audioURL}
+            setOpenComment={setOpenComment}
           />
         ))}
+
+      {openComment && (
+        <Modal isOpen={openComment} onClose={() => setOpenComment(false)}>
+          <ModalForComments onClose={() => setOpenComment(false)} />
+        </Modal>
+      )}
     </div>
   );
 }
