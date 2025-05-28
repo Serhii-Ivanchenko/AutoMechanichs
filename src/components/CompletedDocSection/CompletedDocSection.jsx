@@ -15,9 +15,13 @@ import { useEffect, useState } from 'react';
 import { getDiagnostic, getRepair } from '../../redux/cars/operations';
 import { clearDiag } from '../../redux/cars/slice';
 import PartsForRepair from '../RepairScreen/PartsForRepair/PartsForRepair';
+import AudioRecorder from '../AudioRecorder/AudioRecorder';
+import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage';
 
 export default function CompletedDocSection() {
   const [page, setPage] = useState('diag');
+  const [openAudio, setOpenAudio] = useState(false);
+  const [openPhotos, setOpenPhotos] = useState(false);
   const { carId } = useParams();
   // console.log('carId', carId);
 
@@ -56,7 +60,7 @@ export default function CompletedDocSection() {
     <div className={css.wrapper}>
       <CarDetailsPart particularCar={particularCar} />
       {/* <WorksSwitcher disabled={true} /> */}
-      {particularCar.diagnostic_id && particularCar.repair_id ? (
+      {particularCar?.diagnostic_id && particularCar?.repair_id ? (
         // id && idRepair
         <div className={css.btnBox}>
           <button
@@ -101,10 +105,13 @@ export default function CompletedDocSection() {
           </div>
         </div>
       )}
-
-      {particularCar?.diagnostic_id && particularCar?.repair_id ? (
+      {openPhotos ? (
+        <PhotoCapturePage photosFromWorksPart={completedDiag.photo_files} />
+      ) : particularCar?.diagnostic_id && particularCar?.repair_id ? (
         page === 'diag' ? (
           <SavedSparesPart
+            setOpenAudio={setOpenAudio}
+            setOpenPhotos={setOpenPhotos}
             nodes={completedDiag ? completedDiagWithId : []}
             completedDiag={completedDiag}
             completed={true}
@@ -120,6 +127,8 @@ export default function CompletedDocSection() {
         )
       ) : particularCar?.diagnostic_id ? (
         <SavedSparesPart
+          setOpenAudio={setOpenAudio}
+          setOpenPhotos={setOpenPhotos}
           nodes={completedDiag ? completedDiagWithId : []}
           completedDiag={completedDiag}
           completed={true}
@@ -134,7 +143,15 @@ export default function CompletedDocSection() {
         ''
       )}
 
-      <BottomPart savedPartScreen={true} button={true} />
+      {openAudio ? (
+        <AudioRecorder
+          audioURL={completedDiag?.audio_files?.[0]}
+          completedDoc={true}
+          setOpenAudio={setOpenAudio}
+        />
+      ) : (
+        <BottomPart savedPartScreen={true} button={true} />
+      )}
     </div>
   );
 }
