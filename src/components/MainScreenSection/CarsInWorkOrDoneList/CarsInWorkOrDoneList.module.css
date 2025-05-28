@@ -1,23 +1,23 @@
 .list {
   /* height: 212px; */
-  height: 26.37vh;
+  /* height: 26.37vh; */
   width: 100%;
   padding-right: 18px;
 
   display: flex;
   flex-direction: column;
-  /* flex: 1; */
+  flex: 1 1 0;
   gap: 20px;
 
   overflow: auto;
 
   /* margin-bottom: 25px; */
-  margin-bottom: 3.11vh;
+  /* margin-bottom: 3.11vh; */
 }
 
 .listDone {
   /* margin-bottom: 25px; */
-  margin-bottom: 3.11vh;
+  /* margin-bottom: 3.11vh; */
 }
 
 .list::-webkit-scrollbar {

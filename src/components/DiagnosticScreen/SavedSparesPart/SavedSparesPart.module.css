@@ -5,8 +5,9 @@
   padding-right: 15px;
   padding-left: 15px;
   width: 378px;
-  height: 429px;
-  margin-bottom: 30px;
+  /* height: 429px; */
+  flex: 1 1 auto;
+  margin-bottom: 3.6vh; /* 30px */
   overflow-y: auto;
   margin-left: auto;
   margin-right: auto;

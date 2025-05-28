@@ -33,7 +33,7 @@ export default function SavedSparesPart({
   console.log('completedDiag', completedDiag);
 
   return (
-    <div>
+    <>
       {completed && (
         <div className={css.btnBoxCompleted}>
           <div
@@ -249,6 +249,6 @@ export default function SavedSparesPart({
           ))
         )}
       </ul>
-    </div>
+    </>
   );
 }
