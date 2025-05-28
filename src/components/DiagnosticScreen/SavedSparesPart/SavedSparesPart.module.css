@@ -4,9 +4,10 @@
   gap: 30px;
   padding-right: 15px;
   padding-left: 15px;
-  max-width: 378px;
-  height: 429px;
-  margin-bottom: 30px;
+  width: 378px;
+  /* height: 429px; */
+  flex: 1 1 auto;
+  margin-bottom: 3.6vh; /* 30px */
   overflow-y: auto;
   margin-left: auto;
   margin-right: auto;
@@ -169,12 +170,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 340px;
 }
 
 .btnBoxCompleted {
-  width: 100%;
+  width: 340px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 9px;
+  margin-bottom: 14px;
 }

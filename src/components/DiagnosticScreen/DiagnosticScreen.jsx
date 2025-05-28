@@ -341,7 +341,7 @@ export default function DiagnosticScreen() {
   // console.log('visibleSubcategories', visibleSubcategories);
 
   return (
-    <div>
+    <div className={css.wrapper}>
       <CarDetailsPart particularCar={particularCar} />
       <WorksSwitcher
         subcatOpen={subcatOpen}
@@ -393,8 +393,8 @@ export default function DiagnosticScreen() {
         />
       )}
 
-      {!openCamera && (
-        recordAudio ? (
+      {!openCamera &&
+        (recordAudio ? (
           <AudioRecorder setRecordAudio={setRecordAudio} />
         ) : (
           <BottomPart
@@ -402,10 +402,11 @@ export default function DiagnosticScreen() {
               subcatOpen
                 ? () => setSubcatOpen(false)
                 : savedSparesPartOpen
-                ? handleCloseSavedScreen
+                ? handleCloseSavedScreen()
                 : '/main'
             }
             button={subcatOpen}
+            // buttonSpares={savedSparesPartOpen}
             btnToggle={true}
             // next="diagnostics-subcategories"
             categ={subcatOpen && !savedSparesPartOpen}
@@ -420,8 +421,7 @@ export default function DiagnosticScreen() {
             setOpenCamera={setOpenCamera}
             setRecordAudio={setRecordAudio}
           />
-        )
-      )}
+        ))}
     </div>
   );
 }
