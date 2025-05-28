@@ -445,13 +445,22 @@ export default function AddCarScreen() {
   };
 
   const validate = val => {
-    const regex = /^[A-Za-z0-9]{17}$/;
+    const onlyLatinAndDigits = /^[A-Za-z0-9]*$/;
 
-    if (!regex.test(val)) {
-      setVinError(
-        'VIN може складатись з латинських букв чи цифр та містити 17 символів'
-      );
+    if (!onlyLatinAndDigits.test(val)) {
+      setVinError('VIN може містити лише латинські букви та цифри');
+    } else if (val.length > 17) {
+      setVinError('VIN має містити 17 символів');
+    } else if (val.length === 17) {
+      // Якщо символи окей, але довжина рівно 17 — тоді перевіряємо формат
+      const fullVinRegex = /^[A-Za-z0-9]{17}$/;
+      if (!fullVinRegex.test(val)) {
+        setVinError('VIN має містити 17 символів');
+      } else {
+        setVinError('');
+      }
     } else {
+      // Символи валідні, але ще не введено 17 — не показуємо помилку
       setVinError('');
     }
   };
@@ -676,7 +685,7 @@ export default function AddCarScreen() {
                   onChange={e => {
                     setMileage(e.target.value);
                   }}
-                  placeholder="123"
+                  placeholder="123000"
                 />
 
                 <p className={css.mileageText}>км</p>
