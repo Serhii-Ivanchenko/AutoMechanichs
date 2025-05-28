@@ -5,7 +5,7 @@ import { BsCameraFill, BsTrash } from 'react-icons/bs';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
-import { uploadCarPhotos } from '../../redux/cars/operations';
+import { getAllCars, uploadCarPhotos } from '../../redux/cars/operations';
 import { selectCars } from '../../redux/cars/selectors';
 import autoPhoto from '../../assets/images/absentAutoImg.webp';
 
@@ -30,7 +30,7 @@ export default function PhotoCapturePage({
 
   const displayedCar = cars?.find(car => Number(car?.car_id === Number(carId)));
 
-  console.log('photos', photos);
+  // console.log('photos', photos);
   // console.log('displayedCar', displayedCar);
 
   useEffect(() => {
@@ -92,6 +92,8 @@ export default function PhotoCapturePage({
     setPhotos(prev => prev.filter((item, idx) => idx !== index));
   };
 
+  const formattedDate = new Date().toISOString().split('T')[0];
+
   const onCheckmarkBtnClick = () => {
     if (!carId) return;
 
@@ -119,6 +121,7 @@ export default function PhotoCapturePage({
               color: 'var(--white)FFF',
             },
           });
+          dispatch(getAllCars({ date: formattedDate, mechanic_id: 1 }));
           displayedCar?.status === 'repair'
             ? navigate(`/car/${carId}/repair`)
             : navigate(`/car/${carId}/diagnostics`);
@@ -151,6 +154,15 @@ export default function PhotoCapturePage({
         </div>
       ) : (
         <div className={css.photoSectionWrapper}>
+          {displayedCar?.cars_photo?.length > 0 &&
+            displayedCar?.cars_photo?.map((src, index) => (
+              <img
+                key={index}
+                src={src}
+                alt="car photo"
+                className={css.existedPhoto}
+              />
+            ))}
           {photos?.map((src, index) => (
             <div key={index} className={css.photoWrapper}>
               <img src={src} alt="car photo" className={css.photo} />
