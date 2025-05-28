@@ -28,6 +28,7 @@ export default function AudioRecorder({
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   console.log('audioUrl', audioURL);
 
@@ -117,6 +118,8 @@ export default function AudioRecorder({
   useEffect(() => {
     if (audioURL) {
       const loadAudioDuration = async () => {
+        setIsLoading(true);
+
         try {
           const response = await fetch(audioURL);
           if (!response.ok) {
@@ -141,6 +144,8 @@ export default function AudioRecorder({
           }
         } catch (err) {
           console.error('Error loading audio duration:', err);
+        } finally {
+          setIsLoading(false);
         }
       };
 
@@ -201,33 +206,40 @@ export default function AudioRecorder({
           </>
         ) : (
           <>
-            <button className={css.playBtn} onClick={togglePlay}>
-              {isPlaying ? (
-                <FaPause size={24} className={css.playerBtn} />
-              ) : (
-                <FaPlay size={24} className={css.playerBtn} />
-              )}
-            </button>
-            <audio
-              src={audioURL}
-              ref={audioRef}
-              // onLoadedMetadata={handleLoadedMetadata}
-              onEnded={() => setIsPlaying(false)}
-            />
-            <p>
-              {formatTime(currentTime)} / {duration}
-            </p>
-            {!completedDoc && (
-              <RxCrossCircled
-                size={24}
-                className={css.iconCross}
-                onClick={() => {
-                  setAudioURL(null);
-                  setDuration(null);
-                  setCurrentTime(0);
-                  setIsPlaying(false);
-                }}
-              />
+            {isLoading ? (
+              'Зачекайте...'
+            ) : (
+              <>
+                {' '}
+                <button className={css.playBtn} onClick={togglePlay}>
+                  {isPlaying ? (
+                    <FaPause size={24} className={css.playerBtn} />
+                  ) : (
+                    <FaPlay size={24} className={css.playerBtn} />
+                  )}
+                </button>
+                <audio
+                  src={audioURL}
+                  ref={audioRef}
+                  // onLoadedMetadata={handleLoadedMetadata}
+                  onEnded={() => setIsPlaying(false)}
+                />
+                <p>
+                  {formatTime(currentTime)} / {duration}
+                </p>
+                {!completedDoc && (
+                  <RxCrossCircled
+                    size={24}
+                    className={css.iconCross}
+                    onClick={() => {
+                      setAudioURL(null);
+                      setDuration(null);
+                      setCurrentTime(0);
+                      setIsPlaying(false);
+                    }}
+                  />
+                )}{' '}
+              </>
             )}
           </>
         )}

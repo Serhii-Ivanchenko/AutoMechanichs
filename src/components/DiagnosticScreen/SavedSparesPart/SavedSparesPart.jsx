@@ -48,7 +48,10 @@ export default function SavedSparesPart({
             className={`${css.circle} ${
               completedDiag?.photo_files?.length > 0 && css.circleFilled
             }`}
-            onClick={() => setOpenPhotos(true)}
+            onClick={() => {
+              setOpenPhotos(true);
+              setOpenAudio(false);
+            }}
           >
             <BsCameraFill className={css.icon} />
           </div>

@@ -52,6 +52,7 @@ export default function DiagnosticScreen() {
   const [audioURL, setAudioURL] = useState(null);
   const [photosFromDiag, setPhotosFromDiag] = useState([]);
   const [openComment, setOpenComment] = useState(false);
+  const [comment, setComment] = useState('');
 
   // console.log('carId', carId);
 
@@ -490,12 +491,17 @@ export default function DiagnosticScreen() {
             audioURL={audioURL}
             photosFromWorksPart={photosFromDiag}
             setOpenComment={setOpenComment}
+            comment={comment}
           />
         ))}
 
       {openComment && (
         <Modal isOpen={openComment} onClose={() => setOpenComment(false)}>
-          <ModalForComments onClose={() => setOpenComment(false)} />
+          <ModalForComments
+            onClose={() => setOpenComment(false)}
+            setComment={setComment}
+            comment={comment}
+          />
         </Modal>
       )}
     </div>

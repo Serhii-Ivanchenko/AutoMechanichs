@@ -17,6 +17,7 @@ import { clearDiag } from '../../redux/cars/slice';
 import PartsForRepair from '../RepairScreen/PartsForRepair/PartsForRepair';
 import AudioRecorder from '../AudioRecorder/AudioRecorder';
 import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage';
+import Photos from '../RepairScreen/Photos/Photos';
 
 export default function CompletedDocSection() {
   const [page, setPage] = useState('diag');
@@ -106,7 +107,11 @@ export default function CompletedDocSection() {
         </div>
       )}
       {openPhotos ? (
-        <PhotoCapturePage photosFromWorksPart={completedDiag.photo_files} />
+        <Photos
+          photos={completedDiag?.photo_files}
+          setCheckPhotos={setOpenPhotos}
+          completedDoc={true}
+        />
       ) : particularCar?.diagnostic_id && particularCar?.repair_id ? (
         page === 'diag' ? (
           <SavedSparesPart
@@ -143,15 +148,16 @@ export default function CompletedDocSection() {
         ''
       )}
 
-      {openAudio ? (
-        <AudioRecorder
-          audioURL={completedDiag?.audio_files?.[0]}
-          completedDoc={true}
-          setOpenAudio={setOpenAudio}
-        />
-      ) : (
-        <BottomPart savedPartScreen={true} button={true} />
-      )}
+      {!openPhotos &&
+        (openAudio ? (
+          <AudioRecorder
+            audioURL={completedDiag?.audio_files?.[0]}
+            completedDoc={true}
+            setOpenAudio={setOpenAudio}
+          />
+        ) : (
+          <BottomPart savedPartScreen={true} button={true} />
+        ))}
     </div>
   );
 }

@@ -28,6 +28,7 @@ import AudioRecorder from '../AudioRecorder/AudioRecorder.jsx';
 import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage.jsx';
 import Modal from '../Modal/Modal.jsx';
 import ModalForComments from '../ModalForComments/ModalForComments.jsx';
+import Photos from './Photos/Photos.jsx';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -48,6 +49,8 @@ export default function RepairScreen() {
   const [openCamera, setOpenCamera] = useState(false);
   const [photosFromRepair, setPhotosFromRepair] = useState([]);
   const [openComment, setOpenComment] = useState(false);
+  const [checkPhotos, setCheckPhotos] = useState(false);
+  const [comment, setComment] = useState('');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -336,6 +339,11 @@ export default function RepairScreen() {
           setPhotosFromWorksPart={setPhotosFromRepair}
           photosFromWorksPart={photosFromRepair}
         />
+      ) : checkPhotos ? (
+        <Photos
+          photos={photosFromRepair || repair?.photos}
+          setCheckPhotos={setCheckPhotos}
+        />
       ) : (
         <PartsForRepair
           parts={repair?.parts}
@@ -347,6 +355,8 @@ export default function RepairScreen() {
           completedRepair={completedRepair}
           audioURL={audioURL}
           photosFromRepair={photosFromRepair}
+          repair={repair}
+          setCheckPhotos={setCheckPhotos}
         />
       )}
 
@@ -386,6 +396,7 @@ export default function RepairScreen() {
       )} */}
 
       {!openCamera &&
+        !checkPhotos &&
         (recordAudio ? (
           <AudioRecorder
             setRecordAudio={setRecordAudio}
@@ -414,12 +425,17 @@ export default function RepairScreen() {
             photosFromWorksPart={photosFromRepair}
             audioURL={audioURL}
             setOpenComment={setOpenComment}
+            comment={comment}
           />
         ))}
 
       {openComment && (
         <Modal isOpen={openComment} onClose={() => setOpenComment(false)}>
-          <ModalForComments onClose={() => setOpenComment(false)} />
+          <ModalForComments
+            onClose={() => setOpenComment(false)}
+            setComment={setComment}
+            comment={comment}
+          />
         </Modal>
       )}
     </div>

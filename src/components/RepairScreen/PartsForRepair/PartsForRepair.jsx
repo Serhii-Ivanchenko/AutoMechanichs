@@ -11,6 +11,8 @@ export default function PartsForRepair({
   completedRepair,
   photosFromRepair,
   audioURL,
+  repair,
+  setCheckPhotos,
 }) {
   const handleChangeStatus = id => {
     setStatusParts(prev =>
@@ -48,8 +50,11 @@ export default function PartsForRepair({
                 </div>
                 <div
                   className={`${css.circle} ${
-                    photosFromRepair?.length > 0 && css.circleFilled
+                    (repair?.photos?.length > 0 ||
+                      photosFromRepair?.length > 0) &&
+                    css.circleFilled
                   }`}
+                  onClick={() => setCheckPhotos(true)}
                 >
                   <BsCameraFill className={css.iconMedia} />
                 </div>
@@ -103,7 +108,13 @@ export default function PartsForRepair({
                 <div className={css.circle}>
                   <BsFillMicFill className={css.iconMedia} />
                 </div>
-                <div className={css.circle}>
+                <div
+                  className={`${css.circle} ${
+                    (repair?.photos?.length > 0 ||
+                      photosFromRepair?.length > 0) &&
+                    css.circleFilled
+                  }`}
+                >
                   <BsCameraFill className={css.iconMedia} />
                 </div>
               </div>
