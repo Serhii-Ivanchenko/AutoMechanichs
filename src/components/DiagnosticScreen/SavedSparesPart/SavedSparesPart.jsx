@@ -149,6 +149,7 @@ export default function SavedSparesPart({
                       className={`${css.circle} ${
                         audioURL && css.circleFilled
                       }`}
+                      onClick={() => setOpenAudio(true)}
                     >
                       <BsFillMicFill className={css.icon} />
                     </div>
@@ -156,6 +157,10 @@ export default function SavedSparesPart({
                       className={`${css.circle} ${
                         photosFromDiag?.length > 0 && css.circleFilled
                       }`}
+                      onClick={() => {
+                        setOpenPhotos(true);
+                        setOpenAudio(false);
+                      }}
                     >
                       <BsCameraFill className={css.icon} />
                     </div>

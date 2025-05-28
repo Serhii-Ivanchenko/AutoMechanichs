@@ -174,7 +174,7 @@ export default function AudioRecorder({
     return () => {
       audio.removeEventListener('timeupdate', updateCurrentTime);
     };
-  }, [audioURL]);
+  }, [audioRef.current]);
 
   return (
     <div className={css.wrapper}>
