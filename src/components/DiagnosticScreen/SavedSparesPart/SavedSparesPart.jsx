@@ -15,6 +15,8 @@ export default function SavedSparesPart({
   audioURL,
   photosFromDiag,
   completedDiag,
+  setOpenAudio,
+  setOpenPhotos,
 }) {
   const [expandedMap, setExpandedMap] = useState({});
 
@@ -38,6 +40,7 @@ export default function SavedSparesPart({
             className={`${css.circle} ${
               completedDiag?.audio_files?.length > 0 && css.circleFilled
             }`}
+            onClick={() => setOpenAudio(true)}
           >
             <BsFillMicFill className={css.icon} />
           </div>
@@ -45,6 +48,10 @@ export default function SavedSparesPart({
             className={`${css.circle} ${
               completedDiag?.photo_files?.length > 0 && css.circleFilled
             }`}
+            onClick={() => {
+              setOpenPhotos(true);
+              setOpenAudio(false);
+            }}
           >
             <BsCameraFill className={css.icon} />
           </div>
@@ -142,6 +149,7 @@ export default function SavedSparesPart({
                       className={`${css.circle} ${
                         audioURL && css.circleFilled
                       }`}
+                      onClick={() => setOpenAudio(true)}
                     >
                       <BsFillMicFill className={css.icon} />
                     </div>
@@ -149,6 +157,10 @@ export default function SavedSparesPart({
                       className={`${css.circle} ${
                         photosFromDiag?.length > 0 && css.circleFilled
                       }`}
+                      onClick={() => {
+                        setOpenPhotos(true);
+                        setOpenAudio(false);
+                      }}
                     >
                       <BsCameraFill className={css.icon} />
                     </div>

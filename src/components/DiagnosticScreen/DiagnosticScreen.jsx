@@ -26,6 +26,9 @@ import Filter from './Filter/Filter';
 // import AddCarPhoto from '../AddCarPhoto/AddCarPhoto';
 import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage';
 import AudioRecorder from '../AudioRecorder/AudioRecorder';
+import Modal from '../Modal/Modal';
+import ModalForComments from '../ModalForComments/ModalForComments';
+import Photos from '../RepairScreen/Photos/Photos';
 
 export default function DiagnosticScreen() {
   const togglePoints = useSelector(selectNodesAndPartsForDiagnostics);
@@ -49,6 +52,10 @@ export default function DiagnosticScreen() {
   const [openCamera, setOpenCamera] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
   const [photosFromDiag, setPhotosFromDiag] = useState([]);
+  const [openComment, setOpenComment] = useState(false);
+  const [comment, setComment] = useState('');
+  const [openAudio, setOpenAudio] = useState(false);
+  const [openPhotos, setOpenPhotos] = useState(false);
 
   // console.log('carId', carId);
 
@@ -407,12 +414,22 @@ export default function DiagnosticScreen() {
       {particularCar?.status === 'complete' ? (
         <SavedSparesPart />
       ) : savedSparesPartOpen ? (
-        <SavedSparesPart
-          nodes={nodes}
-          dataToSend={dataForSavedParts}
-          audioURL={audioURL}
-          photosFromDiag={photosFromDiag}
-        />
+        openPhotos ? (
+          <Photos
+            photos={photosFromDiag}
+            setCheckPhotos={setOpenPhotos}
+            completedDoc={false}
+          />
+        ) : (
+          <SavedSparesPart
+            nodes={nodes}
+            dataToSend={dataForSavedParts}
+            audioURL={audioURL}
+            photosFromDiag={photosFromDiag}
+            setOpenAudio={setOpenAudio}
+            setOpenPhotos={setOpenPhotos}
+          />
+        )
       ) : subcatOpen ? (
         openCamera ? (
           <PhotoCapturePage
@@ -421,6 +438,7 @@ export default function DiagnosticScreen() {
             setOpenCamera={setOpenCamera}
             setPhotosFromWorksPart={setPhotosFromDiag}
             photosFromWorksPart={photosFromDiag}
+            openCamera={openCamera}
           />
         ) : (
           <>
@@ -456,11 +474,14 @@ export default function DiagnosticScreen() {
       )}
 
       {!openCamera &&
-        (recordAudio ? (
+        !openPhotos &&
+        (recordAudio || openAudio ? (
           <AudioRecorder
             setRecordAudio={setRecordAudio}
             audioURL={audioURL}
             setAudioURL={setAudioURL}
+            completedDoc={openAudio}
+            setOpenAudio={setOpenAudio}
           />
         ) : (
           <BottomPart
@@ -488,8 +509,20 @@ export default function DiagnosticScreen() {
             setRecordAudio={setRecordAudio}
             audioURL={audioURL}
             photosFromWorksPart={photosFromDiag}
+            setOpenComment={setOpenComment}
+            comment={comment}
           />
         ))}
+
+      {openComment && (
+        <Modal isOpen={openComment} onClose={() => setOpenComment(false)}>
+          <ModalForComments
+            onClose={() => setOpenComment(false)}
+            setComment={setComment}
+            comment={comment}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

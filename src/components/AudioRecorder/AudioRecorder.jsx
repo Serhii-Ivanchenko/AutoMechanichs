@@ -14,6 +14,8 @@ export default function AudioRecorder({
   setRecordAudio,
   audioURL,
   setAudioURL,
+  completedDoc,
+  setOpenAudio,
 }) {
   const mediaRecorderRef = useRef(null);
   // const [audioURL, setAudioURL] = useState(null);
@@ -26,6 +28,7 @@ export default function AudioRecorder({
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   console.log('audioUrl', audioURL);
 
@@ -100,16 +103,55 @@ export default function AudioRecorder({
   };
 
   // const handleLoadedMetadata = () => {
-  //   const audioElement = audioRef.current;
-  //   console.log('readyState:', audioElement.readyState); // Чи повністю готове
-  //   const seconds = audioElement?.duration;
-  //   console.log('seconds loaded:', seconds);
-  //   if (seconds && isFinite(seconds)) {
-  //     setDuration(formatTime(seconds));
-  //   } else {
-  //     console.warn('Duration not available yet');
+  //   if (completedDoc) {
+  //     const audioElement = audioRef.current;
+  //     console.log('readyState:', audioElement.readyState); // Чи повністю готове
+  //     const seconds = audioElement?.duration;
+  //     console.log('seconds loaded:', seconds);
+  //     if (seconds && isFinite(seconds)) {
+  //       setDuration(formatTime(seconds));
+  //     } else {
+  //       console.warn('Duration not available yet');
+  //     }
   //   }
   // };
+  useEffect(() => {
+    if (audioURL) {
+      const loadAudioDuration = async () => {
+        setIsLoading(true);
+
+        try {
+          const response = await fetch(audioURL);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const blob = await response.blob();
+          const arrayBuffer = await blob.arrayBuffer();
+
+          // Використовуємо AudioContext для декодування
+          const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+          const duration = audioBuffer.duration;
+          console.log('MP3 Duration from decodeAudioData:', duration);
+
+          if (isFinite(duration)) {
+            setDuration(formatTime(duration));
+          } else {
+            console.warn('Duration not available yet');
+          }
+        } catch (err) {
+          console.error('Error loading audio duration:', err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      loadAudioDuration();
+    }
+  }, [audioURL, completedDoc]);
   console.log('duration', duration);
   console.log('seconds', audioRef?.current?.duration);
 
@@ -132,7 +174,7 @@ export default function AudioRecorder({
     return () => {
       audio.removeEventListener('timeupdate', updateCurrentTime);
     };
-  }, [audioURL]);
+  }, [audioRef.current]);
 
   return (
     <div className={css.wrapper}>
@@ -164,37 +206,46 @@ export default function AudioRecorder({
           </>
         ) : (
           <>
-            <button className={css.playBtn} onClick={togglePlay}>
-              {isPlaying ? (
-                <FaPause size={24} className={css.playerBtn} />
-              ) : (
-                <FaPlay size={24} className={css.playerBtn} />
-              )}
-            </button>
-            <audio
-              src={audioURL}
-              ref={audioRef}
-              // onLoadedMetadata={handleLoadedMetadata}
-              onEnded={() => setIsPlaying(false)}
-            />
-            <p>
-              {formatTime(currentTime)} / {duration}
-            </p>
-            <RxCrossCircled
-              size={24}
-              className={css.iconCross}
-              onClick={() => {
-                setAudioURL(null);
-                setDuration(null);
-                setCurrentTime(0);
-                setIsPlaying(false);
-              }}
-            />
+            {isLoading ? (
+              'Зачекайте...'
+            ) : (
+              <>
+                {' '}
+                <button className={css.playBtn} onClick={togglePlay}>
+                  {isPlaying ? (
+                    <FaPause size={24} className={css.playerBtn} />
+                  ) : (
+                    <FaPlay size={24} className={css.playerBtn} />
+                  )}
+                </button>
+                <audio
+                  src={audioURL}
+                  ref={audioRef}
+                  // onLoadedMetadata={handleLoadedMetadata}
+                  onEnded={() => setIsPlaying(false)}
+                />
+                <p>
+                  {formatTime(currentTime)} / {duration}
+                </p>
+                {!completedDoc && (
+                  <RxCrossCircled
+                    size={24}
+                    className={css.iconCross}
+                    onClick={() => {
+                      setAudioURL(null);
+                      setDuration(null);
+                      setCurrentTime(0);
+                      setIsPlaying(false);
+                    }}
+                  />
+                )}{' '}
+              </>
+            )}
           </>
         )}
       </div>
       <div className={css.btnBox}>
-        {audioURL ? (
+        {audioURL && !completedDoc ? (
           <button
             className={css.btnCheck}
             onClick={() => setRecordAudio(false)}
@@ -208,8 +259,12 @@ export default function AudioRecorder({
           <button
             type="button"
             onClick={() => {
-              setRecordAudio(false);
               setIsPlaying(false);
+              if (completedDoc) {
+                setOpenAudio(false);
+              } else {
+                setRecordAudio(false);
+              }
             }}
             className={css.cancel}
           >
