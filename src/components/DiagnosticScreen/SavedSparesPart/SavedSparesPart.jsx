@@ -8,6 +8,7 @@ import { BsFillCaretDownFill } from 'react-icons/bs';
 import { useDispatch } from 'react-redux';
 import { createDiagnostic } from '../../../redux/cars/operations';
 import { useState } from 'react';
+import { BiSolidMessageDetail } from 'react-icons/bi';
 
 export default function SavedSparesPart({
   nodes,
@@ -17,6 +18,7 @@ export default function SavedSparesPart({
   completedDiag,
   setOpenAudio,
   setOpenPhotos,
+  setCheckComment,
 }) {
   const [expandedMap, setExpandedMap] = useState({});
 
@@ -54,6 +56,14 @@ export default function SavedSparesPart({
             }}
           >
             <BsCameraFill className={css.icon} />
+          </div>
+          <div
+            className={`${css.circle} ${
+              completedDiag?.comment && css.circleFilled
+            }`}
+            onClick={() => setCheckComment(true)}
+          >
+            <BiSolidMessageDetail className={css.icon} />
           </div>
         </div>
       )}
@@ -163,6 +173,14 @@ export default function SavedSparesPart({
                       }}
                     >
                       <BsCameraFill className={css.icon} />
+                    </div>
+                    <div
+                      className={`${css.circle} ${
+                        completedDiag?.comment && css.circleFilled
+                      }`}
+                      onClick={() => setCheckComment(true)}
+                    >
+                      <BiSolidMessageDetail className={css.icon} />
                     </div>
                   </div>
                 )}

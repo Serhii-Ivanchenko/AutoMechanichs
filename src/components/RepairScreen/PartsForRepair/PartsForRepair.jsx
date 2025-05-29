@@ -2,6 +2,7 @@ import css from './PartsForRepair.module.css';
 import { BsWrench } from 'react-icons/bs';
 import { BsFillMicFill } from 'react-icons/bs';
 import { BsCameraFill } from 'react-icons/bs';
+import { BiSolidMessageDetail } from 'react-icons/bi';
 
 export default function PartsForRepair({
   statusParts,
@@ -13,6 +14,7 @@ export default function PartsForRepair({
   audioURL,
   repair,
   setCheckPhotos,
+  setCheckComment,
 }) {
   const handleChangeStatus = id => {
     setStatusParts(prev =>
@@ -57,6 +59,14 @@ export default function PartsForRepair({
                   onClick={() => setCheckPhotos(true)}
                 >
                   <BsCameraFill className={css.iconMedia} />
+                </div>
+                <div
+                  className={`${css.circle} ${
+                    repair?.comment && css.circleFilled
+                  }`}
+                  onClick={() => setCheckComment(true)}
+                >
+                  <BiSolidMessageDetail className={css.icon} />
                 </div>
               </div>
             )}
@@ -116,6 +126,14 @@ export default function PartsForRepair({
                   }`}
                 >
                   <BsCameraFill className={css.iconMedia} />
+                </div>
+                <div
+                  className={`${css.circle} ${
+                    repair?.comment && css.circleFilled
+                  }`}
+                  onClick={() => setCheckComment(true)}
+                >
+                  <BiSolidMessageDetail className={css.icon} />
                 </div>
               </div>
             )}

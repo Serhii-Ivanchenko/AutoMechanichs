@@ -27,6 +27,7 @@ export default function BottomPart({
   photosFromWorksPart,
   setOpenComment,
   comment,
+  setOpenPhotoComp,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -63,7 +64,10 @@ export default function BottomPart({
             className={`${css.greyCircle} ${
               photosFromWorksPart?.length > 0 && css.greenCircle
             }`}
-            onClick={() => setOpenCamera(true)}
+            onClick={() => {
+              setOpenCamera(true);
+              setOpenPhotoComp(true);
+            }}
           >
             <BsCameraFill className={css.icon} />
           </div>

@@ -19,6 +19,7 @@ import {
   getNodesAndParts,
   getRepair,
   updateRepair,
+  uploadCarPhotos,
 } from '../../redux/cars/operations.js';
 import Filter from '../DiagnosticScreen/Filter/Filter.jsx';
 import PartsForRepair from './PartsForRepair/PartsForRepair.jsx';
@@ -47,10 +48,13 @@ export default function RepairScreen() {
   const [recordAudio, setRecordAudio] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
   const [openCamera, setOpenCamera] = useState(false);
+  const [openPhotoComp, setOpenPhotoComp] = useState(false);
   const [photosFromRepair, setPhotosFromRepair] = useState([]);
   const [openComment, setOpenComment] = useState(false);
   const [checkPhotos, setCheckPhotos] = useState(false);
   const [comment, setComment] = useState('');
+  const [savedRepairPhotos, setSavedRepairPhotos] = useState([]);
+  const [checkComment, setCheckComment] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -71,6 +75,11 @@ export default function RepairScreen() {
 
   const repair = useSelector(selectRepair);
   console.log('repair', repair);
+
+  useEffect(() => {
+    setSavedRepairPhotos(repair?.photos);
+  }, [repair]);
+  console.log('savephotos', savedRepairPhotos);
 
   useEffect(() => {
     if (repair?.parts) {
@@ -108,7 +117,7 @@ export default function RepairScreen() {
         services: statusServices,
         repair_id: id,
         audios: [base64data],
-        photos: photosFromRepair,
+        photos: savedRepairPhotos,
       };
 
       console.log('dataToUpdate', dataToUpdate);
@@ -131,6 +140,17 @@ export default function RepairScreen() {
         duration: 3000,
       });
     }
+  };
+
+  const handleSavePhotos = async () => {
+    const carData = {
+      car_id: carId,
+      photos: {
+        photos_base64: photosFromRepair,
+      },
+    };
+    const data = await dispatch(uploadCarPhotos(carData)).unwrap();
+    setSavedRepairPhotos(prevPhotos => [...prevPhotos, ...data.added_urls]);
   };
 
   // console.log('particularCar', particularCar);
@@ -331,17 +351,23 @@ export default function RepairScreen() {
         car={particularCar}
       />
 
-      {openCamera ? (
+      {openPhotoComp ? (
         <PhotoCapturePage
           diag={true}
+          repair={true}
           carId={carId}
           setOpenCamera={setOpenCamera}
+          setOpenPhotoComp={setOpenPhotoComp}
+          openCameraWorkPart={openCamera}
           setPhotosFromWorksPart={setPhotosFromRepair}
           photosFromWorksPart={photosFromRepair}
+          handleSavePhotos={handleSavePhotos}
         />
       ) : checkPhotos ? (
         <Photos
-          photos={photosFromRepair || repair?.photos}
+          photos={
+            savedRepairPhotos.length > 0 ? savedRepairPhotos : repair?.photos
+          }
           setCheckPhotos={setCheckPhotos}
         />
       ) : (
@@ -357,6 +383,7 @@ export default function RepairScreen() {
           photosFromRepair={photosFromRepair}
           repair={repair}
           setCheckPhotos={setCheckPhotos}
+          setCheckComment={setCheckComment}
         />
       )}
 
@@ -395,7 +422,7 @@ export default function RepairScreen() {
         />
       )} */}
 
-      {!openCamera &&
+      {!openPhotoComp &&
         !checkPhotos &&
         (recordAudio ? (
           <AudioRecorder
@@ -422,6 +449,7 @@ export default function RepairScreen() {
             repair={true}
             setRecordAudio={setRecordAudio}
             setOpenCamera={setOpenCamera}
+            setOpenPhotoComp={setOpenPhotoComp}
             photosFromWorksPart={photosFromRepair}
             audioURL={audioURL}
             setOpenComment={setOpenComment}
@@ -429,10 +457,19 @@ export default function RepairScreen() {
           />
         ))}
 
-      {openComment && (
-        <Modal isOpen={openComment} onClose={() => setOpenComment(false)}>
+      {(openComment || checkComment) && (
+        <Modal
+          isOpen={openComment || checkComment}
+          onClose={() => {
+            setOpenComment(false);
+            setCheckComment(false);
+          }}
+        >
           <ModalForComments
-            onClose={() => setOpenComment(false)}
+            onClose={() => {
+              setOpenComment(false);
+              setCheckComment(false);
+            }}
             setComment={setComment}
             comment={comment}
           />
