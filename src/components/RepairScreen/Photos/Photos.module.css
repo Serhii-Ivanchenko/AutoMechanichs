@@ -1,5 +1,9 @@
 .wrapperDiag {
+  display: flex;
+  flex-direction: column;
   height: 570px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .photoSectionWrapper {

@@ -45,6 +45,9 @@
 
 .cancel,
 .confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 30px;
   width: 105px;
   border: none;
