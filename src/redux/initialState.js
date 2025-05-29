@@ -16,7 +16,7 @@ export const initialState = {
     diagnostic: {},
     repairDetails: {},
     chosenDate: '',
-    newCar:{},
+    newCar: {},
 
     isLoading: false,
     isRecognitionLoading: false,

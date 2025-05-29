@@ -9,7 +9,9 @@ export const selectDiagnostic = state => state.cars.diagnostic;
 
 export const selectDate = state => state.cars.chosenDate;
 
-export const selectRepair = state => state.cars.repairDetails
+export const selectRepair = state => state.cars.repairDetails;
+
+export const selectNewCar = state => state.cars.newCar;
 
 // Loaders
 
