@@ -341,8 +341,11 @@ export default function DiagnosticScreen() {
       };
       console.log('dataToSend', dataToSend);
 
-      await dispatch(createDiagnostic(dataToSend)).unwrap();
-      await dispatch(getAllCars({ date, mechanic_id: 1 }));
+      await dispatch(createDiagnostic(dataToSend))
+        .unwrap()
+        .then(() => {
+          dispatch(getAllCars({ date, mechanic_id: 1 }));
+        });
 
       console.log('Діагностика успішно створена');
       toast.success('Діагностика успішно створена', {
