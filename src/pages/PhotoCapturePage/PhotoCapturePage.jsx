@@ -75,10 +75,10 @@ export default function PhotoCapturePage({
 
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       const photoData = canvas.toDataURL('image/png');
-      const base64String = photoData.split(',')[1];
+      // const base64String = photoData.split(',')[1];
 
       if (!diag) {
-        setPhotos(prev => [...prev, base64String]);
+        setPhotos(prev => [...prev, photoData]);
       } else {
         setPhotosFromWorksPart(prev => [...prev, photoData]);
       }
@@ -173,7 +173,7 @@ export default function PhotoCapturePage({
                 className={css.existedPhoto}
               />
             ))}
-                    {photosToDisplay?.map((src, index) => (
+          {photosToDisplay?.map((src, index) => (
             <div key={index} className={css.photoWrapper}>
               <img src={src} alt="car photo" className={css.photo} />
               <button type="button" className={css.deleteBtn}>
