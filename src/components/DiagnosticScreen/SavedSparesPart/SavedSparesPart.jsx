@@ -23,7 +23,7 @@ export default function SavedSparesPart({ nodes, completed }) {
   };
 
   return (
-    <div>
+    <>
       {completed && (
         <div className={css.btnBoxCompleted}>
           <div className={css.circle}>
@@ -221,6 +221,6 @@ export default function SavedSparesPart({ nodes, completed }) {
           ))
         )}
       </ul>
-    </div>
+    </>
   );
 }

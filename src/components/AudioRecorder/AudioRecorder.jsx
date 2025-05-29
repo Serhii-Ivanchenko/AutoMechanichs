@@ -18,8 +18,10 @@ export default function AudioRecorder({ setRecordAudio }) {
   const [recordingTime, setRecordingTime] = useState(0);
   const timerRef = useRef(null);
   const audioRef = useRef(null);
+  const streamRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(null);
+  const [currentTime, setCurrentTime] = useState(0);
 
   console.log('audioUrl', audioURL);
 
@@ -28,6 +30,7 @@ export default function AudioRecorder({ setRecordAudio }) {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
       mediaRecorderRef.current = new MediaRecorder(stream);
 
       audioChunks.current = [];
@@ -36,10 +39,17 @@ export default function AudioRecorder({ setRecordAudio }) {
         audioChunks.current.push(e.data);
       };
 
-      mediaRecorderRef.current.onstop = () => {
-        const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
+      mediaRecorderRef.current.onstop = async () => {
+        const blob = new Blob(audioChunks.current, { type: 'audio/webp' });
         const url = URL.createObjectURL(blob);
         setAudioURL(url);
+        // const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
+        const arrayBuffer = await blob.arrayBuffer();
+        const audioContext = new (window.AudioContext ||
+          window.webkitAudioContext)();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        const duration = audioBuffer.duration;
+        setDuration(formatTime(duration));
 
         clearInterval(timerRef.current);
         setRecordingTime(0);
@@ -57,6 +67,7 @@ export default function AudioRecorder({ setRecordAudio }) {
 
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
+    streamRef.current?.getTracks().forEach(track => track.stop());
     setIsRecording(false);
   };
 
@@ -64,8 +75,12 @@ export default function AudioRecorder({ setRecordAudio }) {
     const mins = Math.floor(time / 60)
       .toString()
       .padStart(2, '0');
-    const secs = (time % 60).toString().padStart(2, '0');
-    return `${mins}: ${secs}`;
+    const secs = Math.floor(time % 60)
+      .toString()
+      .padStart(2, '0');
+    console.log('secs', secs);
+
+    return `${mins}:${secs}`;
   };
 
   const togglePlay = () => {
@@ -81,17 +96,38 @@ export default function AudioRecorder({ setRecordAudio }) {
   };
 
   // const handleLoadedMetadata = () => {
-  //   const seconds = audioRef?.current?.duration;
-  //   setDuration(formatTime(seconds));
-  //   // console.log('seconds', seconds);
+  //   const audioElement = audioRef.current;
+  //   console.log('readyState:', audioElement.readyState); // Чи повністю готове
+  //   const seconds = audioElement?.duration;
+  //   console.log('seconds loaded:', seconds);
+  //   if (seconds && isFinite(seconds)) {
+  //     setDuration(formatTime(seconds));
+  //   } else {
+  //     console.warn('Duration not available yet');
+  //   }
   // };
   console.log('duration', duration);
   console.log('seconds', audioRef?.current?.duration);
 
+  // useEffect(() => {
+  //   if (audioRef.current?.duration) {
+  //     setDuration(formatTime(audioRef.current.duration));
+  //   }
+  // }, [audioURL]);
+
   useEffect(() => {
-    if (audioRef.current?.duration) {
-      setDuration(formatTime(audioRef.current.duration));
-    }
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateCurrentTime = () => {
+      setCurrentTime(audio.currentTime);
+    };
+
+    audio.addEventListener('timeupdate', updateCurrentTime);
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateCurrentTime);
+    };
   }, [audioURL]);
 
   return (
@@ -137,11 +173,18 @@ export default function AudioRecorder({ setRecordAudio }) {
               // onLoadedMetadata={handleLoadedMetadata}
               onEnded={() => setIsPlaying(false)}
             />
-            <p>time</p>
+            <p>
+              {formatTime(currentTime)} / {duration}
+            </p>
             <RxCrossCircled
               size={24}
               className={css.iconCross}
-              onClick={() => setAudioURL(null)}
+              onClick={() => {
+                setAudioURL(null);
+                setDuration(null);
+                setCurrentTime(0);
+                setIsPlaying(false);
+              }}
             />
           </>
         )}
@@ -157,10 +200,13 @@ export default function AudioRecorder({ setRecordAudio }) {
           // </button>
           <button
             type="button"
-            onClick={() => setRecordAudio(false)}
+            onClick={() => {
+              setRecordAudio(false);
+              setIsPlaying(false);
+            }}
             className={css.cancel}
           >
-            <FaArrowLeft  />
+            <FaArrowLeft />
           </button>
         )}
       </div>

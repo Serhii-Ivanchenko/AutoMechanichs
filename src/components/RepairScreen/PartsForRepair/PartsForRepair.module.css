@@ -130,3 +130,38 @@
   font-variant: small-caps;
   width: 205px;
 }
+
+.iconMedia {
+  fill: var(--light-gray);
+}
+
+.circle {
+  display: flex;
+  width: 28px;
+  height: 28px;
+  justify-content: center;
+  align-items: center;
+  /* gap: 10px; */
+  border-radius: 34px;
+  background: var(--input-text);
+}
+
+.circleFilled {
+  background-color: var(--green-btn-normal);
+}
+
+.btnBoxCompleted {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  /* margin-bottom: 14px; */
+}
+
+.titleBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}

@@ -31,7 +31,7 @@ export default function CompletedDocSection() {
 
   const id = '682ce6104f095bf3de2739ef';
   // const id = particularCar?.diagnostic_id;
-  const idRepair = '6830857da0bfeec5d409915b';
+  const idRepair = '6830155a926bc65393d0eff6';
 
   useEffect(() => {
     id && dispatch(getDiagnostic(id));
@@ -58,53 +58,55 @@ export default function CompletedDocSection() {
       {/* <WorksSwitcher disabled={true} /> */}
       {
         // particularCar.diagnostic_id && particularCar.repair_id
-        id && idRepair
-        ? (
-        <div className={css.btnBox}>
-          <button
-            className={`${css.buttons} ${page === 'diag' && css.buttonActive}`}
-            onClick={() => setPage('diag')}
-          >
-            <p>Діагностика</p>
-            <div className={css.indicator}>
-              <BsUiRadiosGrid />
-            </div>
-          </button>
+        id && idRepair ? (
+          <div className={css.btnBox}>
+            <button
+              className={`${css.buttons} ${
+                page === 'diag' && css.buttonActive
+              }`}
+              onClick={() => setPage('diag')}
+            >
+              <p>Діагностика</p>
+              <div className={css.indicator}>
+                <BsUiRadiosGrid />
+              </div>
+            </button>
 
-          <button
-            className={`${css.buttons} ${
-              page === 'repair' && css.buttonActive
-            }`}
-            onClick={() => setPage('repair')}
-          >
-            <p>Ремонт</p>
-            <div className={css.indicator}>
-              <BsWrench />
-            </div>
-          </button>
-        </div>
-      ) : (
-        <div className={css.buttons}>
-          <p>
-            {particularCar?.diagnostic_id
-              ? 'Діагностика'
-              : particularCar?.repair_id
-              ? 'Ремонт'
-              : 'Діагностика'}
-          </p>
-          <div className={css.indicator}>
-            {particularCar?.diagnostic_id ? (
-              <BsUiRadiosGrid />
-            ) : particularCar?.repair_id ? (
-              <BsWrench />
-            ) : (
-              <BsUiRadiosGrid />
-            )}
+            <button
+              className={`${css.buttons} ${
+                page === 'repair' && css.buttonActive
+              }`}
+              onClick={() => setPage('repair')}
+            >
+              <p>Ремонт</p>
+              <div className={css.indicator}>
+                <BsWrench />
+              </div>
+            </button>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className={css.buttons}>
+            <p>
+              {particularCar?.diagnostic_id
+                ? 'Діагностика'
+                : particularCar?.repair_id
+                ? 'Ремонт'
+                : 'Діагностика'}
+            </p>
+            <div className={css.indicator}>
+              {particularCar?.diagnostic_id ? (
+                <BsUiRadiosGrid />
+              ) : particularCar?.repair_id ? (
+                <BsWrench />
+              ) : (
+                <BsUiRadiosGrid />
+              )}
+            </div>
+          </div>
+        )
+      }
 
-      {particularCar.diagnostic_id && particularCar.repair_id ? (
+      {particularCar?.diagnostic_id && particularCar?.repair_id ? (
         page === 'diag' ? (
           <SavedSparesPart
             nodes={completedDiag ? completedDiagWithId : []}
@@ -119,12 +121,12 @@ export default function CompletedDocSection() {
         ) : (
           ''
         )
-      ) : particularCar.diagnostic_id ? (
+      ) : particularCar?.diagnostic_id ? (
         <SavedSparesPart
           nodes={completedDiag ? completedDiagWithId : []}
           completed={true}
         />
-      ) : particularCar.repair_id ? (
+      ) : particularCar?.repair_id ? (
         <PartsForRepair
           completedRepair={true}
           parts={repair?.parts}
