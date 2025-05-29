@@ -24,6 +24,8 @@ import Filter from '../DiagnosticScreen/Filter/Filter.jsx';
 import PartsForRepair from './PartsForRepair/PartsForRepair.jsx';
 import toast from 'react-hot-toast';
 import { clearRepair } from '../../redux/cars/slice.js';
+import AudioRecorder from '../AudioRecorder/AudioRecorder.jsx';
+import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage.jsx';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -39,6 +41,10 @@ export default function RepairScreen() {
   const [statusParts, setStatusParts] = useState([]);
   const [statusServices, setStatusServices] = useState([]);
   const [completedRepair, setCompletedRepair] = useState(false);
+  const [recordAudio, setRecordAudio] = useState(false);
+  const [audioURL, setAudioURL] = useState(null);
+  const [openCamera, setOpenCamera] = useState(false);
+  const [photosFromRepair, setPhotosFromRepair] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -73,30 +79,51 @@ export default function RepairScreen() {
     }
   }, [repair?.parts, repair?.services]);
 
-  const handleUpdateStatuses = () => {
-    const dataToUpdate = {
-      ...repair,
-      parts: statusParts,
-      services: statusServices,
-      repair_id: id,
-    };
+  const handleUpdateStatuses = async () => {
+    try {
+      let base64data = null;
 
-    console.log('dataToUpdate', dataToUpdate);
+      if (audioURL) {
+        const response = await fetch(audioURL);
+        const blob = await response.blob();
 
-    dispatch(updateRepair(dataToUpdate))
-      .unwrap()
-      .then(() => {
-        toast.success('Ремонт успішно оновлено', {
-          position: 'top-center',
-          duration: 3000,
-          style: {
-            background: 'var(--bg-input)',
-            color: 'var(--white)',
-          },
+        base64data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
         });
-        dispatch(clearRepair());
-        navigate('/main');
+      }
+
+      const dataToUpdate = {
+        ...repair,
+        parts: statusParts,
+        services: statusServices,
+        repair_id: id,
+        audios: [base64data],
+        photos: photosFromRepair,
+      };
+
+      console.log('dataToUpdate', dataToUpdate);
+
+      await dispatch(updateRepair(dataToUpdate));
+      toast.success('Ремонт успішно оновлено', {
+        position: 'top-center',
+        duration: 3000,
+        style: {
+          background: 'var(--bg-input)',
+          color: 'var(--white)',
+        },
       });
+      await dispatch(clearRepair());
+      navigate('/main');
+    } catch (error) {
+      console.error('Помилка при оновленні ремонту:', error);
+      toast.error('Помилка оновлення ремонту', {
+        position: 'top-center',
+        duration: 3000,
+      });
+    }
   };
 
   // console.log('particularCar', particularCar);
@@ -297,15 +324,27 @@ export default function RepairScreen() {
         car={particularCar}
       />
 
-      <PartsForRepair
-        parts={repair?.parts}
-        services={repair?.services}
-        setStatusParts={setStatusParts}
-        statusParts={statusParts}
-        setStatusServices={setStatusServices}
-        statusServices={statusServices}
-        completedRepair={completedRepair}
-      />
+      {openCamera ? (
+        <PhotoCapturePage
+          diag={true}
+          carId={carId}
+          setOpenCamera={setOpenCamera}
+          setPhotosFromWorksPart={setPhotosFromRepair}
+          photosFromWorksPart={photosFromRepair}
+        />
+      ) : (
+        <PartsForRepair
+          parts={repair?.parts}
+          services={repair?.services}
+          setStatusParts={setStatusParts}
+          statusParts={statusParts}
+          setStatusServices={setStatusServices}
+          statusServices={statusServices}
+          completedRepair={completedRepair}
+          audioURL={audioURL}
+          photosFromRepair={photosFromRepair}
+        />
+      )}
 
       {/* {savedSparesPartOpen ? (
         <SavedSparesPart nodes={nodes} />
@@ -342,23 +381,36 @@ export default function RepairScreen() {
         />
       )} */}
 
-      <BottomPart
-        back={completedRepair ? () => setCompletedRepair(false) : '/main'}
-        button={completedRepair}
-        btnToggle={true}
-        // next="diagnostics-subcategories"
-        categ={!completedRepair}
-        next={
-          !completedRepair
-            ? () => setCompletedRepair(true)
-            : completedRepair
-            ? handleUpdateStatuses
-            : undefined
-        }
-        // chosenPoints={chosenPoints}
-        savedPartBottom={completedRepair}
-        repair={true}
-      />
+      {!openCamera &&
+        (recordAudio ? (
+          <AudioRecorder
+            setRecordAudio={setRecordAudio}
+            audioURL={audioURL}
+            setAudioURL={setAudioURL}
+          />
+        ) : (
+          <BottomPart
+            back={completedRepair ? () => setCompletedRepair(false) : '/main'}
+            button={completedRepair}
+            btnToggle={true}
+            // next="diagnostics-subcategories"
+            categ={!completedRepair}
+            next={
+              !completedRepair
+                ? () => setCompletedRepair(true)
+                : completedRepair
+                ? handleUpdateStatuses
+                : undefined
+            }
+            // chosenPoints={chosenPoints}
+            savedPartBottom={completedRepair}
+            repair={true}
+            setRecordAudio={setRecordAudio}
+            setOpenCamera={setOpenCamera}
+            photosFromWorksPart={photosFromRepair}
+            audioURL={audioURL}
+          />
+        ))}
     </div>
   );
 }
