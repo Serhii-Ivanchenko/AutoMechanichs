@@ -12,7 +12,7 @@
   background: var(--bg-input);
   margin-right: auto;
   margin-left: auto;
-  margin-bottom: 15px;
+  margin-bottom: 1.77vh; /* 15px */
 }
 
 .circle {

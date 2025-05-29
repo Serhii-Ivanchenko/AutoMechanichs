@@ -46,6 +46,7 @@ export default function AddCarScreen() {
   const [mileage, setMileage] = useState('');
   const [vin, setVin] = useState('');
   const [plate, setPlate] = useState('');
+  const [vinError, setVinError] = useState('');
   const dispatch = useDispatch();
 
   const buttonMakeRef = useRef(null);
@@ -443,6 +444,27 @@ export default function AddCarScreen() {
     navigate(`/main`);
   };
 
+  const validate = val => {
+    const onlyLatinAndDigits = /^[A-Za-z0-9]*$/;
+
+    if (!onlyLatinAndDigits.test(val)) {
+      setVinError('VIN може містити лише латинські букви та цифри');
+    } else if (val.length > 17) {
+      setVinError('VIN має містити 17 символів');
+    } else if (val.length === 17) {
+      // Якщо символи окей, але довжина рівно 17 — тоді перевіряємо формат
+      const fullVinRegex = /^[A-Za-z0-9]{17}$/;
+      if (!fullVinRegex.test(val)) {
+        setVinError('VIN має містити 17 символів');
+      } else {
+        setVinError('');
+      }
+    } else {
+      // Символи валідні, але ще не введено 17 — не показуємо помилку
+      setVinError('');
+    }
+  };
+
   return isRecognitionLoading ? (
     <LoaderSvg />
   ) : (
@@ -660,8 +682,10 @@ export default function AddCarScreen() {
                   className={css.mileage}
                   type="text"
                   value={mileage}
-                  onChange={e => setMileage(e.target.value)}
-                  placeholder="123"
+                  onChange={e => {
+                    setMileage(e.target.value);
+                  }}
+                  placeholder="123000"
                 />
 
                 <p className={css.mileageText}>км</p>
@@ -672,9 +696,13 @@ export default function AddCarScreen() {
                 className={css.vin}
                 type="text"
                 value={vin}
-                onChange={e => setVin(e.target.value)}
+                onChange={e => {
+                  setVin(e.target.value);
+                  validate(e.target.value);
+                }}
                 placeholder="vin"
               />
+              {vinError && <p className={css.error}>{vinError}</p>}
             </div>
           </>
         )}
@@ -707,6 +735,7 @@ export default function AddCarScreen() {
         chosenYear &&
         mileage &&
         vin &&
+        !vinError &&
         plate ? (
           <IoMdCheckmark
             className={`${css.acceptBtn} ${css.check}`}

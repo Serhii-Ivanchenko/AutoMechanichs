@@ -393,7 +393,7 @@ export default function DiagnosticScreen() {
   // console.log('visibleSubcategories', visibleSubcategories);
 
   return (
-    <div>
+    <div className={css.wrapper}>
       <CarDetailsPart particularCar={particularCar} />
       <WorksSwitcher
         subcatOpen={subcatOpen}
