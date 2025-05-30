@@ -70,7 +70,9 @@ export default function PhotoCapturePage({
   const handleMainButtonClick = () => {
     if (!openedCamera) {
       setIsCameraOpen(true);
-      setOpenCamera(true);
+      if (diag) {
+        setOpenCamera(true);
+      }
     } else {
       // Делаем снимок
       const video = videoRef.current;
@@ -102,8 +104,10 @@ export default function PhotoCapturePage({
     setStream(null);
     setIsCameraOpen(false);
     setOpenCamera(false);
-    if (diag) {
+    if (diag && photosFromWorksPart?.length > 0) {
       setCheckPhotos(true);
+    } else {
+      setOpenPhotoComp(false);
     }
   };
 
@@ -121,6 +125,7 @@ export default function PhotoCapturePage({
         handleSavePhotos();
       }
       setOpenCamera(false);
+      setOpenPhotoComp(false);
     } else if (photos?.length === 0) {
       displayedCar?.status === 'repair'
         ? navigate(`/car/${carId}/repair`)
@@ -192,12 +197,12 @@ export default function PhotoCapturePage({
             ))}
           </div>
         ) : (
-          <p>Фото відсутні</p>
+          <p className={css.absentPhotos}>Фото відсутні</p>
         )
       ) : (
-        <div className={css.photoSectionWrapper}>
-          {displayedCar?.cars_photo?.length > 0 &&
-            displayedCar?.cars_photo?.map((src, index) => (
+        displayedCar?.cars_photo?.length > 0 ? (
+          <div className={css.photoSectionWrapper}>
+            {displayedCar?.cars_photo?.map((src, index) => (
               <img
                 key={index}
                 src={src}
@@ -205,18 +210,21 @@ export default function PhotoCapturePage({
                 className={css.existedPhoto}
               />
             ))}
-          {photosToDisplay?.map((src, index) => (
-            <div key={index} className={css.photoWrapper}>
-              <img src={src} alt="car photo" className={css.photo} />
-              <button type="button" className={css.deleteBtn}>
-                <BsTrash
-                  className={css.deleteBtnIcon}
-                  onClick={() => handlePhotoDelete(index)}
-                />
-              </button>
-            </div>
-          ))}
-        </div>
+            {photosToDisplay?.map((src, index) => (
+              <div key={index} className={css.photoWrapper}>
+                <img src={src} alt="car photo" className={css.photo} />
+                <button type="button" className={css.deleteBtn}>
+                  <BsTrash
+                    className={css.deleteBtnIcon}
+                    onClick={() => handlePhotoDelete(index)}
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={css.absentPhotos}>Фото відсутні</p>
+        )
       )}
       <div className={`${css.btnsWrapper} ${stream ? css.cameraOn : ''}`}>
         {!openedCamera ? (

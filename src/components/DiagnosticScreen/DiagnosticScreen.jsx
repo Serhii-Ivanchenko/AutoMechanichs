@@ -432,6 +432,7 @@ export default function DiagnosticScreen() {
             setOpenAudio={setOpenAudio}
             setOpenPhotos={setOpenPhotos}
             setCheckComment={setCheckComment}
+            comment={comment}
           />
         )
       ) : subcatOpen ? (
@@ -442,7 +443,7 @@ export default function DiagnosticScreen() {
             setOpenCamera={setOpenCamera}
             setPhotosFromWorksPart={setPhotosFromDiag}
             photosFromWorksPart={photosFromDiag}
-            openCamera={openCamera}
+            openCameraWorkPart={openCamera}
             setOpenPhotoComp={setOpenPhotoComp}
           />
         ) : (
@@ -517,6 +518,8 @@ export default function DiagnosticScreen() {
             setOpenComment={setOpenComment}
             comment={comment}
             setOpenPhotoComp={setOpenPhotoComp}
+            diag={true}
+            // photosFromDiag={photosFromDiag}
           />
         ))}
 

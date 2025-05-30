@@ -31,6 +31,15 @@
   overflow-x: hidden;
 }
 
+.absentPhotos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 30px;
+  color: var(--main-gray)
+}
+
 .photoSectionWrapper::-webkit-scrollbar {
   width: 4px;
   padding-top: 4px;

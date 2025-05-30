@@ -82,6 +82,7 @@ export default function RepairScreen() {
 
   useEffect(() => {
     setSavedRepairPhotos(repair?.photos);
+    setAudios(repair?.audios);
   }, [repair]);
   console.log('savephotos', savedRepairPhotos);
 
@@ -120,8 +121,9 @@ export default function RepairScreen() {
         parts: statusParts,
         services: statusServices,
         repair_id: id,
-        audios: [audioURL],
+        audios: audios,
         photos: savedRepairPhotos,
+        comment: comment,
       };
 
       console.log('dataToUpdate', dataToUpdate);
@@ -155,6 +157,8 @@ export default function RepairScreen() {
     };
     const data = await dispatch(uploadCarPhotos(carData)).unwrap();
     setSavedRepairPhotos(prevPhotos => [...prevPhotos, ...data.added_urls]);
+    setOpenPhotoComp(false);
+    setPhotosFromRepair([]);
   };
 
   // console.log('particularCar', particularCar);
@@ -383,7 +387,7 @@ export default function RepairScreen() {
           setStatusServices={setStatusServices}
           statusServices={statusServices}
           completedRepair={completedRepair}
-          audioURL={audioURL}
+          audioURL={audios?.length > 0}
           photosFromRepair={photosFromRepair}
           repair={repair}
           setCheckPhotos={setCheckPhotos}
@@ -489,7 +493,10 @@ export default function RepairScreen() {
           isOpen={modalWithRecordings}
           onClose={() => setModalWithRecordings(false)}
         >
-          <ModalForListOfRecordings audios={audios} />
+          <ModalForListOfRecordings
+            audios={audios}
+            onClose={() => setModalWithRecordings(false)}
+          />
         </Modal>
       )}
     </>

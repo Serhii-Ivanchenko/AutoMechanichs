@@ -28,6 +28,7 @@ export default function BottomPart({
   setOpenComment,
   comment,
   setOpenPhotoComp,
+  diag,
 }) {
   const isDisabled = chosenPoints?.length === 0;
 
@@ -65,7 +66,11 @@ export default function BottomPart({
               photosFromWorksPart?.length > 0 && css.greenCircle
             }`}
             onClick={() => {
-              setOpenCamera(true);
+              if (diag && photosFromWorksPart.length > 0) {
+                setOpenCamera(false);
+              } else {
+                setOpenCamera(true);
+              }
               setOpenPhotoComp(true);
             }}
           >

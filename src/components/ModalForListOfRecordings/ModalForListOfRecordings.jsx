@@ -1,13 +1,23 @@
 import AudioRecorder from '../AudioRecorder/AudioRecorder';
+import css from './ModalForListOfRecordings.module.css';
+import { FaArrowLeft } from 'react-icons/fa';
 
-export default function ModalForListOfRecordings({ audios }) {
+export default function ModalForListOfRecordings({ audios, onClose }) {
   return (
-    <ul>
-      {audios.map((audio, index) => (
-        <li key={index}>
-          <AudioRecorder completedDoc={true} audioURL={audio} />
-        </li>
-      ))}
-    </ul>
+    <div className={css.wrapper}>
+      <ul className={css.list}>
+        {audios.map((audio, index) => (
+          <li key={index}>
+            <AudioRecorder completedDoc={true} audioURL={audio} modal={true} />
+          </li>
+        ))}
+      </ul>
+
+      <div className={css.btnBox}>
+        <button className={css.cancelBtn} onClick={onClose}>
+          <FaArrowLeft size={40} className={css.cross} />
+        </button>
+      </div>
+    </div>
   );
 }
