@@ -29,13 +29,13 @@ import AudioRecorder from '../AudioRecorder/AudioRecorder';
 import Modal from '../Modal/Modal';
 import ModalForComments from '../ModalForComments/ModalForComments';
 import Photos from '../RepairScreen/Photos/Photos';
+import LoaderSvg from '../Loader/LoaderSvg';
 
 export default function DiagnosticScreen() {
-  const togglePoints = useSelector(selectNodesAndPartsForDiagnostics);
+  const togglePoints = useSelector(selectNodesAndPartsForDiagnostics) || [];
 
   const [chosenPoints, setChosenPoints] = useState(
-    togglePoints &&
-      togglePoints?.map(point => ({ id: point.id, label: point.name }))
+    togglePoints?.map(point => ({ id: point.id, label: point.name }))
   );
   const [categoryForDetailsPart, setCategoryForDetailsPart] = useState('');
   const [subcatOpen, setSubcatOpen] = useState(false);
@@ -87,6 +87,20 @@ export default function DiagnosticScreen() {
       togglePoints?.map(point => ({ id: point.id, label: point.name }))
     );
   }, [togglePoints]);
+
+  console.log('chosenPoints', chosenPoints);
+
+  // useEffect(() => {
+  //   if (togglePoints?.length) {
+  //     setChosenPoints(
+  //       togglePoints.map(point => ({ id: point.id, label: point.name }))
+  //     );
+  //   }
+  // }, [togglePoints]);
+
+  // if (!togglePoints?.length) {
+  //   return null; // або <Skeleton />, або просто нічого
+  // }
 
   const handleCheckboxChange = (event, id, label) => {
     setChosenPoints(prevPoints => {
@@ -471,6 +485,8 @@ export default function DiagnosticScreen() {
             </ul>
           </>
         )
+      ) : chosenPoints.length === 0 ? (
+        <LoaderSvg />
       ) : (
         <TogglePoints
           togglePoints={togglePoints}

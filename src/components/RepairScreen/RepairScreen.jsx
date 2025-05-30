@@ -46,19 +46,31 @@ export default function RepairScreen() {
   const [statusParts, setStatusParts] = useState([]);
   const [statusServices, setStatusServices] = useState([]);
   const [completedRepair, setCompletedRepair] = useState(false);
+
+  // Audios
   const [recordAudio, setRecordAudio] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
   const [audios, setAudios] = useState([]);
+  const [audioLocalURLs, setAudioLocalURLs] = useState([]);
+  const [currentBlob, setCurrentBlob] = useState(null);
+  const [checkPhotos, setCheckPhotos] = useState(false);
+  const [modalWithRecordings, setModalWithRecordings] = useState(false);
+
+  // Photos
   const [openCamera, setOpenCamera] = useState(false);
   const [openPhotoComp, setOpenPhotoComp] = useState(false);
   const [photosFromRepair, setPhotosFromRepair] = useState([]);
-  const [openComment, setOpenComment] = useState(false);
-  const [checkPhotos, setCheckPhotos] = useState(false);
-  const [comment, setComment] = useState('');
   const [savedRepairPhotos, setSavedRepairPhotos] = useState([]);
+
+  // Comments
+  const [openComment, setOpenComment] = useState(false);
+  const [comment, setComment] = useState('');
   const [checkComment, setCheckComment] = useState(false);
-  const [modalWithRecordings, setModalWithRecordings] = useState(false);
-  console.log('audios', audios);
+  const [commentsList, setCommentsList] = useState([]);
+
+  // console.log('audios', audios);
+  // console.log('local', audioLocalURLs);
+  console.log('comments', commentsList);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -80,11 +92,30 @@ export default function RepairScreen() {
   const repair = useSelector(selectRepair);
   console.log('repair', repair);
 
+  function base64ToBlob(base64String, contentType = 'audio/webm') {
+    const byteCharacters = atob(base64String.split(',')[1]);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    return new Blob(byteArrays, { type: contentType });
+  }
+
   useEffect(() => {
     setSavedRepairPhotos(repair?.photos);
-    setAudios(repair?.audios);
+    setAudios(repair?.audios?.map(audio => base64ToBlob(audio, 'audio/webm')));
+    setAudioLocalURLs(repair?.audios);
+    setCommentsList(repair?.comments);
   }, [repair]);
-  console.log('savephotos', savedRepairPhotos);
+  // console.log('savephotos', savedRepairPhotos);
 
   useEffect(() => {
     if (repair?.parts) {
@@ -100,30 +131,36 @@ export default function RepairScreen() {
     }
   }, [repair?.parts, repair?.services]);
 
+  async function convertBlobsToBase64(blobs) {
+    const base64Array = await Promise.all(
+      blobs.map(
+        blob =>
+          new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          })
+      )
+    );
+    return base64Array;
+  }
   const handleUpdateStatuses = async () => {
     try {
-      // let base64data = null;
+      let audiosBase64 = [];
 
-      // if (audioURL) {
-      //   const response = await fetch(audioURL);
-      //   const blob = await response.blob();
-
-      //   base64data = await new Promise((resolve, reject) => {
-      //     const reader = new FileReader();
-      //     reader.onloadend = () => resolve(reader.result);
-      //     reader.onerror = reject;
-      //     reader.readAsDataURL(blob);
-      //   });
-      // }
+      if (audios && audios.length > 0) {
+        audiosBase64 = await convertBlobsToBase64(audios);
+      }
 
       const dataToUpdate = {
         ...repair,
         parts: statusParts,
         services: statusServices,
         repair_id: id,
-        audios: audios,
+        audios: audiosBase64,
         photos: savedRepairPhotos,
-        comment: comment,
+        comments: commentsList,
       };
 
       console.log('dataToUpdate', dataToUpdate);
@@ -394,6 +431,7 @@ export default function RepairScreen() {
           setCheckComment={setCheckComment}
           setModalWithRecordings={setModalWithRecordings}
           comment={comment}
+          commentsList={commentsList}
         />
       )}
 
@@ -441,6 +479,9 @@ export default function RepairScreen() {
             setAudioURL={setAudioURL}
             repair={true}
             setAudios={setAudios}
+            currentBlob={currentBlob}
+            setCurrentBlob={setCurrentBlob}
+            setAudioLocalURLs={setAudioLocalURLs}
           />
         ) : (
           <BottomPart
@@ -484,6 +525,10 @@ export default function RepairScreen() {
             }}
             setComment={setComment}
             comment={comment}
+            checkComment={checkComment}
+            setCommentsList={setCommentsList}
+            repair={true}
+            commentsList={commentsList}
           />
         </Modal>
       )}
@@ -494,7 +539,7 @@ export default function RepairScreen() {
           onClose={() => setModalWithRecordings(false)}
         >
           <ModalForListOfRecordings
-            audios={audios}
+            audios={audioLocalURLs}
             onClose={() => setModalWithRecordings(false)}
           />
         </Modal>
