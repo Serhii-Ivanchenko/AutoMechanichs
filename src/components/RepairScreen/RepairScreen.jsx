@@ -347,7 +347,7 @@ export default function RepairScreen() {
   // );
 
   return (
-    <div>
+    <>
       <CarDetailsPart particularCar={particularCar} />
       <WorksSwitcher
         // subcatRepairOpen={subcatOpen}
@@ -492,6 +492,6 @@ export default function RepairScreen() {
           <ModalForListOfRecordings audios={audios} />
         </Modal>
       )}
-    </div>
+    </>
   );
 }
