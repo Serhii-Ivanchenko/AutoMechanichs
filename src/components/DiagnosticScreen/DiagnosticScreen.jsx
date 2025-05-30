@@ -50,12 +50,14 @@ export default function DiagnosticScreen() {
   const navigate = useNavigate();
   const { carId } = useParams();
   const [openCamera, setOpenCamera] = useState(false);
+  const [openPhotoComp, setOpenPhotoComp] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
   const [photosFromDiag, setPhotosFromDiag] = useState([]);
   const [openComment, setOpenComment] = useState(false);
   const [comment, setComment] = useState('');
   const [openAudio, setOpenAudio] = useState(false);
   const [openPhotos, setOpenPhotos] = useState(false);
+  const [checkComment, setCheckComment] = useState(false);
 
   // console.log('carId', carId);
 
@@ -337,6 +339,7 @@ export default function DiagnosticScreen() {
         mechanic_id: 1,
         audios: audioURL ? [base64data] : [],
         photos: photosFromDiag,
+        general_comment: comment,
         nodes: nodesToCreateDiag,
       };
       console.log('dataToSend', dataToSend);
@@ -428,10 +431,11 @@ export default function DiagnosticScreen() {
             photosFromDiag={photosFromDiag}
             setOpenAudio={setOpenAudio}
             setOpenPhotos={setOpenPhotos}
+            setCheckComment={setCheckComment}
           />
         )
       ) : subcatOpen ? (
-        openCamera ? (
+        openPhotoComp ? (
           <PhotoCapturePage
             diag={true}
             carId={carId}
@@ -439,6 +443,7 @@ export default function DiagnosticScreen() {
             setPhotosFromWorksPart={setPhotosFromDiag}
             photosFromWorksPart={photosFromDiag}
             openCamera={openCamera}
+            setOpenPhotoComp={setOpenPhotoComp}
           />
         ) : (
           <>
@@ -473,7 +478,7 @@ export default function DiagnosticScreen() {
         />
       )}
 
-      {!openCamera &&
+      {!openPhotoComp &&
         !openPhotos &&
         (recordAudio || openAudio ? (
           <AudioRecorder
@@ -511,13 +516,23 @@ export default function DiagnosticScreen() {
             photosFromWorksPart={photosFromDiag}
             setOpenComment={setOpenComment}
             comment={comment}
+            setOpenPhotoComp={setOpenPhotoComp}
           />
         ))}
 
-      {openComment && (
-        <Modal isOpen={openComment} onClose={() => setOpenComment(false)}>
+      {(openComment || checkComment) && (
+        <Modal
+          isOpen={openComment || checkComment}
+          onClose={() => {
+            setOpenComment(false);
+            setCheckComment(false);
+          }}
+        >
           <ModalForComments
-            onClose={() => setOpenComment(false)}
+            onClose={() => {
+              setOpenComment(false);
+              setCheckComment(false);
+            }}
             setComment={setComment}
             comment={comment}
           />

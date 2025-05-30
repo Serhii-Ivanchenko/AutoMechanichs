@@ -19,6 +19,7 @@ import {
   getNodesAndParts,
   getRepair,
   updateRepair,
+  uploadCarPhotos,
 } from '../../redux/cars/operations.js';
 import Filter from '../DiagnosticScreen/Filter/Filter.jsx';
 import PartsForRepair from './PartsForRepair/PartsForRepair.jsx';
@@ -29,6 +30,7 @@ import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage.jsx'
 import Modal from '../Modal/Modal.jsx';
 import ModalForComments from '../ModalForComments/ModalForComments.jsx';
 import Photos from './Photos/Photos.jsx';
+import ModalForListOfRecordings from '../ModalForListOfRecordings/ModalForListOfRecordings.jsx';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -46,11 +48,17 @@ export default function RepairScreen() {
   const [completedRepair, setCompletedRepair] = useState(false);
   const [recordAudio, setRecordAudio] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
+  const [audios, setAudios] = useState([]);
   const [openCamera, setOpenCamera] = useState(false);
+  const [openPhotoComp, setOpenPhotoComp] = useState(false);
   const [photosFromRepair, setPhotosFromRepair] = useState([]);
   const [openComment, setOpenComment] = useState(false);
   const [checkPhotos, setCheckPhotos] = useState(false);
   const [comment, setComment] = useState('');
+  const [savedRepairPhotos, setSavedRepairPhotos] = useState([]);
+  const [checkComment, setCheckComment] = useState(false);
+  const [modalWithRecordings, setModalWithRecordings] = useState(false);
+  console.log('audios', audios);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -73,6 +81,11 @@ export default function RepairScreen() {
   console.log('repair', repair);
 
   useEffect(() => {
+    setSavedRepairPhotos(repair?.photos);
+  }, [repair]);
+  console.log('savephotos', savedRepairPhotos);
+
+  useEffect(() => {
     if (repair?.parts) {
       setStatusParts(
         repair?.parts.map(part => ({ ...part, id: Math.random() }))
@@ -88,27 +101,27 @@ export default function RepairScreen() {
 
   const handleUpdateStatuses = async () => {
     try {
-      let base64data = null;
+      // let base64data = null;
 
-      if (audioURL) {
-        const response = await fetch(audioURL);
-        const blob = await response.blob();
+      // if (audioURL) {
+      //   const response = await fetch(audioURL);
+      //   const blob = await response.blob();
 
-        base64data = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
-      }
+      //   base64data = await new Promise((resolve, reject) => {
+      //     const reader = new FileReader();
+      //     reader.onloadend = () => resolve(reader.result);
+      //     reader.onerror = reject;
+      //     reader.readAsDataURL(blob);
+      //   });
+      // }
 
       const dataToUpdate = {
         ...repair,
         parts: statusParts,
         services: statusServices,
         repair_id: id,
-        audios: [base64data],
-        photos: photosFromRepair,
+        audios: [audioURL],
+        photos: savedRepairPhotos,
       };
 
       console.log('dataToUpdate', dataToUpdate);
@@ -131,6 +144,17 @@ export default function RepairScreen() {
         duration: 3000,
       });
     }
+  };
+
+  const handleSavePhotos = async () => {
+    const carData = {
+      car_id: carId,
+      photos: {
+        photos_base64: photosFromRepair,
+      },
+    };
+    const data = await dispatch(uploadCarPhotos(carData)).unwrap();
+    setSavedRepairPhotos(prevPhotos => [...prevPhotos, ...data.added_urls]);
   };
 
   // console.log('particularCar', particularCar);
@@ -323,7 +347,7 @@ export default function RepairScreen() {
   // );
 
   return (
-    <div>
+    <>
       <CarDetailsPart particularCar={particularCar} />
       <WorksSwitcher
         // subcatRepairOpen={subcatOpen}
@@ -331,17 +355,23 @@ export default function RepairScreen() {
         car={particularCar}
       />
 
-      {openCamera ? (
+      {openPhotoComp ? (
         <PhotoCapturePage
           diag={true}
+          repair={true}
           carId={carId}
           setOpenCamera={setOpenCamera}
+          setOpenPhotoComp={setOpenPhotoComp}
+          openCameraWorkPart={openCamera}
           setPhotosFromWorksPart={setPhotosFromRepair}
           photosFromWorksPart={photosFromRepair}
+          handleSavePhotos={handleSavePhotos}
         />
       ) : checkPhotos ? (
         <Photos
-          photos={photosFromRepair || repair?.photos}
+          photos={
+            savedRepairPhotos.length > 0 ? savedRepairPhotos : repair?.photos
+          }
           setCheckPhotos={setCheckPhotos}
         />
       ) : (
@@ -357,6 +387,9 @@ export default function RepairScreen() {
           photosFromRepair={photosFromRepair}
           repair={repair}
           setCheckPhotos={setCheckPhotos}
+          setCheckComment={setCheckComment}
+          setModalWithRecordings={setModalWithRecordings}
+          comment={comment}
         />
       )}
 
@@ -395,13 +428,15 @@ export default function RepairScreen() {
         />
       )} */}
 
-      {!openCamera &&
+      {!openPhotoComp &&
         !checkPhotos &&
         (recordAudio ? (
           <AudioRecorder
             setRecordAudio={setRecordAudio}
             audioURL={audioURL}
             setAudioURL={setAudioURL}
+            repair={true}
+            setAudios={setAudios}
           />
         ) : (
           <BottomPart
@@ -422,6 +457,7 @@ export default function RepairScreen() {
             repair={true}
             setRecordAudio={setRecordAudio}
             setOpenCamera={setOpenCamera}
+            setOpenPhotoComp={setOpenPhotoComp}
             photosFromWorksPart={photosFromRepair}
             audioURL={audioURL}
             setOpenComment={setOpenComment}
@@ -429,15 +465,33 @@ export default function RepairScreen() {
           />
         ))}
 
-      {openComment && (
-        <Modal isOpen={openComment} onClose={() => setOpenComment(false)}>
+      {(openComment || checkComment) && (
+        <Modal
+          isOpen={openComment || checkComment}
+          onClose={() => {
+            setOpenComment(false);
+            setCheckComment(false);
+          }}
+        >
           <ModalForComments
-            onClose={() => setOpenComment(false)}
+            onClose={() => {
+              setOpenComment(false);
+              setCheckComment(false);
+            }}
             setComment={setComment}
             comment={comment}
           />
         </Modal>
       )}
-    </div>
+
+      {modalWithRecordings && (
+        <Modal
+          isOpen={modalWithRecordings}
+          onClose={() => setModalWithRecordings(false)}
+        >
+          <ModalForListOfRecordings audios={audios} />
+        </Modal>
+      )}
+    </>
   );
 }
