@@ -17,6 +17,7 @@ export default function AudioRecorder({
   completedDoc,
   setOpenAudio,
   repair,
+  setAudios,
 }) {
   const mediaRecorderRef = useRef(null);
   // const [audioURL, setAudioURL] = useState(null);
@@ -257,7 +258,13 @@ export default function AudioRecorder({
         {audioURL && !completedDoc ? (
           <button
             className={css.btnCheck}
-            onClick={() => setRecordAudio(false)}
+            onClick={() => {
+              setRecordAudio(false);
+              if (repair) {
+                setAudios(prev => [...prev, audioURL]);
+                setAudioURL(null);
+              }
+            }}
           >
             <BsCheckLg className={css.iconCheck} />
           </button>

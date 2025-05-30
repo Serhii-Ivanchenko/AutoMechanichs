@@ -48,6 +48,7 @@ export default function RepairScreen() {
   const [completedRepair, setCompletedRepair] = useState(false);
   const [recordAudio, setRecordAudio] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
+  const [audios, setAudios] = useState([]);
   const [openCamera, setOpenCamera] = useState(false);
   const [openPhotoComp, setOpenPhotoComp] = useState(false);
   const [photosFromRepair, setPhotosFromRepair] = useState([]);
@@ -57,7 +58,7 @@ export default function RepairScreen() {
   const [savedRepairPhotos, setSavedRepairPhotos] = useState([]);
   const [checkComment, setCheckComment] = useState(false);
   const [modalWithRecordings, setModalWithRecordings] = useState(false);
-  console.log('audioURL', audioURL);
+  console.log('audios', audios);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -435,6 +436,7 @@ export default function RepairScreen() {
             audioURL={audioURL}
             setAudioURL={setAudioURL}
             repair={true}
+            setAudios={setAudios}
           />
         ) : (
           <BottomPart
@@ -487,7 +489,7 @@ export default function RepairScreen() {
           isOpen={modalWithRecordings}
           onClose={() => setModalWithRecordings(false)}
         >
-          <ModalForListOfRecordings audios={repair.audios} />
+          <ModalForListOfRecordings audios={audios} />
         </Modal>
       )}
     </div>
