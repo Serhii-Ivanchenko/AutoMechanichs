@@ -30,6 +30,7 @@ import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage.jsx'
 import Modal from '../Modal/Modal.jsx';
 import ModalForComments from '../ModalForComments/ModalForComments.jsx';
 import Photos from './Photos/Photos.jsx';
+import ModalForListOfRecordings from '../ModalForListOfRecordings/ModalForListOfRecordings.jsx';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -55,6 +56,8 @@ export default function RepairScreen() {
   const [comment, setComment] = useState('');
   const [savedRepairPhotos, setSavedRepairPhotos] = useState([]);
   const [checkComment, setCheckComment] = useState(false);
+  const [modalWithRecordings, setModalWithRecordings] = useState(false);
+  console.log('audioURL', audioURL);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -97,26 +100,26 @@ export default function RepairScreen() {
 
   const handleUpdateStatuses = async () => {
     try {
-      let base64data = null;
+      // let base64data = null;
 
-      if (audioURL) {
-        const response = await fetch(audioURL);
-        const blob = await response.blob();
+      // if (audioURL) {
+      //   const response = await fetch(audioURL);
+      //   const blob = await response.blob();
 
-        base64data = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
-      }
+      //   base64data = await new Promise((resolve, reject) => {
+      //     const reader = new FileReader();
+      //     reader.onloadend = () => resolve(reader.result);
+      //     reader.onerror = reject;
+      //     reader.readAsDataURL(blob);
+      //   });
+      // }
 
       const dataToUpdate = {
         ...repair,
         parts: statusParts,
         services: statusServices,
         repair_id: id,
-        audios: [base64data],
+        audios: [audioURL],
         photos: savedRepairPhotos,
       };
 
@@ -384,6 +387,8 @@ export default function RepairScreen() {
           repair={repair}
           setCheckPhotos={setCheckPhotos}
           setCheckComment={setCheckComment}
+          setModalWithRecordings={setModalWithRecordings}
+          comment={comment}
         />
       )}
 
@@ -429,6 +434,7 @@ export default function RepairScreen() {
             setRecordAudio={setRecordAudio}
             audioURL={audioURL}
             setAudioURL={setAudioURL}
+            repair={true}
           />
         ) : (
           <BottomPart
@@ -473,6 +479,15 @@ export default function RepairScreen() {
             setComment={setComment}
             comment={comment}
           />
+        </Modal>
+      )}
+
+      {modalWithRecordings && (
+        <Modal
+          isOpen={modalWithRecordings}
+          onClose={() => setModalWithRecordings(false)}
+        >
+          <ModalForListOfRecordings audios={repair.audios} />
         </Modal>
       )}
     </div>

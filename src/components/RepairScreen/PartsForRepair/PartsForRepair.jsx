@@ -15,6 +15,8 @@ export default function PartsForRepair({
   repair,
   setCheckPhotos,
   setCheckComment,
+  setModalWithRecordings,
+  comment,
 }) {
   const handleChangeStatus = id => {
     setStatusParts(prev =>
@@ -47,6 +49,7 @@ export default function PartsForRepair({
               <div className={css.btnBoxCompleted}>
                 <div
                   className={`${css.circle} ${audioURL && css.circleFilled}`}
+                  onClick={() => setModalWithRecordings(true)}
                 >
                   <BsFillMicFill className={css.iconMedia} />
                 </div>
@@ -62,7 +65,7 @@ export default function PartsForRepair({
                 </div>
                 <div
                   className={`${css.circle} ${
-                    repair?.comment && css.circleFilled
+                    (repair?.comment || comment) && css.circleFilled
                   }`}
                   onClick={() => setCheckComment(true)}
                 >
@@ -115,7 +118,10 @@ export default function PartsForRepair({
             <p className={css.title}>Послуги</p>
             {statusParts?.length === 0 && (
               <div className={css.btnBoxCompleted}>
-                <div className={css.circle}>
+                <div
+                  className={css.circle}
+                  onClick={() => setModalWithRecordings(true)}
+                >
                   <BsFillMicFill className={css.iconMedia} />
                 </div>
                 <div

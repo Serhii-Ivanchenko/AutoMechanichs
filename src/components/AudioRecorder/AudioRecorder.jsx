@@ -16,6 +16,7 @@ export default function AudioRecorder({
   setAudioURL,
   completedDoc,
   setOpenAudio,
+  repair,
 }) {
   const mediaRecorderRef = useRef(null);
   // const [audioURL, setAudioURL] = useState(null);
@@ -47,9 +48,13 @@ export default function AudioRecorder({
       };
 
       mediaRecorderRef.current.onstop = async () => {
-        const blob = new Blob(audioChunks.current, { type: 'audio/webp' });
+        const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(blob);
+        // if (repair) {
+        //   setAudioURL(prev => [...prev, url]);
+        // } else {
         setAudioURL(url);
+        // }
         // const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
         const arrayBuffer = await blob.arrayBuffer();
         const audioContext = new (window.AudioContext ||
@@ -232,7 +237,11 @@ export default function AudioRecorder({
                     size={24}
                     className={css.iconCross}
                     onClick={() => {
+                      // if (repair) {
+                      //   setAudioURL([]);
+                      // } else {
                       setAudioURL(null);
+                      // }
                       setDuration(null);
                       setCurrentTime(0);
                       setIsPlaying(false);
