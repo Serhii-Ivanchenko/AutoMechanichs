@@ -2,8 +2,6 @@ import CompletedDocSection from '../../components/CompletedDocSection/CompletedD
 
 export default function CompletedDocPage() {
   return (
-    <div>
       <CompletedDocSection />
-    </div>
   );
 }

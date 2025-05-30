@@ -168,7 +168,9 @@ export default function PhotoCapturePage({
         });
     }
   };
-
+  console.log('photosToDisplay', photosToDisplay);
+  console.log('photos', photos);
+  console.log('displayedCar', displayedCar);
   return (
     <div className={`${css.wrapper} ${diag && css.wrapperDiag}`}>
       {openedCamera ? (
@@ -181,7 +183,7 @@ export default function PhotoCapturePage({
           />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
-      ) : checkPhotos ? (
+      ) : !displayedCar ? (
         photosToDisplay.length > 0 ? (
           <div className={css.photoSectionWrapper}>
             {photosToDisplay?.map((src, index) => (
@@ -199,32 +201,30 @@ export default function PhotoCapturePage({
         ) : (
           <p className={css.absentPhotos}>Фото відсутні</p>
         )
+      ) : displayedCar?.cars_photo?.length > 0 ? (
+        <div className={css.photoSectionWrapper}>
+          {displayedCar?.cars_photo?.map((src, index) => (
+            <img
+              key={index}
+              src={src}
+              alt="car photo"
+              className={css.existedPhoto}
+            />
+          ))}
+          {photosToDisplay?.map((src, index) => (
+            <div key={index} className={css.photoWrapper}>
+              <img src={src} alt="car photo" className={css.photo} />
+              <button type="button" className={css.deleteBtn}>
+                <BsTrash
+                  className={css.deleteBtnIcon}
+                  onClick={() => handlePhotoDelete(index)}
+                />
+              </button>
+            </div>
+          ))}
+        </div>
       ) : (
-        displayedCar?.cars_photo?.length > 0 ? (
-          <div className={css.photoSectionWrapper}>
-            {displayedCar?.cars_photo?.map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                alt="car photo"
-                className={css.existedPhoto}
-              />
-            ))}
-            {photosToDisplay?.map((src, index) => (
-              <div key={index} className={css.photoWrapper}>
-                <img src={src} alt="car photo" className={css.photo} />
-                <button type="button" className={css.deleteBtn}>
-                  <BsTrash
-                    className={css.deleteBtnIcon}
-                    onClick={() => handlePhotoDelete(index)}
-                  />
-                </button>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className={css.absentPhotos}>Фото відсутні</p>
-        )
+        <p className={css.absentPhotos}>Фото відсутні</p>
       )}
       <div className={`${css.btnsWrapper} ${stream ? css.cameraOn : ''}`}>
         {!openedCamera ? (

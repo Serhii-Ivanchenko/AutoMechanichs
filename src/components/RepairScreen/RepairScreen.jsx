@@ -351,7 +351,7 @@ export default function RepairScreen() {
   // );
 
   return (
-    <>
+    <div className={css.wrapper}>
       <CarDetailsPart particularCar={particularCar} />
       <WorksSwitcher
         // subcatRepairOpen={subcatOpen}
@@ -499,6 +499,6 @@ export default function RepairScreen() {
           />
         </Modal>
       )}
-    </>
+    </div>
   );
 }

@@ -14,9 +14,6 @@ export default function ModalForComments({ onClose, setComment, comment }) {
         value={comment}
       />
       <div className={css.btnBox}>
-        <button type="button" className={css.confirm} onClick={onClose}>
-          Підтвердити
-        </button>
         <button
           type="button"
           className={css.cancel}
@@ -26,6 +23,9 @@ export default function ModalForComments({ onClose, setComment, comment }) {
           }}
         >
           Закрити
+        </button>
+        <button type="button" className={css.confirm} onClick={onClose}>
+          Підтвердити
         </button>
       </div>
     </div>
