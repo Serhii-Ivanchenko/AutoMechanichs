@@ -247,6 +247,7 @@ export const createNewCar = createAsyncThunk(
       const response = await axiosInstance.post(`/mb/save_car/`, carData, {
         headers: {
           'company-id': serviceId,
+          "X-Api-Key": "YA7NxysJ",
         },
       });
       console.log('createNewCar', response.data);
