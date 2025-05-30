@@ -387,7 +387,7 @@ export default function RepairScreen() {
           setStatusServices={setStatusServices}
           statusServices={statusServices}
           completedRepair={completedRepair}
-          audioURL={audios.length > 0}
+          audioURL={audios?.length > 0}
           photosFromRepair={photosFromRepair}
           repair={repair}
           setCheckPhotos={setCheckPhotos}
