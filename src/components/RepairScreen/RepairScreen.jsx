@@ -46,23 +46,31 @@ export default function RepairScreen() {
   const [statusParts, setStatusParts] = useState([]);
   const [statusServices, setStatusServices] = useState([]);
   const [completedRepair, setCompletedRepair] = useState(false);
+
+  // Audios
   const [recordAudio, setRecordAudio] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
   const [audios, setAudios] = useState([]);
   const [audioLocalURLs, setAudioLocalURLs] = useState([]);
+  const [currentBlob, setCurrentBlob] = useState(null);
+  const [checkPhotos, setCheckPhotos] = useState(false);
+  const [modalWithRecordings, setModalWithRecordings] = useState(false);
+
+  // Photos
   const [openCamera, setOpenCamera] = useState(false);
   const [openPhotoComp, setOpenPhotoComp] = useState(false);
   const [photosFromRepair, setPhotosFromRepair] = useState([]);
-  const [openComment, setOpenComment] = useState(false);
-  const [checkPhotos, setCheckPhotos] = useState(false);
-  const [comment, setComment] = useState('');
   const [savedRepairPhotos, setSavedRepairPhotos] = useState([]);
-  const [checkComment, setCheckComment] = useState(false);
-  const [modalWithRecordings, setModalWithRecordings] = useState(false);
-  const [currentBlob, setCurrentBlob] = useState(null);
 
-  console.log('audios', audios);
-  console.log('local', audioLocalURLs);
+  // Comments
+  const [openComment, setOpenComment] = useState(false);
+  const [comment, setComment] = useState('');
+  const [checkComment, setCheckComment] = useState(false);
+  const [commentsList, setCommentsList] = useState([]);
+
+  // console.log('audios', audios);
+  // console.log('local', audioLocalURLs);
+  console.log('comments', commentsList);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -105,8 +113,9 @@ export default function RepairScreen() {
     setSavedRepairPhotos(repair?.photos);
     setAudios(repair?.audios?.map(audio => base64ToBlob(audio, 'audio/webm')));
     setAudioLocalURLs(repair?.audios);
+    setCommentsList(repair?.comments);
   }, [repair]);
-  console.log('savephotos', savedRepairPhotos);
+  // console.log('savephotos', savedRepairPhotos);
 
   useEffect(() => {
     if (repair?.parts) {
@@ -144,20 +153,6 @@ export default function RepairScreen() {
         audiosBase64 = await convertBlobsToBase64(audios);
       }
 
-      // let base64data = null;
-
-      // if (audioURL) {
-      //   const response = await fetch(audioURL);
-      //   const blob = await response.blob();
-
-      //   base64data = await new Promise((resolve, reject) => {
-      //     const reader = new FileReader();
-      //     reader.onloadend = () => resolve(reader.result);
-      //     reader.onerror = reject;
-      //     reader.readAsDataURL(blob);
-      //   });
-      // }
-
       const dataToUpdate = {
         ...repair,
         parts: statusParts,
@@ -165,7 +160,7 @@ export default function RepairScreen() {
         repair_id: id,
         audios: audiosBase64,
         photos: savedRepairPhotos,
-        comment: comment,
+        comments: commentsList,
       };
 
       console.log('dataToUpdate', dataToUpdate);
@@ -436,6 +431,7 @@ export default function RepairScreen() {
           setCheckComment={setCheckComment}
           setModalWithRecordings={setModalWithRecordings}
           comment={comment}
+          commentsList={commentsList}
         />
       )}
 
@@ -529,6 +525,10 @@ export default function RepairScreen() {
             }}
             setComment={setComment}
             comment={comment}
+            checkComment={checkComment}
+            setCommentsList={setCommentsList}
+            repair={true}
+            commentsList={commentsList}
           />
         </Modal>
       )}
