@@ -104,8 +104,10 @@ export default function PhotoCapturePage({
     setStream(null);
     setIsCameraOpen(false);
     setOpenCamera(false);
-    if (diag) {
+    if (diag && photosFromWorksPart?.length > 0) {
       setCheckPhotos(true);
+    } else {
+      setOpenPhotoComp(false);
     }
   };
 
@@ -166,7 +168,9 @@ export default function PhotoCapturePage({
         });
     }
   };
-
+  console.log('photosToDisplay', photosToDisplay);
+  console.log('photos', photos);
+  console.log('displayedCar', displayedCar);
   return (
     <div className={`${css.wrapper} ${diag && css.wrapperDiag}`}>
       {openedCamera ? (
@@ -179,7 +183,7 @@ export default function PhotoCapturePage({
           />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
-      ) : checkPhotos ? (
+      ) : !displayedCar ? (
         photosToDisplay.length > 0 ? (
           <div className={css.photoSectionWrapper}>
             {photosToDisplay?.map((src, index) => (
@@ -195,19 +199,18 @@ export default function PhotoCapturePage({
             ))}
           </div>
         ) : (
-          <p>Фото відсутні</p>
+          <p className={css.absentPhotos}>Фото відсутні</p>
         )
-      ) : (
+      ) : displayedCar?.cars_photo?.length > 0 ? (
         <div className={css.photoSectionWrapper}>
-          {displayedCar?.cars_photo?.length > 0 &&
-            displayedCar?.cars_photo?.map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                alt="car photo"
-                className={css.existedPhoto}
-              />
-            ))}
+          {displayedCar?.cars_photo?.map((src, index) => (
+            <img
+              key={index}
+              src={src}
+              alt="car photo"
+              className={css.existedPhoto}
+            />
+          ))}
           {photosToDisplay?.map((src, index) => (
             <div key={index} className={css.photoWrapper}>
               <img src={src} alt="car photo" className={css.photo} />
@@ -220,6 +223,8 @@ export default function PhotoCapturePage({
             </div>
           ))}
         </div>
+      ) : (
+        <p className={css.absentPhotos}>Фото відсутні</p>
       )}
       <div className={`${css.btnsWrapper} ${stream ? css.cameraOn : ''}`}>
         {!openedCamera ? (

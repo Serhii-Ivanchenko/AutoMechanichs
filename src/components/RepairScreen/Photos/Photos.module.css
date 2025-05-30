@@ -1,14 +1,33 @@
 .wrapperDiag {
   display: flex;
   flex-direction: column;
-  height: 570px;
+  /* height: 570px; */
+  flex: 1;
   margin-left: auto;
   margin-right: auto;
+  overflow: auto;
+}
+
+.wrapperDiag::-webkit-scrollbar {
+  width: 4px;
+  padding-top: 4px;
+}
+
+.wrapperDiag::-webkit-scrollbar-track {
+  border-radius: 4px;
+  background-color: var(--bg);
+}
+
+.wrapperDiag::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: var(--main-gray);
 }
 
 .photoSectionWrapper {
-  height: 477px;
-  flex-grow: 1;
+  /* height: 477px; */
+  /* flex-grow: 1; */
+  flex: 1 1 auto;
+
   min-height: 130px;
   /* max-height: 580px;
     max-height: 72.139vh; */

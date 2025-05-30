@@ -31,6 +31,15 @@
   overflow-x: hidden;
 }
 
+.absentPhotos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 30px;
+  color: var(--main-gray)
+}
+
 .photoSectionWrapper::-webkit-scrollbar {
   width: 4px;
   padding-top: 4px;
@@ -174,10 +183,12 @@
 
 .photoPreviewWrapper {
   position: relative;
-  width: 70px;
-  height: 70px;
+  max-width: 70px;
+  max-height: 70px;
   width: 8.706vh;
   height: 8.706vh;
+  /* width: clamp(70px, 8.706vh, 100px); */
+  /* height: auto; */
   border-radius: 14px;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   overflow: hidden;
