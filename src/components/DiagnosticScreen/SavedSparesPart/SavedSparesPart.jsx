@@ -19,6 +19,7 @@ export default function SavedSparesPart({
   setOpenAudio,
   setOpenPhotos,
   setCheckComment,
+  comment,
 }) {
   const [expandedMap, setExpandedMap] = useState({});
 
@@ -42,7 +43,10 @@ export default function SavedSparesPart({
             className={`${css.circle} ${
               completedDiag?.audio_files?.length > 0 && css.circleFilled
             }`}
-            onClick={() => setOpenAudio(true)}
+            onClick={() => {
+              if (completedDiag?.audio_files?.length === 0) return;
+              setOpenAudio(true);
+            }}
           >
             <BsFillMicFill className={css.icon} />
           </div>
@@ -51,6 +55,7 @@ export default function SavedSparesPart({
               completedDiag?.photo_files?.length > 0 && css.circleFilled
             }`}
             onClick={() => {
+              if (completedDiag?.photo_files?.length === 0) return;
               setOpenPhotos(true);
               setOpenAudio(false);
             }}
@@ -58,9 +63,7 @@ export default function SavedSparesPart({
             <BsCameraFill className={css.icon} />
           </div>
           <div
-            className={`${css.circle} ${
-              completedDiag?.comment && css.circleFilled
-            }`}
+            className={`${css.circle} ${comment && css.circleFilled}`}
             onClick={() => setCheckComment(true)}
           >
             <BiSolidMessageDetail className={css.icon} />

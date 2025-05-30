@@ -22,6 +22,10 @@
   margin-right: auto;
 }
 
+.wrapperModal {
+  border-top: none;
+}
+
 .player {
   width: 300px;
   height: 50px;

@@ -70,7 +70,9 @@ export default function PhotoCapturePage({
   const handleMainButtonClick = () => {
     if (!openedCamera) {
       setIsCameraOpen(true);
-      setOpenCamera(true);
+      if (diag) {
+        setOpenCamera(true);
+      }
     } else {
       // Делаем снимок
       const video = videoRef.current;
@@ -121,6 +123,7 @@ export default function PhotoCapturePage({
         handleSavePhotos();
       }
       setOpenCamera(false);
+      setOpenPhotoComp(false);
     } else if (photos?.length === 0) {
       displayedCar?.status === 'repair'
         ? navigate(`/car/${carId}/repair`)

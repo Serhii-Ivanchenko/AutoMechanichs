@@ -18,6 +18,7 @@ export default function AudioRecorder({
   setOpenAudio,
   repair,
   setAudios,
+  modal,
 }) {
   const mediaRecorderRef = useRef(null);
   // const [audioURL, setAudioURL] = useState(null);
@@ -183,7 +184,7 @@ export default function AudioRecorder({
   }, [audioRef.current]);
 
   return (
-    <div className={css.wrapper}>
+    <div className={`${css.wrapper} ${modal && css.wrapperModal}`}>
       <div className={css.player}>
         {!audioURL ? (
           <>
@@ -254,40 +255,44 @@ export default function AudioRecorder({
           </>
         )}
       </div>
-      <div className={css.btnBox}>
-        {audioURL && !completedDoc ? (
-          <button
-            className={css.btnCheck}
-            onClick={() => {
-              setRecordAudio(false);
-              if (repair) {
-                setAudios(prev => [...prev, audioURL]);
-                setAudioURL(null);
-              }
-            }}
-          >
-            <BsCheckLg className={css.iconCheck} />
-          </button>
-        ) : (
-          // <button className={css.btn} onClick={() => setRecordAudio(false)}>
-          //   <BsFillDoorOpenFill className={css.iconDoor} />
-          // </button>
-          <button
-            type="button"
-            onClick={() => {
-              setIsPlaying(false);
-              if (completedDoc) {
-                setOpenAudio(false);
-              } else {
+      {modal ? (
+        ''
+      ) : (
+        <div className={css.btnBox}>
+          {audioURL && !completedDoc ? (
+            <button
+              className={css.btnCheck}
+              onClick={() => {
                 setRecordAudio(false);
-              }
-            }}
-            className={css.cancel}
-          >
-            <FaArrowLeft />
-          </button>
-        )}
-      </div>
+                if (repair) {
+                  setAudios(prev => [...prev, audioURL]);
+                  setAudioURL(null);
+                }
+              }}
+            >
+              <BsCheckLg className={css.iconCheck} />
+            </button>
+          ) : (
+            // <button className={css.btn} onClick={() => setRecordAudio(false)}>
+            //   <BsFillDoorOpenFill className={css.iconDoor} />
+            // </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsPlaying(false);
+                if (completedDoc) {
+                  setOpenAudio(false);
+                } else {
+                  setRecordAudio(false);
+                }
+              }}
+              className={css.cancel}
+            >
+              <FaArrowLeft />
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
