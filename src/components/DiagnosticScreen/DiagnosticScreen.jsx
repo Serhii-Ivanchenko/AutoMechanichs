@@ -520,25 +520,24 @@ export default function DiagnosticScreen() {
           />
         ))}
 
-      {openComment ||
-        (checkComment && (
-          <Modal
-            isOpen={openComment || checkComment}
+      {(openComment || checkComment) && (
+        <Modal
+          isOpen={openComment || checkComment}
+          onClose={() => {
+            setOpenComment(false);
+            setCheckComment(false);
+          }}
+        >
+          <ModalForComments
             onClose={() => {
               setOpenComment(false);
               setCheckComment(false);
             }}
-          >
-            <ModalForComments
-              onClose={() => {
-                setOpenComment(false);
-                setCheckComment(false);
-              }}
-              setComment={setComment}
-              comment={comment}
-            />
-          </Modal>
-        ))}
+            setComment={setComment}
+            comment={comment}
+          />
+        </Modal>
+      )}
     </div>
   );
 }
