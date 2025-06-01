@@ -48,7 +48,7 @@ export default function PhotoCapturePage({
       if (openedCamera && videoRef.current && !stream) {
         try {
           const mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
+            video: { facingMode: 'environment' },
           });
           videoRef.current.srcObject = mediaStream;
           setStream(mediaStream);
