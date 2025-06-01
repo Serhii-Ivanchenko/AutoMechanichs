@@ -17,6 +17,7 @@ export default function PartsForRepair({
   setCheckComment,
   setModalWithRecordings,
   comment,
+  commentsList,
 }) {
   const handleChangeStatus = id => {
     setStatusParts(prev =>
@@ -65,9 +66,12 @@ export default function PartsForRepair({
                 </div>
                 <div
                   className={`${css.circle} ${
-                    (repair?.comment || comment) && css.circleFilled
+                    commentsList?.length > 0 && css.circleFilled
                   }`}
-                  onClick={() => setCheckComment(true)}
+                  onClick={() => {
+                    if (commentsList?.length === 0) return;
+                    setCheckComment(true);
+                  }}
                 >
                   <BiSolidMessageDetail className={css.icon} />
                 </div>

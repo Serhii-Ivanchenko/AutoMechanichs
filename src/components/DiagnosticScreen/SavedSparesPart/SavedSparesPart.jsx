@@ -63,7 +63,9 @@ export default function SavedSparesPart({
             <BsCameraFill className={css.icon} />
           </div>
           <div
-            className={`${css.circle} ${comment && css.circleFilled}`}
+            className={`${css.circle} ${
+              completedDiag?.general_comment && css.circleFilled
+            }`}
             onClick={() => setCheckComment(true)}
           >
             <BiSolidMessageDetail className={css.icon} />
@@ -178,9 +180,7 @@ export default function SavedSparesPart({
                       <BsCameraFill className={css.icon} />
                     </div>
                     <div
-                      className={`${css.circle} ${
-                        completedDiag?.comment && css.circleFilled
-                      }`}
+                      className={`${css.circle} ${comment && css.circleFilled}`}
                       onClick={() => setCheckComment(true)}
                     >
                       <BiSolidMessageDetail className={css.icon} />

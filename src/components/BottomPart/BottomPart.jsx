@@ -63,7 +63,7 @@ export default function BottomPart({
           </div>
           <div
             className={`${css.greyCircle} ${
-              photosFromWorksPart?.length > 0 && css.greenCircle
+              !repair && photosFromWorksPart?.length > 0 && css.greenCircle
             }`}
             onClick={() => {
               if (diag && photosFromWorksPart.length > 0) {

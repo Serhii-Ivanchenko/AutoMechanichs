@@ -19,6 +19,9 @@ export default function AudioRecorder({
   repair,
   setAudios,
   modal,
+  currentBlob,
+  setCurrentBlob,
+  setAudioLocalURLs,
 }) {
   const mediaRecorderRef = useRef(null);
   // const [audioURL, setAudioURL] = useState(null);
@@ -33,7 +36,7 @@ export default function AudioRecorder({
   const [currentTime, setCurrentTime] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log('audioUrl', audioURL);
+  // console.log('audioUrl', audioURL);
 
   // const [time, setTime]=
 
@@ -56,6 +59,7 @@ export default function AudioRecorder({
         //   setAudioURL(prev => [...prev, url]);
         // } else {
         setAudioURL(url);
+        setCurrentBlob(blob);
         // }
         // const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
         const arrayBuffer = await blob.arrayBuffer();
@@ -102,9 +106,9 @@ export default function AudioRecorder({
     if (!audio) return;
 
     if (isPlaying) {
-      audio.pause();
+      audio?.pause();
     } else {
-      audio.play();
+      audio?.play();
     }
     setIsPlaying(!isPlaying);
   };
@@ -265,7 +269,8 @@ export default function AudioRecorder({
               onClick={() => {
                 setRecordAudio(false);
                 if (repair) {
-                  setAudios(prev => [...prev, audioURL]);
+                  setAudios(prev => [...prev, currentBlob]);
+                  setAudioLocalURLs(prev => [...prev, audioURL]);
                   setAudioURL(null);
                 }
               }}
