@@ -86,6 +86,7 @@ export default function AudioRecorder({
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
     streamRef.current?.getTracks().forEach(track => track.stop());
+    // setRecordingTime(0);
     setIsRecording(false);
   };
 
@@ -248,8 +249,11 @@ export default function AudioRecorder({
                       // } else {
                       setAudioURL(null);
                       // }
+                      stopRecording();
                       setDuration(null);
                       setCurrentTime(0);
+                      // setRecordingTime(0);
+                      // setRecordAudio(false);
                       setIsPlaying(false);
                     }}
                   />

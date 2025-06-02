@@ -109,10 +109,30 @@ export default function RepairScreen() {
     return new Blob(byteArrays, { type: contentType });
   }
 
+  function base64ToBlobUrl(base64, mimeType = 'audio/webm') {
+    const byteCharacters = atob(base64.split(',')[1]);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: mimeType });
+    return URL.createObjectURL(blob);
+  }
+
   useEffect(() => {
     setSavedRepairPhotos(repair?.photos);
     setAudios(repair?.audios?.map(audio => base64ToBlob(audio, 'audio/webm')));
-    setAudioLocalURLs(repair?.audios);
+    setAudioLocalURLs(
+      repair?.audios?.map(audio => base64ToBlobUrl(audio, 'audio/webm'))
+    );
     setCommentsList(repair?.comments);
   }, [repair]);
   // console.log('savephotos', savedRepairPhotos);
