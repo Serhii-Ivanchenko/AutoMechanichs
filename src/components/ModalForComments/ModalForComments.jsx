@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import css from './ModalForComments.module.css';
 
 export default function ModalForComments({
@@ -9,6 +10,14 @@ export default function ModalForComments({
   repair,
   commentsList,
 }) {
+  const focusRef = useRef(null);
+
+  useEffect(() => {
+    if (focusRef && focusRef.current && !comment) {
+      focusRef.current.focus();
+    }
+  });
+
   const hanleAddComment = e => {
     setComment(e.target.value);
   };
@@ -31,6 +40,7 @@ export default function ModalForComments({
           className={css.textarea}
           onChange={hanleAddComment}
           value={comment}
+          ref={focusRef}
         />
       )}
 

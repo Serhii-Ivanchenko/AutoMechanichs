@@ -16,6 +16,7 @@ import {
   selectRepair,
 } from '../../redux/cars/selectors.js';
 import {
+  getAllCars,
   getNodesAndParts,
   getRepair,
   updateRepair,
@@ -69,7 +70,7 @@ export default function RepairScreen() {
   const [commentsList, setCommentsList] = useState([]);
 
   // console.log('audios', audios);
-  // console.log('local', audioLocalURLs);
+  console.log('local', audioLocalURLs);
   console.log('comments', commentsList);
 
   const dispatch = useDispatch();
@@ -165,6 +166,9 @@ export default function RepairScreen() {
     );
     return base64Array;
   }
+
+  const date = sessionStorage.getItem('date');
+
   const handleUpdateStatuses = async () => {
     try {
       let audiosBase64 = [];
@@ -195,6 +199,7 @@ export default function RepairScreen() {
         },
       });
       await dispatch(clearRepair());
+      await getAllCars({ date, mechanic_id: 1 });
       navigate('/main');
     } catch (error) {
       console.error('Помилка при оновленні ремонту:', error);
