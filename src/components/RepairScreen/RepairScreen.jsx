@@ -189,18 +189,21 @@ export default function RepairScreen() {
 
       console.log('dataToUpdate', dataToUpdate);
 
-      await dispatch(updateRepair(dataToUpdate));
-      toast.success('Ремонт успішно оновлено', {
-        position: 'top-center',
-        duration: 3000,
-        style: {
-          background: 'var(--bg-input)',
-          color: 'var(--white)',
-        },
-      });
-      await dispatch(clearRepair());
-      await getAllCars({ date, mechanic_id: 1 });
-      navigate('/main');
+      await dispatch(updateRepair(dataToUpdate))
+        .unwrap()
+        .then(() => {
+          toast.success('Ремонт успішно оновлено', {
+            position: 'top-center',
+            duration: 3000,
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)',
+            },
+          });
+          dispatch(clearRepair());
+          dispatch(getAllCars({ date, mechanic_id: 1 }));
+          navigate('/main');
+        });
     } catch (error) {
       console.error('Помилка при оновленні ремонту:', error);
       toast.error('Помилка оновлення ремонту', {
