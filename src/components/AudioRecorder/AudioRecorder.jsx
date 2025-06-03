@@ -22,6 +22,9 @@ export default function AudioRecorder({
   currentBlob,
   setCurrentBlob,
   setAudioLocalURLs,
+  id,
+  setCurrentlyPlayingId,
+  currentlyPlayingId,
 }) {
   const mediaRecorderRef = useRef(null);
   // const [audioURL, setAudioURL] = useState(null);
@@ -30,15 +33,17 @@ export default function AudioRecorder({
   const [recordingTime, setRecordingTime] = useState(0);
   const timerRef = useRef(null);
   const audioRef = useRef(null);
+  const audioRefs = useRef({});
   const streamRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlayingArray, setIsPlayingArray] = useState(null);
   const [duration, setDuration] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   // console.log('audioUrl', audioURL);
 
-  // const [time, setTime]=
+  const playAudio = modal ? currentlyPlayingId === id : isPlaying;
 
   const startRecording = async () => {
     try {
@@ -69,7 +74,12 @@ export default function AudioRecorder({
         const duration = audioBuffer.duration;
         setDuration(formatTime(duration));
 
-        clearInterval(timerRef.current);
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+        }
+        timerRef.current = setInterval(() => {
+          setRecordingTime(prev => prev + 1);
+        }, 1000);
         setRecordingTime(0);
       };
 
@@ -86,6 +96,9 @@ export default function AudioRecorder({
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
     streamRef.current?.getTracks().forEach(track => track.stop());
+    setRecordingTime(0);
+    clearInterval(timerRef.current);
+    timerRef.current = null;
     setIsRecording(false);
   };
 
@@ -101,16 +114,43 @@ export default function AudioRecorder({
     return `${mins}:${secs}`;
   };
 
-  const togglePlay = () => {
-    const audio = audioRef.current;
+  useEffect(() => {
+    if (!modal) return;
+
+    const audio = audioRefs.current[id];
     if (!audio) return;
 
-    if (isPlaying) {
-      audio?.pause();
+    if (currentlyPlayingId !== id) {
+      // Якщо це аудіо зараз не грає — ставимо на паузу, але не скидаємо currentTime
+      if (!audio.paused) audio.pause();
     } else {
-      audio?.play();
+      // Якщо це активне аудіо — програємо його
+      audio.play();
     }
-    setIsPlaying(!isPlaying);
+  }, [currentlyPlayingId, id, modal]);
+
+  const togglePlay = () => {
+    if (!modal) {
+      // твоя звичайна логіка для одиночного аудіо
+      const audio = audioRef.current;
+      if (!audio) return;
+
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+      setIsPlaying(!isPlaying);
+    } else {
+      // Для модального режиму - переключаємо currentlyPlayingId
+      if (currentlyPlayingId === id) {
+        // Якщо клікнули на вже активне - ставимо на паузу (прибираємо активний id)
+        setCurrentlyPlayingId(null);
+      } else {
+        // Інакше - вмикаємо це аудіо
+        setCurrentlyPlayingId(id);
+      }
+    }
   };
 
   // const handleLoadedMetadata = () => {
@@ -173,19 +213,17 @@ export default function AudioRecorder({
   // }, [audioURL]);
 
   useEffect(() => {
-    const audio = audioRef.current;
+    const audio = modal ? audioRefs.current[id] : audioRef.current;
     if (!audio) return;
 
-    const updateCurrentTime = () => {
-      setCurrentTime(audio.currentTime);
-    };
+    const updateTime = () => setCurrentTime(audio.currentTime);
 
-    audio.addEventListener('timeupdate', updateCurrentTime);
+    audio.addEventListener('timeupdate', updateTime);
 
     return () => {
-      audio.removeEventListener('timeupdate', updateCurrentTime);
+      audio.removeEventListener('timeupdate', updateTime);
     };
-  }, [audioRef.current]);
+  }, [modal, currentlyPlayingId, id, isPlaying]);
 
   return (
     <div className={`${css.wrapper} ${modal && css.wrapperModal}`}>
@@ -223,7 +261,7 @@ export default function AudioRecorder({
               <>
                 {' '}
                 <button className={css.playBtn} onClick={togglePlay}>
-                  {isPlaying ? (
+                  {playAudio ? (
                     <FaPause size={24} className={css.playerBtn} />
                   ) : (
                     <FaPlay size={24} className={css.playerBtn} />
@@ -231,9 +269,19 @@ export default function AudioRecorder({
                 </button>
                 <audio
                   src={audioURL}
-                  ref={audioRef}
+                  ref={el => {
+                    if (modal) audioRefs.current[id] = el;
+                    else audioRef.current = el;
+                  }}
                   // onLoadedMetadata={handleLoadedMetadata}
-                  onEnded={() => setIsPlaying(false)}
+                  onEnded={() => {
+                    setCurrentTime(0);
+                    if (modal) {
+                      setCurrentlyPlayingId(null);
+                    } else {
+                      setIsPlaying(false);
+                    }
+                  }}
                 />
                 <p>
                   {formatTime(currentTime)} / {duration}
@@ -248,9 +296,13 @@ export default function AudioRecorder({
                       // } else {
                       setAudioURL(null);
                       // }
+                      stopRecording();
                       setDuration(null);
                       setCurrentTime(0);
+                      // setRecordingTime(0);
+                      // setRecordAudio(false);
                       setIsPlaying(false);
+                      setIsPlayingArray(null);
                     }}
                   />
                 )}{' '}
@@ -285,6 +337,7 @@ export default function AudioRecorder({
               type="button"
               onClick={() => {
                 setIsPlaying(false);
+                setIsPlayingArray(null);
                 if (completedDoc) {
                   setOpenAudio(false);
                 } else {

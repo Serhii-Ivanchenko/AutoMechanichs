@@ -16,6 +16,7 @@ import {
   selectRepair,
 } from '../../redux/cars/selectors.js';
 import {
+  getAllCars,
   getNodesAndParts,
   getRepair,
   updateRepair,
@@ -69,7 +70,7 @@ export default function RepairScreen() {
   const [commentsList, setCommentsList] = useState([]);
 
   // console.log('audios', audios);
-  // console.log('local', audioLocalURLs);
+  console.log('local', audioLocalURLs);
   console.log('comments', commentsList);
 
   const dispatch = useDispatch();
@@ -109,10 +110,30 @@ export default function RepairScreen() {
     return new Blob(byteArrays, { type: contentType });
   }
 
+  function base64ToBlobUrl(base64, mimeType = 'audio/webm') {
+    const byteCharacters = atob(base64.split(',')[1]);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: mimeType });
+    return URL.createObjectURL(blob);
+  }
+
   useEffect(() => {
     setSavedRepairPhotos(repair?.photos);
     setAudios(repair?.audios?.map(audio => base64ToBlob(audio, 'audio/webm')));
-    setAudioLocalURLs(repair?.audios);
+    setAudioLocalURLs(
+      repair?.audios?.map(audio => base64ToBlobUrl(audio, 'audio/webm'))
+    );
     setCommentsList(repair?.comments);
   }, [repair]);
   // console.log('savephotos', savedRepairPhotos);
@@ -145,6 +166,9 @@ export default function RepairScreen() {
     );
     return base64Array;
   }
+
+  const date = sessionStorage.getItem('date');
+
   const handleUpdateStatuses = async () => {
     try {
       let audiosBase64 = [];
@@ -165,17 +189,21 @@ export default function RepairScreen() {
 
       console.log('dataToUpdate', dataToUpdate);
 
-      await dispatch(updateRepair(dataToUpdate));
-      toast.success('Ремонт успішно оновлено', {
-        position: 'top-center',
-        duration: 3000,
-        style: {
-          background: 'var(--bg-input)',
-          color: 'var(--white)',
-        },
-      });
-      await dispatch(clearRepair());
-      navigate('/main');
+      await dispatch(updateRepair(dataToUpdate))
+        .unwrap()
+        .then(() => {
+          toast.success('Ремонт успішно оновлено', {
+            position: 'top-center',
+            duration: 3000,
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)',
+            },
+          });
+          dispatch(clearRepair());
+          dispatch(getAllCars({ date, mechanic_id: 1 }));
+          navigate('/main');
+        });
     } catch (error) {
       console.error('Помилка при оновленні ремонту:', error);
       toast.error('Помилка оновлення ремонту', {
