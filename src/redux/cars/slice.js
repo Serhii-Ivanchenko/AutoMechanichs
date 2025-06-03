@@ -12,6 +12,7 @@ import {
   updateCar,
   updateRepair,
   uploadCarPhotos,
+  uploadMedia,
 } from './operations.js';
 
 const handlePending = state => {
@@ -42,11 +43,11 @@ const carsSlice = createSlice({
       state.error = null;
     },
     clearDiag: state => {
-      state.diagnostic = {}
+      state.diagnostic = {};
     },
     clearRepair: state => {
-      state.repairDetails ={}
-    }
+      state.repairDetails = {};
+    },
   },
   extraReducers: builder =>
     builder
@@ -191,6 +192,20 @@ const carsSlice = createSlice({
       })
       .addCase(updateCar.rejected, (state, action) => {
         state.isSavingCarLoading = false;
+        state.error = action.payload;
+      })
+
+      // ! Upload media to convert
+      .addCase(uploadMedia.pending, (state, action) => {
+        state.isConvertingMedia = true;
+        state.error = null;
+      })
+      .addCase(uploadMedia.fulfilled, (state, action) => {
+        state.isConvertingMedia = false;
+        state.convertedMedia = action.payload.urls;
+      })
+      .addCase(uploadMedia.rejected, (state, action) => {
+        state.isConvertingMedia = false;
         state.error = action.payload;
       }),
 });

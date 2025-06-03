@@ -329,3 +329,31 @@ export const updateCar = createAsyncThunk(
     }
   }
 );
+
+// ! Upload media to convert
+
+export const uploadMedia = createAsyncThunk(
+  'cars/uploadMedia',
+  async (media, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      // media_types: {"photos": "jpg", "audios": "mp3", "videos": "mp4"}
+      const response = await axiosInstance.post(`/mb/upload_media/`, media, {
+        headers: {
+          'company-id': serviceId,
+          // 'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('uploadMedia', response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
