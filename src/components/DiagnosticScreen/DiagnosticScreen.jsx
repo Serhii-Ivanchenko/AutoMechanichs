@@ -59,6 +59,8 @@ export default function DiagnosticScreen() {
   const [openPhotos, setOpenPhotos] = useState(false);
   const [checkComment, setCheckComment] = useState(false);
 
+  console.log('audioURL', audioURL);
+
   // console.log('carId', carId);
 
   const cars = useSelector(selectCars);
@@ -504,6 +506,7 @@ export default function DiagnosticScreen() {
             setAudioURL={setAudioURL}
             completedDoc={openAudio}
             setOpenAudio={setOpenAudio}
+            diag={true}
           />
         ) : (
           <BottomPart

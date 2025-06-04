@@ -12,6 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectCars,
+  selectIsRepairLoading,
   selectNodesAndPartsForDiagnostics,
   selectRepair,
 } from '../../redux/cars/selectors.js';
@@ -32,6 +33,7 @@ import Modal from '../Modal/Modal.jsx';
 import ModalForComments from '../ModalForComments/ModalForComments.jsx';
 import Photos from './Photos/Photos.jsx';
 import ModalForListOfRecordings from '../ModalForListOfRecordings/ModalForListOfRecordings.jsx';
+import LoaderSvg from '../Loader/LoaderSvg.jsx';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -71,10 +73,13 @@ export default function RepairScreen() {
 
   // console.log('audios', audios);
   console.log('local', audioLocalURLs);
-  console.log('comments', commentsList);
+  console.log('audioURL', audioURL);
+
+  // console.log('comments', commentsList);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const loader = useSelector(selectIsRepairLoading);
 
   const { carId } = useParams();
   // console.log('carId', carId);
@@ -91,49 +96,47 @@ export default function RepairScreen() {
   }, [dispatch]);
 
   const repair = useSelector(selectRepair);
-  console.log('repair', repair);
+  // console.log('repair', repair);
 
-  function base64ToBlob(base64String, contentType = 'audio/webm') {
-    const byteCharacters = atob(base64String.split(',')[1]);
-    const byteArrays = [];
+  // function base64ToBlob(base64String, contentType = 'audio/webm') {
+  //   const byteCharacters = atob(base64String.split(',')[1]);
+  //   const byteArrays = [];
 
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-      const slice = byteCharacters.slice(offset, offset + 512);
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
+  //   for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+  //     const slice = byteCharacters.slice(offset, offset + 512);
+  //     const byteNumbers = new Array(slice.length);
+  //     for (let i = 0; i < slice.length; i++) {
+  //       byteNumbers[i] = slice.charCodeAt(i);
+  //     }
+  //     const byteArray = new Uint8Array(byteNumbers);
+  //     byteArrays.push(byteArray);
+  //   }
 
-    return new Blob(byteArrays, { type: contentType });
-  }
+  //   return new Blob(byteArrays, { type: contentType });
+  // }
 
-  function base64ToBlobUrl(base64, mimeType = 'audio/webm') {
-    const byteCharacters = atob(base64.split(',')[1]);
-    const byteArrays = [];
+  // function base64ToBlobUrl(base64, mimeType = 'audio/webm') {
+  //   const byteCharacters = atob(base64.split(',')[1]);
+  //   const byteArrays = [];
 
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-      const slice = byteCharacters.slice(offset, offset + 512);
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
+  //   for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+  //     const slice = byteCharacters.slice(offset, offset + 512);
+  //     const byteNumbers = new Array(slice.length);
+  //     for (let i = 0; i < slice.length; i++) {
+  //       byteNumbers[i] = slice.charCodeAt(i);
+  //     }
+  //     const byteArray = new Uint8Array(byteNumbers);
+  //     byteArrays.push(byteArray);
+  //   }
 
-    const blob = new Blob(byteArrays, { type: mimeType });
-    return URL.createObjectURL(blob);
-  }
+  //   const blob = new Blob(byteArrays, { type: mimeType });
+  //   return URL.createObjectURL(blob);
+  // }
 
   useEffect(() => {
     setSavedRepairPhotos(repair?.photos);
-    setAudios(repair?.audios?.map(audio => base64ToBlob(audio, 'audio/webm')));
-    setAudioLocalURLs(
-      repair?.audios?.map(audio => base64ToBlobUrl(audio, 'audio/webm'))
-    );
+    setAudios(repair?.audios);
+    setAudioLocalURLs(repair?.audios);
     setCommentsList(repair?.comments);
   }, [repair]);
   // console.log('savephotos', savedRepairPhotos);
@@ -152,37 +155,37 @@ export default function RepairScreen() {
     }
   }, [repair?.parts, repair?.services]);
 
-  async function convertBlobsToBase64(blobs) {
-    const base64Array = await Promise.all(
-      blobs.map(
-        blob =>
-          new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-          })
-      )
-    );
-    return base64Array;
-  }
+  // async function convertBlobsToBase64(blobs) {
+  //   const base64Array = await Promise.all(
+  //     blobs.map(
+  //       blob =>
+  //         new Promise((resolve, reject) => {
+  //           const reader = new FileReader();
+  //           reader.onloadend = () => resolve(reader.result);
+  //           reader.onerror = reject;
+  //           reader.readAsDataURL(blob);
+  //         })
+  //     )
+  //   );
+  //   return base64Array;
+  // }
 
   const date = sessionStorage.getItem('date');
 
   const handleUpdateStatuses = async () => {
     try {
-      let audiosBase64 = [];
+      // let audiosBase64 = [];
 
-      if (audios && audios.length > 0) {
-        audiosBase64 = await convertBlobsToBase64(audios);
-      }
+      // if (audios && audios.length > 0) {
+      //   audiosBase64 = await convertBlobsToBase64(audios);
+      // }
 
       const dataToUpdate = {
         ...repair,
         parts: statusParts,
         services: statusServices,
         repair_id: id,
-        audios: audiosBase64,
+        audios: audioLocalURLs,
         photos: savedRepairPhotos,
         comments: commentsList,
       };
@@ -424,7 +427,9 @@ export default function RepairScreen() {
         car={particularCar}
       />
 
-      {openPhotoComp ? (
+      {loader ? (
+        <LoaderSvg />
+      ) : openPhotoComp ? (
         <PhotoCapturePage
           diag={true}
           repair={true}

@@ -9,6 +9,18 @@ import { BsCheckLg, BsFillStopFill } from 'react-icons/bs';
 
 import css from './AudioRecorder.module.css';
 import { useEffect, useRef, useState } from 'react';
+import { uploadMedia } from '../../redux/cars/operations';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectIsConvertingMedia } from '../../redux/cars/selectors';
+
+const convertAudioIntoBase64 = async blob => {
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result); // returns "data:audio/webm;base64,..."
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
 
 export default function AudioRecorder({
   setRecordAudio,
@@ -17,6 +29,7 @@ export default function AudioRecorder({
   completedDoc,
   setOpenAudio,
   repair,
+  diag,
   setAudios,
   modal,
   currentBlob,
@@ -36,10 +49,11 @@ export default function AudioRecorder({
   const audioRefs = useRef({});
   const streamRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isPlayingArray, setIsPlayingArray] = useState(null);
   const [duration, setDuration] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const loader = useSelector(selectIsConvertingMedia);
 
   // console.log('audioUrl', audioURL);
 
@@ -60,13 +74,13 @@ export default function AudioRecorder({
       mediaRecorderRef.current.onstop = async () => {
         const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(blob);
-        // if (repair) {
-        //   setAudioURL(prev => [...prev, url]);
-        // } else {
-        setAudioURL(url);
-        setCurrentBlob(blob);
-        // }
-        // const blob = new Blob(audioChunks.current, { type: 'audio/webm' });
+        if (diag) {
+          setAudioURL(url);
+        }
+        if (repair) {
+          setCurrentBlob(blob);
+        }
+
         const arrayBuffer = await blob.arrayBuffer();
         const audioContext = new (window.AudioContext ||
           window.webkitAudioContext)();
@@ -74,13 +88,29 @@ export default function AudioRecorder({
         const duration = audioBuffer.duration;
         setDuration(formatTime(duration));
 
-        if (timerRef.current) {
-          clearInterval(timerRef.current);
+        // if (timerRef.current) {
+        //   clearInterval(timerRef.current);
+        // }
+
+        if (repair) {
+          const base64Audio = await convertAudioIntoBase64(blob);
+
+          const media = {
+            media_type: 'audios',
+            files_base64: [base64Audio],
+          };
+          console.log('media', media);
+
+          const data = await dispatch(uploadMedia(media)).unwrap();
+          setAudioURL(data?.urls[0]);
+          console.log('data', data);
+          console.log('audio', data?.urls[0]);
         }
-        timerRef.current = setInterval(() => {
-          setRecordingTime(prev => prev + 1);
-        }, 1000);
-        setRecordingTime(0);
+
+        //   timerRef.current = setInterval(() => {
+        //     setRecordingTime(prev => prev + 1);
+        //   }, 1000);
+        //   setRecordingTime(0);
       };
 
       mediaRecorderRef.current.start();
@@ -93,7 +123,7 @@ export default function AudioRecorder({
     }
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
     mediaRecorderRef.current?.stop();
     streamRef.current?.getTracks().forEach(track => track.stop());
     setRecordingTime(0);
@@ -109,7 +139,7 @@ export default function AudioRecorder({
     const secs = Math.floor(time % 60)
       .toString()
       .padStart(2, '0');
-    console.log('secs', secs);
+    // console.log('secs', secs);
 
     return `${mins}:${secs}`;
   };
@@ -120,38 +150,72 @@ export default function AudioRecorder({
     const audio = audioRefs.current[id];
     if (!audio) return;
 
-    if (currentlyPlayingId !== id) {
-      // Якщо це аудіо зараз не грає — ставимо на паузу, але не скидаємо currentTime
-      if (!audio.paused) audio.pause();
+    if (currentlyPlayingId === id) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          setTimeout(() => {
+            audio.play();
+          }, 200);
+        });
+      }
     } else {
-      // Якщо це активне аудіо — програємо його
-      audio.play();
+      if (!audio.paused) audio.pause();
     }
   }, [currentlyPlayingId, id, modal]);
 
   const togglePlay = () => {
     if (!modal) {
-      // твоя звичайна логіка для одиночного аудіо
       const audio = audioRef.current;
       if (!audio) return;
 
       if (isPlaying) {
         audio.pause();
+        setIsPlaying(false);
       } else {
-        audio.play();
+        // Якщо audio ще не готовий, спробуємо зачекати трохи
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => setIsPlaying(true))
+            .catch(() => {
+              // якщо не спрацювало, спробуємо через timeout
+              setTimeout(() => {
+                audio.play().then(() => setIsPlaying(true));
+              }, 200);
+            });
+        } else {
+          setIsPlaying(true);
+        }
       }
-      setIsPlaying(!isPlaying);
     } else {
-      // Для модального режиму - переключаємо currentlyPlayingId
+      // Для модалки
       if (currentlyPlayingId === id) {
-        // Якщо клікнули на вже активне - ставимо на паузу (прибираємо активний id)
         setCurrentlyPlayingId(null);
       } else {
-        // Інакше - вмикаємо це аудіо
         setCurrentlyPlayingId(id);
       }
     }
   };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
+    const onEnded = () => setIsPlaying(false);
+
+    audio.addEventListener('play', onPlay);
+    audio.addEventListener('pause', onPause);
+    audio.addEventListener('ended', onEnded);
+
+    return () => {
+      audio.removeEventListener('play', onPlay);
+      audio.removeEventListener('pause', onPause);
+      audio.removeEventListener('ended', onEnded);
+    };
+  }, []);
 
   // const handleLoadedMetadata = () => {
   //   if (completedDoc) {
@@ -166,6 +230,7 @@ export default function AudioRecorder({
   //     }
   //   }
   // };
+
   useEffect(() => {
     if (audioURL) {
       const loadAudioDuration = async () => {
@@ -203,14 +268,8 @@ export default function AudioRecorder({
       loadAudioDuration();
     }
   }, [audioURL, completedDoc]);
-  console.log('duration', duration);
-  console.log('seconds', audioRef?.current?.duration);
-
-  // useEffect(() => {
-  //   if (audioRef.current?.duration) {
-  //     setDuration(formatTime(audioRef.current.duration));
-  //   }
-  // }, [audioURL]);
+  // console.log('duration', duration);
+  // console.log('seconds', audioRef?.current?.duration);
 
   useEffect(() => {
     const audio = modal ? audioRefs.current[id] : audioRef.current;
@@ -228,7 +287,9 @@ export default function AudioRecorder({
   return (
     <div className={`${css.wrapper} ${modal && css.wrapperModal}`}>
       <div className={css.player}>
-        {!audioURL ? (
+        {loader && !audioURL ? (
+          'Зачекайте...'
+        ) : !audioURL ? (
           <>
             {' '}
             <p>{formatTime(recordingTime)}</p>
@@ -255,7 +316,7 @@ export default function AudioRecorder({
           </>
         ) : (
           <>
-            {isLoading ? (
+            {isLoading || loader ? (
               'Зачекайте...'
             ) : (
               <>
@@ -296,13 +357,11 @@ export default function AudioRecorder({
                       // } else {
                       setAudioURL(null);
                       // }
-                      stopRecording();
                       setDuration(null);
                       setCurrentTime(0);
                       // setRecordingTime(0);
                       // setRecordAudio(false);
                       setIsPlaying(false);
-                      setIsPlayingArray(null);
                     }}
                   />
                 )}{' '}
@@ -337,7 +396,6 @@ export default function AudioRecorder({
               type="button"
               onClick={() => {
                 setIsPlaying(false);
-                setIsPlayingArray(null);
                 if (completedDoc) {
                   setOpenAudio(false);
                 } else {
