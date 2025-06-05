@@ -1,16 +1,13 @@
 .SavedSparesList {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 30px;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding: 0 15px;
+  margin: 0 auto 3.6vh;
   width: 378px;
-  /* height: 429px; */
-  flex: 1 1 auto;
-  margin-bottom: 3.6vh; /* 30px */
-  overflow-y: auto;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .SavedSparesList::-webkit-scrollbar {
@@ -41,6 +38,7 @@
   width: 170px;
   word-break: break-word;
 }
+
 .nodeName {
   padding: 5px 2px;
   margin-bottom: 10px;
