@@ -11,7 +11,7 @@
   margin-right: auto;
   position: relative;
   background: var(--bg-secondary);
-  overscroll-behavior: none;
-  touch-action: none;
+  /* overscroll-behavior: none;
+  touch-action: none; */
 }
 
