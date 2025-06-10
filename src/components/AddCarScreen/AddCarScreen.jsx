@@ -407,6 +407,7 @@ export default function AddCarScreen() {
           ) {
             toast.error('Авто з таким номером вже існує', {
               position: 'top-center',
+              duration: 5000,
               style: {
                 background: 'var(--bg-input)',
                 color: 'var(--white)FFF',
@@ -416,7 +417,7 @@ export default function AddCarScreen() {
           if (result.car_id) {
             toast.success('Авто успішно створене', {
               position: 'top-center',
-              duration: 3000,
+              duration: 5000,
               style: {
                 background: 'var(--bg-input)',
                 color: 'var(--white)FFF',
