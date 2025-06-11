@@ -32,124 +32,6 @@ import { selectDate } from '../../redux/cars/selectors.js';
 import { Toaster } from 'react-hot-toast';
 // import { selectChosenDay } from '../../redux/cars/selectors.js';
 
-const array1 = [
-  {
-    time: '00:10',
-    carModel: '2001 MITSUBISHI OUTLANDER',
-    problem: 'Стукає сперeду справа',
-    salary: '123456',
-    sparesStatus: '',
-    status: 'diagnostic',
-  },
-  {
-    time: '00:20',
-    carModel: '2001 MITSUBISHI OUTLANDER',
-    problem: 'Стукає сперeду справа',
-    salary: '1234',
-    sparesStatus: 'received',
-    status: 'repair',
-  },
-  {
-    time: '18:00',
-    carModel: '2020 VW Passat',
-    problem: 'Стукає сперeду справа',
-    salary: '35000',
-    sparesStatus: 'ordered',
-    status: 'repair',
-  },
-  {
-    time: '20:00',
-    carModel: '2020 VW Passat',
-    problem: 'Стукає сперeду справа',
-    salary: '3000',
-    sparesStatus: 'ordered',
-    status: 'diagnostic',
-  },
-  {
-    time: '21:00',
-    carModel: '2020 VW Polo',
-    problem: 'Стукає сперeду справа',
-    salary: '400',
-    sparesStatus: '',
-    status: 'diagnostic',
-  },
-  {
-    time: '09:00',
-    carModel: '2020 VW Polo',
-    problem: 'Стукає сперeду справа',
-    salary: '400',
-    sparesStatus: 'received',
-    status: 'diagnostic',
-  },
-  {
-    time: '08:00',
-    carModel: '2001 HONDA CIVIC',
-    problem: 'Стукає сперeду справа',
-    salary: '400',
-    sparesStatus: 'ordered',
-    status: 'repair',
-  },
-  {
-    time: '12:00',
-    carModel: '2001 HONDA CIVIC',
-    problem: 'Стукає сперeду справа',
-    salary: '8482',
-    sparesStatus: 'received',
-    status: 'diagnostic',
-  },
-];
-
-const array2 = [
-  {
-    time: '12:00',
-    carModel: '2001 VOLKSWAGEN PASSAT',
-    problem: 'Стукає сперeду справа',
-    salary: '12400',
-  },
-  {
-    time: '12:00',
-    carModel: '2001 MITSUBISHI OUTLANDER',
-    problem: 'Проблеми з автоматичною коробкою передач',
-    salary: '400',
-  },
-  {
-    time: '12:00',
-    carModel: '2001 HONDA CIVIC',
-    problem: 'Стукає сперeду справа',
-    salary: '400',
-  },
-  {
-    time: '12:00',
-    carModel: '2001 HONDA CIVIC',
-    problem: 'Стукає сперeду справа',
-    salary: '400',
-  },
-  {
-    time: '12:00',
-    carModel: '2001 HONDA CIVIC',
-    problem: 'Стукає сперeду справа',
-    salary: '400',
-  },
-  {
-    time: '12:00',
-    carModel: '2001 HONDA CIVIC',
-    problem: 'Стукає сперeду справа',
-    salary: '400',
-  },
-  {
-    time: '12:00',
-    carModel: '2001 HONDA CIVIC',
-    problem: 'Стукає сперeду справа',
-    salary: '400',
-  },
-  {
-    time: '12:00',
-    carModel: '2001 HONDA CIVIC',
-    problem: 'Стукає сперeду справа',
-    salary: '400',
-  },
-];
-
 const LoginPage = lazy(() => import('../../pages/LoginPage/LoginPage.jsx'));
 const MainPage = lazy(() => import('../../pages/MainPage/MainPage.jsx'));
 const AddCarPage = lazy(() => import('../../pages/AddCarPage/AddCarPage.jsx'));
@@ -163,6 +45,16 @@ const RepairPage = lazy(() => import('../../pages/RepairPage/RepairPage.jsx'));
 const NotFoundPage = lazy(() =>
   import('../../pages/NotFoundPage/NotFoundPage.jsx')
 );
+
+const RequireMainVisit = ({ children }) => {
+  const visited = sessionStorage.getItem('visitedMain');
+
+  if (!visited) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
 
 export default function App() {
   const dispatch = useDispatch();
@@ -206,9 +98,9 @@ export default function App() {
     dispatch(getMechanicBalance(user?.id));
   }, [dispatch]);
 
-  const wage = array2.reduce((sum, i) => sum + Number(i.salary || 0), 0);
-  const possibleSum = array1.reduce((sum, i) => sum + Number(i.salary || 0), 0);
-  const amountPossible = wage + possibleSum;
+  // const wage = array2.reduce((sum, i) => sum + Number(i.salary || 0), 0);
+  // const possibleSum = array1.reduce((sum, i) => sum + Number(i.salary || 0), 0);
+  // const amountPossible = wage + possibleSum;
 
   return (
     <Layout>
@@ -220,9 +112,7 @@ export default function App() {
           {location.pathname !== '/login' &&
             location.pathname !== '/' &&
             !isLoading &&
-            !isRefreshing && (
-              <TopPart wage={wage} amountPossible={amountPossible} />
-            )}
+            !isRefreshing && <TopPart />}
           {location.pathname === '/main' && !isLoading && !isRefreshing && (
             <CalendarPart />
           )}
@@ -241,18 +131,20 @@ export default function App() {
             <Route
               path="/main"
               element={
-                <PrivateRoute
-                  redirectTo="/login"
-                  component={
-                    <MainPage array1={array1} array2={array2} wage={wage} />
-                  }
-                />
+                <PrivateRoute redirectTo="/login" component={<MainPage />} />
               }
             />
             <Route
               path="/add-car"
               element={
-                <PrivateRoute redirectTo="/login" component={<AddCarPage />} />
+                <PrivateRoute
+                  redirectTo="/login"
+                  component={
+                    <RequireMainVisit>
+                      <AddCarPage />
+                    </RequireMainVisit>
+                  }
+                />
               }
             />
             <Route
@@ -260,7 +152,11 @@ export default function App() {
               element={
                 <PrivateRoute
                   redirectTo="/login"
-                  component={<UpdateCarPage />}
+                  component={
+                    <RequireMainVisit>
+                      <UpdateCarPage />
+                    </RequireMainVisit>
+                  }
                 />
               }
             />
@@ -269,7 +165,11 @@ export default function App() {
               element={
                 <PrivateRoute
                   redirectTo="/login"
-                  component={<PhotoCapturePage />}
+                  component={
+                    <RequireMainVisit>
+                      <PhotoCapturePage />
+                    </RequireMainVisit>
+                  }
                 />
               }
             />
@@ -278,14 +178,25 @@ export default function App() {
               element={
                 <PrivateRoute
                   redirectTo="/login"
-                  component={<DiagnosticPage />}
+                  component={
+                    <RequireMainVisit>
+                      <DiagnosticPage />
+                    </RequireMainVisit>
+                  }
                 />
               }
             />
             <Route
               path="/car/:carId/repair"
               element={
-                <PrivateRoute redirectTo="/login" component={<RepairPage />} />
+                <PrivateRoute
+                  redirectTo="/login"
+                  component={
+                    <RequireMainVisit>
+                      <RepairPage />
+                    </RequireMainVisit>
+                  }
+                />
               }
             />
             <Route
@@ -293,7 +204,11 @@ export default function App() {
               element={
                 <PrivateRoute
                   redirectTo="/login"
-                  component={<CompletedDocPage />}
+                  component={
+                    <RequireMainVisit>
+                      <CompletedDocPage />
+                    </RequireMainVisit>
+                  }
                 />
               }
             />
