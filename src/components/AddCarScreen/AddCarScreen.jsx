@@ -138,12 +138,12 @@ export default function AddCarScreen() {
     }
   };
 
+  const displayedCar = cars?.find(car => Number(car?.car_id) === Number(carId));
+
+  console.log('displayedCar', displayedCar);
+
   useEffect(() => {
     if (!carId || cars?.length === 0) return;
-
-    const displayedCar = cars?.find(
-      car => Number(car?.car_id) === Number(carId)
-    );
 
     const existedMake = carData?.find(
       car => car?.make?.toLocaleLowerCase() === displayedCar?.make.toLowerCase()
@@ -178,7 +178,7 @@ export default function AddCarScreen() {
       carVin: displayedCar?.vin,
       carPhoto: existedPhoto,
     };
-  }, [carId]);
+  }, [carId, displayedCar]);
 
   useEffect(() => {
     if (!carInfo || Object.keys(carInfo).length === 0) return;
