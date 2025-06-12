@@ -5,7 +5,7 @@ import { BsPlusCircleDotted } from 'react-icons/bs';
 import { BsCameraFill, BsBoxArrowLeft } from 'react-icons/bs';
 import { BiSolidMessageDetail } from 'react-icons/bi';
 import css from './MainScreenSection.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DiagnosticScreen from '../DiagnosticScreen/DiagnosticScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { logOut } from '../../redux/auth/operations';
@@ -27,6 +27,10 @@ export default function MainScreenSection({ array1, array2, wage }) {
     sessionStorage.removeItem('date');
     dispatch(clearChosenDate());
   };
+
+  useEffect(() => {
+    sessionStorage.setItem('visitedMain', 'true');
+  }, []);
 
   console.log('cars', cars);
 
