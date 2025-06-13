@@ -16,6 +16,7 @@ import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createNewCar,
+  getAllCars,
   recognizeLicensePlate,
   updateCar,
 } from '../../redux/cars/operations';
@@ -423,6 +424,12 @@ export default function AddCarScreen() {
                 color: 'var(--white)FFF',
               },
             });
+            dispatch(
+              getAllCars({
+                date: new Date().toLocaleString('sv').split(' ')[0],
+                mechanic_id: 1,
+              })
+            );
             navigate(`/car/${result.car_id}/photos`);
           } else {
             console.error('ID не знайдено:', result);
