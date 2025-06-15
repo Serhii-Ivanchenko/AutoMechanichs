@@ -18,6 +18,7 @@ export const initialState = {
     chosenDate: '',
     newCar: {},
     convertedMedia: [],
+    mileageOrVin: {},
 
     isLoading: false,
     isRecognitionLoading: false,
@@ -26,6 +27,7 @@ export const initialState = {
     isSavingCarLoading: false,
     isRepairLoading: false,
     isConvertingMedia: false,
+    isMileageOrVinLoading: false,
 
     error: null,
   },

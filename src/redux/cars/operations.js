@@ -330,6 +330,32 @@ export const updateCar = createAsyncThunk(
   }
 );
 
+// Get mileage or VIN from photo
+export const getMileageOrVinFromPhoto = createAsyncThunk(
+  'cars/getMileageOrVinFromPhoto',
+  async (photo, thunkAPI) => {
+    try {
+      const response = await axiosInstancePhotos.post(
+        '/mb/ocr_vin_odometer/',
+        photo,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('getMileageOrVinFromPhoto', response.data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
 // ! Upload media to convert
 
 export const uploadMedia = createAsyncThunk(
@@ -357,3 +383,5 @@ export const uploadMedia = createAsyncThunk(
     }
   }
 );
+
+

@@ -6,6 +6,7 @@ import {
   editVINorMileage,
   getAllCars,
   getDiagnostic,
+  getMileageOrVinFromPhoto,
   getNodesAndParts,
   getRepair,
   recognizeLicensePlate,
@@ -195,6 +196,23 @@ const carsSlice = createSlice({
         state.error = action.payload;
       })
 
+      // get mileage or vin from photo
+      .addCase(getMileageOrVinFromPhoto.pending, state => {
+        state.isMileageOrVinLoading = true;
+        state.error = null;
+      })
+      .addCase(getMileageOrVinFromPhoto.fulfilled, (state, action) => {
+        state.isMileageOrVinLoading = false;
+        state.mileageOrVin = {
+          ...(state.mileageOrVin || {}),
+          ...action.payload,
+        };
+      })
+      .addCase(getMileageOrVinFromPhoto.rejected, (state, action) => {
+        state.isMileageOrVinLoading = false;
+        state.error = action.payload;
+      })
+
       // ! Upload media to convert
       .addCase(uploadMedia.pending, (state, action) => {
         state.isConvertingMedia = true;
@@ -209,7 +227,12 @@ const carsSlice = createSlice({
         state.error = action.payload;
       }),
 });
-export const { setChosenDate, clearChosenDate, deleteCarInfo, clearDiag, clearRepair } =
-  carsSlice.actions;
+export const {
+  setChosenDate,
+  clearChosenDate,
+  deleteCarInfo,
+  clearDiag,
+  clearRepair,
+} = carsSlice.actions;
 
 export default carsSlice.reducer;
