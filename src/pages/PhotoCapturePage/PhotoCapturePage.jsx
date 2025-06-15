@@ -71,7 +71,7 @@ export default function PhotoCapturePage({
     if (!openedCamera) {
       setIsCameraOpen(true);
       if (diag) {
-        setOpenCamera(true);
+        setOpenCamera?.(true);
       }
     } else {
       // Делаем снимок
@@ -103,11 +103,15 @@ export default function PhotoCapturePage({
     }
     setStream(null);
     setIsCameraOpen(false);
-    setOpenCamera(false);
+    if (typeof setOpenCamera === 'function') {
+      setOpenCamera(false);
+    }
     if (diag && photosFromWorksPart?.length > 0) {
       setCheckPhotos(true);
     } else {
-      setOpenPhotoComp(false);
+      if (typeof setOpenPhotoComp === 'function') {
+        setOpenPhotoComp(false);
+      }
     }
   };
 
@@ -168,9 +172,9 @@ export default function PhotoCapturePage({
         });
     }
   };
-  console.log('photosToDisplay', photosToDisplay);
-  console.log('photos', photos);
-  console.log('displayedCar', displayedCar);
+  // console.log('photosToDisplay', photosToDisplay);
+  // console.log('photos', photos);
+  // console.log('displayedCar', displayedCar);
   return (
     <div className={`${css.wrapper} ${diag && css.wrapperDiag}`}>
       {openedCamera ? (
