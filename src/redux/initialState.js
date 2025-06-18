@@ -16,6 +16,9 @@ export const initialState = {
     diagnostic: {},
     repairDetails: {},
     chosenDate: '',
+    newCar: {},
+    convertedMedia: [],
+    mileageOrVin: {},
 
     isLoading: false,
     isRecognitionLoading: false,
@@ -23,6 +26,9 @@ export const initialState = {
     isDiagCreateLoading: false,
     isSavingCarLoading: false,
     isRepairLoading: false,
+    isConvertingMedia: false,
+    isMileageOrVinLoading: false,
+
     error: null,
   },
 };

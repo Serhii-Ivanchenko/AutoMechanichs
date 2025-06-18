@@ -1,8 +1,11 @@
 .wrapper {
-  width: 100%;
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
   align-items: center;
+  max-height: 100%;
 }
 
 .btnBox {

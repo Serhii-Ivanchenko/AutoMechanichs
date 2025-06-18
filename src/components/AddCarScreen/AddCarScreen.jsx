@@ -16,6 +16,7 @@ import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createNewCar,
+  getAllCars,
   recognizeLicensePlate,
   updateCar,
 } from '../../redux/cars/operations';
@@ -97,7 +98,9 @@ export default function AddCarScreen() {
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
+      });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -136,12 +139,12 @@ export default function AddCarScreen() {
     }
   };
 
+  const displayedCar = cars?.find(car => Number(car?.car_id) === Number(carId));
+
+  console.log('displayedCar', displayedCar);
+
   useEffect(() => {
     if (!carId || cars?.length === 0) return;
-
-    const displayedCar = cars?.find(
-      car => Number(car?.car_id) === Number(carId)
-    );
 
     const existedMake = carData?.find(
       car => car?.make?.toLocaleLowerCase() === displayedCar?.make.toLowerCase()
@@ -176,7 +179,7 @@ export default function AddCarScreen() {
       carVin: displayedCar?.vin,
       carPhoto: existedPhoto,
     };
-  }, [carId]);
+  }, [carId, displayedCar]);
 
   useEffect(() => {
     if (!carInfo || Object.keys(carInfo).length === 0) return;
@@ -405,6 +408,7 @@ export default function AddCarScreen() {
           ) {
             toast.error('Авто з таким номером вже існує', {
               position: 'top-center',
+              duration: 5000,
               style: {
                 background: 'var(--bg-input)',
                 color: 'var(--white)FFF',
@@ -414,12 +418,18 @@ export default function AddCarScreen() {
           if (result.car_id) {
             toast.success('Авто успішно створене', {
               position: 'top-center',
-              duration: 3000,
+              duration: 5000,
               style: {
                 background: 'var(--bg-input)',
                 color: 'var(--white)FFF',
               },
             });
+            dispatch(
+              getAllCars({
+                date: new Date().toLocaleString('sv').split(' ')[0],
+                mechanic_id: 1,
+              })
+            );
             navigate(`/car/${result.car_id}/photos`);
           } else {
             console.error('ID не знайдено:', result);
@@ -445,13 +455,22 @@ export default function AddCarScreen() {
   };
 
   const validate = val => {
-    const regex = /^[A-Za-z0-9]{17}$/;
+    const onlyLatinAndDigits = /^[A-Za-z0-9]*$/;
 
-    if (!regex.test(val)) {
-      setVinError(
-        'VIN може складатись з латинських букв чи цифр та містити 17 символів'
-      );
+    if (!onlyLatinAndDigits.test(val)) {
+      setVinError('VIN може містити лише латинські букви та цифри');
+    } else if (val.length > 17) {
+      setVinError('VIN має містити 17 символів');
+    } else if (val.length === 17) {
+      // Якщо символи окей, але довжина рівно 17 — тоді перевіряємо формат
+      const fullVinRegex = /^[A-Za-z0-9]{17}$/;
+      if (!fullVinRegex.test(val)) {
+        setVinError('VIN має містити 17 символів');
+      } else {
+        setVinError('');
+      }
     } else {
+      // Символи валідні, але ще не введено 17 — не показуємо помилку
       setVinError('');
     }
   };
@@ -676,7 +695,7 @@ export default function AddCarScreen() {
                   onChange={e => {
                     setMileage(e.target.value);
                   }}
-                  placeholder="123"
+                  placeholder="123000"
                 />
 
                 <p className={css.mileageText}>км</p>

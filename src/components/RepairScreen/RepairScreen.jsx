@@ -12,18 +12,28 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectCars,
+  selectIsRepairLoading,
   selectNodesAndPartsForDiagnostics,
   selectRepair,
 } from '../../redux/cars/selectors.js';
 import {
+  getAllCars,
   getNodesAndParts,
   getRepair,
   updateRepair,
+  uploadCarPhotos,
 } from '../../redux/cars/operations.js';
 import Filter from '../DiagnosticScreen/Filter/Filter.jsx';
 import PartsForRepair from './PartsForRepair/PartsForRepair.jsx';
 import toast from 'react-hot-toast';
 import { clearRepair } from '../../redux/cars/slice.js';
+import AudioRecorder from '../AudioRecorder/AudioRecorder.jsx';
+import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage.jsx';
+import Modal from '../Modal/Modal.jsx';
+import ModalForComments from '../ModalForComments/ModalForComments.jsx';
+import Photos from './Photos/Photos.jsx';
+import ModalForListOfRecordings from '../ModalForListOfRecordings/ModalForListOfRecordings.jsx';
+import LoaderSvg from '../Loader/LoaderSvg.jsx';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -39,8 +49,37 @@ export default function RepairScreen() {
   const [statusParts, setStatusParts] = useState([]);
   const [statusServices, setStatusServices] = useState([]);
   const [completedRepair, setCompletedRepair] = useState(false);
+
+  // Audios
+  const [recordAudio, setRecordAudio] = useState(false);
+  const [audioURL, setAudioURL] = useState(null);
+  const [audios, setAudios] = useState([]);
+  const [audioLocalURLs, setAudioLocalURLs] = useState([]);
+  const [currentBlob, setCurrentBlob] = useState(null);
+  const [checkPhotos, setCheckPhotos] = useState(false);
+  const [modalWithRecordings, setModalWithRecordings] = useState(false);
+
+  // Photos
+  const [openCamera, setOpenCamera] = useState(false);
+  const [openPhotoComp, setOpenPhotoComp] = useState(false);
+  const [photosFromRepair, setPhotosFromRepair] = useState([]);
+  const [savedRepairPhotos, setSavedRepairPhotos] = useState([]);
+
+  // Comments
+  const [openComment, setOpenComment] = useState(false);
+  const [comment, setComment] = useState('');
+  const [checkComment, setCheckComment] = useState(false);
+  const [commentsList, setCommentsList] = useState([]);
+
+  // console.log('audios', audios);
+  console.log('local', audioLocalURLs);
+  console.log('audioURL', audioURL);
+
+  // console.log('comments', commentsList);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const loader = useSelector(selectIsRepairLoading);
 
   const { carId } = useParams();
   // console.log('carId', carId);
@@ -57,7 +96,50 @@ export default function RepairScreen() {
   }, [dispatch]);
 
   const repair = useSelector(selectRepair);
-  console.log('repair', repair);
+  // console.log('repair', repair);
+
+  // function base64ToBlob(base64String, contentType = 'audio/webm') {
+  //   const byteCharacters = atob(base64String.split(',')[1]);
+  //   const byteArrays = [];
+
+  //   for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+  //     const slice = byteCharacters.slice(offset, offset + 512);
+  //     const byteNumbers = new Array(slice.length);
+  //     for (let i = 0; i < slice.length; i++) {
+  //       byteNumbers[i] = slice.charCodeAt(i);
+  //     }
+  //     const byteArray = new Uint8Array(byteNumbers);
+  //     byteArrays.push(byteArray);
+  //   }
+
+  //   return new Blob(byteArrays, { type: contentType });
+  // }
+
+  // function base64ToBlobUrl(base64, mimeType = 'audio/webm') {
+  //   const byteCharacters = atob(base64.split(',')[1]);
+  //   const byteArrays = [];
+
+  //   for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+  //     const slice = byteCharacters.slice(offset, offset + 512);
+  //     const byteNumbers = new Array(slice.length);
+  //     for (let i = 0; i < slice.length; i++) {
+  //       byteNumbers[i] = slice.charCodeAt(i);
+  //     }
+  //     const byteArray = new Uint8Array(byteNumbers);
+  //     byteArrays.push(byteArray);
+  //   }
+
+  //   const blob = new Blob(byteArrays, { type: mimeType });
+  //   return URL.createObjectURL(blob);
+  // }
+
+  useEffect(() => {
+    setSavedRepairPhotos(repair?.photos);
+    setAudios(repair?.audios);
+    setAudioLocalURLs(repair?.audios);
+    setCommentsList(repair?.comments);
+  }, [repair]);
+  // console.log('savephotos', savedRepairPhotos);
 
   useEffect(() => {
     if (repair?.parts) {
@@ -73,30 +155,78 @@ export default function RepairScreen() {
     }
   }, [repair?.parts, repair?.services]);
 
-  const handleUpdateStatuses = () => {
-    const dataToUpdate = {
-      ...repair,
-      parts: statusParts,
-      services: statusServices,
-      repair_id: id,
-    };
+  // async function convertBlobsToBase64(blobs) {
+  //   const base64Array = await Promise.all(
+  //     blobs.map(
+  //       blob =>
+  //         new Promise((resolve, reject) => {
+  //           const reader = new FileReader();
+  //           reader.onloadend = () => resolve(reader.result);
+  //           reader.onerror = reject;
+  //           reader.readAsDataURL(blob);
+  //         })
+  //     )
+  //   );
+  //   return base64Array;
+  // }
 
-    console.log('dataToUpdate', dataToUpdate);
+  const date = sessionStorage.getItem('date');
 
-    dispatch(updateRepair(dataToUpdate))
-      .unwrap()
-      .then(() => {
-        toast.success('Ремонт успішно оновлено', {
-          position: 'top-center',
-          duration: 3000,
-          style: {
-            background: 'var(--bg-input)',
-            color: 'var(--white)',
-          },
+  const handleUpdateStatuses = async () => {
+    try {
+      // let audiosBase64 = [];
+
+      // if (audios && audios.length > 0) {
+      //   audiosBase64 = await convertBlobsToBase64(audios);
+      // }
+
+      const dataToUpdate = {
+        ...repair,
+        parts: statusParts,
+        services: statusServices,
+        repair_id: id,
+        audios: audioLocalURLs,
+        photos: savedRepairPhotos,
+        comments: commentsList,
+      };
+
+      console.log('dataToUpdate', dataToUpdate);
+
+      await dispatch(updateRepair(dataToUpdate))
+        .unwrap()
+        .then(() => {
+          toast.success('Ремонт успішно оновлено', {
+            position: 'top-center',
+            duration: 3000,
+            style: {
+              background: 'var(--bg-input)',
+              color: 'var(--white)',
+            },
+          });
+          dispatch(clearRepair());
+          dispatch(getAllCars({ date, mechanic_id: 1 }));
+          navigate('/main');
         });
-        dispatch(clearRepair());
-        navigate('/main');
+    } catch (error) {
+      console.error('Помилка при оновленні ремонту:', error);
+      toast.error('Помилка оновлення ремонту', {
+        position: 'top-center',
+        duration: 3000,
       });
+    }
+  };
+
+  const handleSavePhotos = async () => {
+    const carData = {
+      car_id: carId,
+      photos: {
+        photos_base64: photosFromRepair,
+      },
+    };
+    const data = await dispatch(uploadCarPhotos(carData)).unwrap();
+    setSavedRepairPhotos(prevPhotos => [...prevPhotos, ...data.added_urls]);
+    setOpenPhotoComp(false);
+    setPhotosFromRepair([]);
   };
 
   // console.log('particularCar', particularCar);
@@ -289,7 +419,7 @@ export default function RepairScreen() {
   // );
 
   return (
-    <div>
+    <div className={css.wrapper}>
       <CarDetailsPart particularCar={particularCar} />
       <WorksSwitcher
         // subcatRepairOpen={subcatOpen}
@@ -297,15 +427,46 @@ export default function RepairScreen() {
         car={particularCar}
       />
 
-      <PartsForRepair
-        parts={repair?.parts}
-        services={repair?.services}
-        setStatusParts={setStatusParts}
-        statusParts={statusParts}
-        setStatusServices={setStatusServices}
-        statusServices={statusServices}
-        completedRepair={completedRepair}
-      />
+      {loader ? (
+        <LoaderSvg />
+      ) : openPhotoComp ? (
+        <PhotoCapturePage
+          diag={true}
+          repair={true}
+          carId={carId}
+          setOpenCamera={setOpenCamera}
+          setOpenPhotoComp={setOpenPhotoComp}
+          openCameraWorkPart={openCamera}
+          setPhotosFromWorksPart={setPhotosFromRepair}
+          photosFromWorksPart={photosFromRepair}
+          handleSavePhotos={handleSavePhotos}
+        />
+      ) : checkPhotos ? (
+        <Photos
+          photos={
+            savedRepairPhotos.length > 0 ? savedRepairPhotos : repair?.photos
+          }
+          setCheckPhotos={setCheckPhotos}
+        />
+      ) : (
+        <PartsForRepair
+          parts={repair?.parts}
+          services={repair?.services}
+          setStatusParts={setStatusParts}
+          statusParts={statusParts}
+          setStatusServices={setStatusServices}
+          statusServices={statusServices}
+          completedRepair={completedRepair}
+          audioURL={audios?.length > 0}
+          photosFromRepair={photosFromRepair}
+          repair={repair}
+          setCheckPhotos={setCheckPhotos}
+          setCheckComment={setCheckComment}
+          setModalWithRecordings={setModalWithRecordings}
+          comment={comment}
+          commentsList={commentsList}
+        />
+      )}
 
       {/* {savedSparesPartOpen ? (
         <SavedSparesPart nodes={nodes} />
@@ -342,23 +503,80 @@ export default function RepairScreen() {
         />
       )} */}
 
-      <BottomPart
-        back={completedRepair ? () => setCompletedRepair(false) : '/main'}
-        button={completedRepair}
-        btnToggle={true}
-        // next="diagnostics-subcategories"
-        categ={!completedRepair}
-        next={
-          !completedRepair
-            ? () => setCompletedRepair(true)
-            : completedRepair
-            ? handleUpdateStatuses
-            : undefined
-        }
-        // chosenPoints={chosenPoints}
-        savedPartBottom={completedRepair}
-        repair={true}
-      />
+      {!openPhotoComp &&
+        !checkPhotos &&
+        (recordAudio ? (
+          <AudioRecorder
+            setRecordAudio={setRecordAudio}
+            audioURL={audioURL}
+            setAudioURL={setAudioURL}
+            repair={true}
+            setAudios={setAudios}
+            currentBlob={currentBlob}
+            setCurrentBlob={setCurrentBlob}
+            setAudioLocalURLs={setAudioLocalURLs}
+          />
+        ) : (
+          <BottomPart
+            back={completedRepair ? () => setCompletedRepair(false) : '/main'}
+            button={completedRepair}
+            btnToggle={true}
+            // next="diagnostics-subcategories"
+            categ={!completedRepair}
+            next={
+              !completedRepair
+                ? () => setCompletedRepair(true)
+                : completedRepair
+                ? handleUpdateStatuses
+                : undefined
+            }
+            // chosenPoints={chosenPoints}
+            savedPartBottom={completedRepair}
+            repair={true}
+            setRecordAudio={setRecordAudio}
+            setOpenCamera={setOpenCamera}
+            setOpenPhotoComp={setOpenPhotoComp}
+            photosFromWorksPart={photosFromRepair}
+            audioURL={audioURL}
+            setOpenComment={setOpenComment}
+            comment={comment}
+          />
+        ))}
+
+      {(openComment || checkComment) && (
+        <Modal
+          isOpen={openComment || checkComment}
+          onClose={() => {
+            setOpenComment(false);
+            setCheckComment(false);
+          }}
+        >
+          <ModalForComments
+            onClose={() => {
+              setOpenComment(false);
+              setCheckComment(false);
+            }}
+            setComment={setComment}
+            comment={comment}
+            checkComment={checkComment}
+            setCommentsList={setCommentsList}
+            repair={true}
+            commentsList={commentsList}
+          />
+        </Modal>
+      )}
+
+      {modalWithRecordings && (
+        <Modal
+          isOpen={modalWithRecordings}
+          onClose={() => setModalWithRecordings(false)}
+        >
+          <ModalForListOfRecordings
+            audios={audioLocalURLs}
+            onClose={() => setModalWithRecordings(false)}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

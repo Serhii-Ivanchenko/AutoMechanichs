@@ -13,6 +13,12 @@ export default function PhotoCapturePage({
   diag,
   // carId,
   setOpenCamera,
+  setPhotosFromWorksPart,
+  photosFromWorksPart,
+  handleSavePhotos,
+  repair,
+  openCameraWorkPart,
+  setOpenPhotoComp,
 }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -20,6 +26,7 @@ export default function PhotoCapturePage({
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [photoPreview, setPhotoPreview] = useState('');
+  const [checkPhotos, setCheckPhotos] = useState(false);
   const cars = useSelector(selectCars);
 
   const params = useParams();
@@ -29,16 +36,19 @@ export default function PhotoCapturePage({
   const navigate = useNavigate();
 
   const displayedCar = cars?.find(car => Number(car?.car_id === Number(carId)));
+  const photosToDisplay = diag ? photosFromWorksPart : photos;
+  const setPhotosToDisplay = diag ? setPhotosFromWorksPart : setPhotos;
+  const openedCamera = diag ? openCameraWorkPart : isCameraOpen;
 
   // console.log('photos', photos);
   // console.log('displayedCar', displayedCar);
 
   useEffect(() => {
     const openCamera = async () => {
-      if (isCameraOpen && videoRef.current && !stream) {
+      if (openedCamera && videoRef.current && !stream) {
         try {
           const mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
+            video: { facingMode: 'environment' },
           });
           videoRef.current.srcObject = mediaStream;
           setStream(mediaStream);
@@ -55,11 +65,14 @@ export default function PhotoCapturePage({
         stream.getTracks().forEach(track => track.stop());
       }
     };
-  }, [isCameraOpen, stream]);
+  }, [openedCamera, stream]);
 
   const handleMainButtonClick = () => {
-    if (!isCameraOpen) {
+    if (!openedCamera) {
       setIsCameraOpen(true);
+      if (diag) {
+        setOpenCamera?.(true);
+      }
     } else {
       // Делаем снимок
       const video = videoRef.current;
@@ -73,9 +86,13 @@ export default function PhotoCapturePage({
 
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       const photoData = canvas.toDataURL('image/png');
-      const base64String = photoData.split(',')[1];
+      // const base64String = photoData.split(',')[1];
 
-      setPhotos(prev => [...prev, base64String]);
+      if (!diag) {
+        setPhotos(prev => [...prev, photoData]);
+      } else {
+        setPhotosFromWorksPart(prev => [...prev, photoData]);
+      }
       setPhotoPreview(photoData);
     }
   };
@@ -86,10 +103,20 @@ export default function PhotoCapturePage({
     }
     setStream(null);
     setIsCameraOpen(false);
+    if (typeof setOpenCamera === 'function') {
+      setOpenCamera(false);
+    }
+    if (diag && photosFromWorksPart?.length > 0) {
+      setCheckPhotos(true);
+    } else {
+      if (typeof setOpenPhotoComp === 'function') {
+        setOpenPhotoComp(false);
+      }
+    }
   };
 
   const handlePhotoDelete = index => {
-    setPhotos(prev => prev.filter((item, idx) => idx !== index));
+    setPhotosToDisplay(prev => prev.filter((item, idx) => idx !== index));
   };
 
   const formattedDate = new Date().toISOString().split('T')[0];
@@ -97,7 +124,13 @@ export default function PhotoCapturePage({
   const onCheckmarkBtnClick = () => {
     if (!carId) return;
 
-    if (photos?.length === 0) {
+    if (diag || repair) {
+      if (repair) {
+        handleSavePhotos();
+      }
+      setOpenCamera(false);
+      setOpenPhotoComp(false);
+    } else if (photos?.length === 0) {
       displayedCar?.status === 'repair'
         ? navigate(`/car/${carId}/repair`)
         : navigate(`/car/${carId}/diagnostics`);
@@ -139,10 +172,12 @@ export default function PhotoCapturePage({
         });
     }
   };
-
+  // console.log('photosToDisplay', photosToDisplay);
+  // console.log('photos', photos);
+  // console.log('displayedCar', displayedCar);
   return (
     <div className={`${css.wrapper} ${diag && css.wrapperDiag}`}>
-      {isCameraOpen ? (
+      {openedCamera ? (
         <div className={`${css.video} ${diag && css.videoDiag}`}>
           <video
             ref={videoRef}
@@ -152,18 +187,35 @@ export default function PhotoCapturePage({
           />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
-      ) : (
-        <div className={css.photoSectionWrapper}>
-          {displayedCar?.cars_photo?.length > 0 &&
-            displayedCar?.cars_photo?.map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                alt="car photo"
-                className={css.existedPhoto}
-              />
+      ) : !displayedCar ? (
+        photosToDisplay.length > 0 ? (
+          <div className={css.photoSectionWrapper}>
+            {photosToDisplay?.map((src, index) => (
+              <div key={index} className={css.photoWrapper}>
+                <img src={src} alt="car photo" className={css.photo} />
+                <button type="button" className={css.deleteBtn}>
+                  <BsTrash
+                    className={css.deleteBtnIcon}
+                    onClick={() => handlePhotoDelete(index)}
+                  />
+                </button>
+              </div>
             ))}
-          {photos?.map((src, index) => (
+          </div>
+        ) : (
+          <p className={css.absentPhotos}>Фото відсутні</p>
+        )
+      ) : displayedCar?.cars_photo?.length > 0 ? (
+        <div className={css.photoSectionWrapper}>
+          {displayedCar?.cars_photo?.map((src, index) => (
+            <img
+              key={index}
+              src={src}
+              alt="car photo"
+              className={css.existedPhoto}
+            />
+          ))}
+          {photosToDisplay?.map((src, index) => (
             <div key={index} className={css.photoWrapper}>
               <img src={src} alt="car photo" className={css.photo} />
               <button type="button" className={css.deleteBtn}>
@@ -175,27 +227,31 @@ export default function PhotoCapturePage({
             </div>
           ))}
         </div>
+      ) : (
+        <p className={css.absentPhotos}>Фото відсутні</p>
       )}
       <div className={`${css.btnsWrapper} ${stream ? css.cameraOn : ''}`}>
-        {!isCameraOpen ? (
-          <Link className={css.cancelBtn} to={`/car/${carId}/update-car`}>
-            <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-          </Link>
+        {!openedCamera ? (
+          diag ? (
+            <button
+              className={css.cancelBtn}
+              onClick={() => {
+                // if (checkPhotos) {
+                //   setCheckPhotos(false);
+                //   setOpenCamera(true);
+                // } else {
+                setOpenPhotoComp(false);
+                // }
+              }}
+            >
+              <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+            </button>
+          ) : (
+            <Link className={css.cancelBtn} to={`/car/${carId}/update-car`}>
+              <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
+            </Link>
+          )
         ) : (
-          //   diag ? (
-          //     <button
-          //       className={css.cancelBtn}
-          //       onClick={() => setOpenCamera(false)}
-          //     >
-          //       <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-          //     </button>
-          // )
-          // : (
-          //     <Link className={css.cancelBtn} to="/add-car">
-          //       <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
-          //     </Link>
-          //   )
-          // )
           <button className={css.cancelBtn} onClick={handleCloseCamera}>
             <IoMdClose className={`${css.cancelBtn} ${css.cross}`} />
           </button>
@@ -214,15 +270,21 @@ export default function PhotoCapturePage({
             <IoMdCheckmark className={`${css.acceptBtn} ${css.check}`} />
           </Link>
         ) */}
-        {!isCameraOpen ? (
+        {!openedCamera ? (
           // <Link className={css.acceptBtn} to="/car/:carId/diagnostics">
           <IoMdCheckmark
             className={`${css.acceptBtn} ${css.check}`}
             onClick={onCheckmarkBtnClick}
           />
         ) : // {/* </Link> */}
-        photos.length > 0 ? (
-          <div className={css.photoPreviewWrapper}>
+        photosToDisplay.length > 0 ? (
+          <div
+            className={css.photoPreviewWrapper}
+            // onClick={() => {
+            //   diag ? setCheckPhotos(true) : '';
+            //   setOpenCamera(false);
+            // }}
+          >
             <img
               src={photoPreview}
               alt="photo preview"
@@ -232,7 +294,7 @@ export default function PhotoCapturePage({
                 e.target.src = autoPhoto;
               }}
             />
-            <p className={css.photoQuantity}>{photos?.length}</p>
+            <p className={css.photoQuantity}>{photosToDisplay?.length}</p>
           </div>
         ) : (
           <div className={css.emptyDiv}></div>

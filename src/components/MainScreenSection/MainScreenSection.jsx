@@ -5,7 +5,7 @@ import { BsPlusCircleDotted } from 'react-icons/bs';
 import { BsCameraFill, BsBoxArrowLeft } from 'react-icons/bs';
 import { BiSolidMessageDetail } from 'react-icons/bi';
 import css from './MainScreenSection.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DiagnosticScreen from '../DiagnosticScreen/DiagnosticScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { logOut } from '../../redux/auth/operations';
@@ -28,26 +28,30 @@ export default function MainScreenSection({ array1, array2, wage }) {
     dispatch(clearChosenDate());
   };
 
+  useEffect(() => {
+    sessionStorage.setItem('visitedMain', 'true');
+  }, []);
+
   console.log('cars', cars);
 
   const date = sessionStorage.getItem('date');
 
   const checkDate = dayOfRecord => {
     const currentDate = new Date(date);
-    // const dateOfRecord = time;
-
-    // const [hours, minutes] = timeOfRecord.split(':').map(Number);
     const dateOfRecord = new Date(dayOfRecord);
-    // dateOfRecord.setHours(hours, minutes, 0, 0);
 
-    console.log(
-      'dateOfRecord > currentTime',
-      new Date(dateOfRecord) > new Date(currentDate)
+    // console.log(
+    //   'dateOfRecord > currentTime',
+    //   new Date(dateOfRecord).toISOString().split('T')[0] >
+    //     new Date(currentDate).toISOString().split('T')[0]
+    // );
+    // console.log('dateOfRecord', new Date(dateOfRecord).toLocaleDateString());
+    // console.log('currentTime', new Date(currentDate).toDateString());
+
+    return (
+      new Date(dateOfRecord).toISOString().split('T')[0] >
+      new Date(currentDate).toISOString().split('T')[0]
     );
-    // console.log('dateOfRecord', new Date(dateOfRecord));
-    // console.log('currentTime', new Date(currentTime));
-
-    return new Date(dateOfRecord) > new Date(currentDate);
   };
 
   const carsInWork = cars?.filter(car =>
@@ -77,41 +81,20 @@ export default function MainScreenSection({ array1, array2, wage }) {
     }
   };
 
-  // console.log('carsArray', carsArray);
+  // console.log('carsArray', carsArray());
 
-  // const carsDoneForParticularDay = carsDone?.filter(
-  //   car => car.complete_date === date
-  // );
+  const carsDoneForParticularDay = carsDone?.filter(car =>
+    car?.status === 'diagnostic'
+      ? car?.diagnostic_created_at.split('T')[0] === date
+      : car?.status === 'repair'
+      ? car?.repair_created_at.split('T')[0] === date
+      : ''
+  );
+
+  console.log('carsDoneForParticularDay', carsDoneForParticularDay);
 
   return (
     <div className={css.sectionWrapper}>
-      {/* //   <div className={css.topPart}>
-    //     <div className={css.mechNameBox}>
-    //       <p className={css.name}>Блудов О.А.</p>
-    //       <p className={css.paleText}>Механік</p>
-    //     </div>
-    //     <div className={css.salaryInfoBox}>
-    //       <div className={css.salaryPoint}>
-    //         <p className={css.paleText}>Нараховано</p>
-    //         <p className={css.amount}>{wage}</p>
-    //       </div>
-    //       <div className={css.salaryPoint}>
-    //         <p className={css.paleText}>Сьогодні</p>
-    //         <p className={css.amount}>{'+' + wage}</p>
-    //       </div>
-    //       <div className={css.salaryPoint}>
-    //         <p className={css.paleText}>Можлива ЗП</p>
-    //         <p className={css.amountPossible}>{amountPossible}</p>
-    //       </div>
-    //     </div>
-    //   </div> */}
-
-      {/* <CalendarPart /> */}
-
-      {/* {diagOpen ? (
-        <DiagnosticScreen setDiagOpen={setDiagOpen} />
-      ) : (
-        <> */}
       <CarsInWorkOrDoneList list={carsArray()} />
 
       <Link to="/add-car" className={css.btnAddPhoto}>
@@ -122,7 +105,7 @@ export default function MainScreenSection({ array1, array2, wage }) {
 
       <CarsInWorkOrDoneList
         done={true}
-        list={carsDone}
+        list={carsDoneForParticularDay}
         // setDiagOpen={setDiagOpen}
       />
 

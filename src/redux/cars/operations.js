@@ -247,6 +247,7 @@ export const createNewCar = createAsyncThunk(
       const response = await axiosInstance.post(`/mb/save_car/`, carData, {
         headers: {
           'company-id': serviceId,
+          "X-Api-Key": "YA7NxysJ",
         },
       });
       console.log('createNewCar', response.data);
@@ -328,3 +329,59 @@ export const updateCar = createAsyncThunk(
     }
   }
 );
+
+// Get mileage or VIN from photo
+export const getMileageOrVinFromPhoto = createAsyncThunk(
+  'cars/getMileageOrVinFromPhoto',
+  async (photo, thunkAPI) => {
+    try {
+      const response = await axiosInstancePhotos.post(
+        '/mb/ocr_vin_odometer/',
+        photo,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('getMileageOrVinFromPhoto', response.data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
+// ! Upload media to convert
+
+export const uploadMedia = createAsyncThunk(
+  'cars/uploadMedia',
+  async (media, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const serviceId = state.auth.userData.selectedServiceId;
+    try {
+      // media_types: {"photos": "jpg", "audios": "mp3", "videos": "mp4"}
+      const response = await axiosInstance.post(`/mb/upload_media/`, media, {
+        headers: {
+          'company-id': serviceId,
+          // 'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('uploadMedia', response.data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({
+        status: error.response?.status,
+        message: error.message,
+        details: error.response?.data.detail, // Залишаємо лише необхідні дані
+      });
+    }
+  }
+);
+
+

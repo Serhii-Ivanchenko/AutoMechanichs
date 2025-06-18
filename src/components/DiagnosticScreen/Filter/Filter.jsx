@@ -9,11 +9,11 @@ export default function Filter({ filter, setFilter }) {
     setFilter(e.target.value);
   };
 
-  useEffect(() => {
-    if (focusRef.current) {
-      focusRef.current.focus();
-    }
-  }, [filter]);
+  // useEffect(() => {
+  //   if (focusRef.current) {
+  //     focusRef.current.focus();
+  //   }
+  // }, [filter]);
 
   return (
     <div className={css.searchBox}>

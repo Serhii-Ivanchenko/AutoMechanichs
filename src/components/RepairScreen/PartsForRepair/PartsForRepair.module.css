@@ -1,7 +1,9 @@
 .wrapper {
   width: 350px;
-  height: 429px;
+  /* height: 429px; */
   overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
 
   display: flex;
   flex-direction: column;

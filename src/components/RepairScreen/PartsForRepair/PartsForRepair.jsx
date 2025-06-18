@@ -2,6 +2,7 @@ import css from './PartsForRepair.module.css';
 import { BsWrench } from 'react-icons/bs';
 import { BsFillMicFill } from 'react-icons/bs';
 import { BsCameraFill } from 'react-icons/bs';
+import { BiSolidMessageDetail } from 'react-icons/bi';
 
 export default function PartsForRepair({
   statusParts,
@@ -9,6 +10,14 @@ export default function PartsForRepair({
   statusServices,
   setStatusServices,
   completedRepair,
+  photosFromRepair,
+  audioURL,
+  repair,
+  setCheckPhotos,
+  setCheckComment,
+  setModalWithRecordings,
+  comment,
+  commentsList,
 }) {
   const handleChangeStatus = id => {
     setStatusParts(prev =>
@@ -37,13 +46,34 @@ export default function PartsForRepair({
           {' '}
           <div className={css.titleBox}>
             <p className={css.title}>Запчастини</p>
-            {completedRepair && statusParts?.length > 0 && (
+            {statusParts?.length > 0 && (
               <div className={css.btnBoxCompleted}>
-                <div className={css.circle}>
+                <div
+                  className={`${css.circle} ${audioURL && css.circleFilled}`}
+                  onClick={() => setModalWithRecordings(true)}
+                >
                   <BsFillMicFill className={css.iconMedia} />
                 </div>
-                <div className={css.circle}>
+                <div
+                  className={`${css.circle} ${
+                    (repair?.photos?.length > 0 ||
+                      photosFromRepair?.length > 0) &&
+                    css.circleFilled
+                  }`}
+                  onClick={() => setCheckPhotos(true)}
+                >
                   <BsCameraFill className={css.iconMedia} />
+                </div>
+                <div
+                  className={`${css.circle} ${
+                    commentsList?.length > 0 && css.circleFilled
+                  }`}
+                  onClick={() => {
+                    if (commentsList?.length === 0) return;
+                    setCheckComment(true);
+                  }}
+                >
+                  <BiSolidMessageDetail className={css.icon} />
                 </div>
               </div>
             )}
@@ -90,13 +120,30 @@ export default function PartsForRepair({
           {' '}
           <div className={css.titleBox}>
             <p className={css.title}>Послуги</p>
-            {completedRepair && statusParts?.length === 0 && (
+            {statusParts?.length === 0 && (
               <div className={css.btnBoxCompleted}>
-                <div className={css.circle}>
+                <div
+                  className={css.circle}
+                  onClick={() => setModalWithRecordings(true)}
+                >
                   <BsFillMicFill className={css.iconMedia} />
                 </div>
-                <div className={css.circle}>
+                <div
+                  className={`${css.circle} ${
+                    (repair?.photos?.length > 0 ||
+                      photosFromRepair?.length > 0) &&
+                    css.circleFilled
+                  }`}
+                >
                   <BsCameraFill className={css.iconMedia} />
+                </div>
+                <div
+                  className={`${css.circle} ${
+                    repair?.comment && css.circleFilled
+                  }`}
+                  onClick={() => setCheckComment(true)}
+                >
+                  <BiSolidMessageDetail className={css.icon} />
                 </div>
               </div>
             )}

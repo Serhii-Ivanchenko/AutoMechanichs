@@ -8,8 +8,19 @@ import { BsFillCaretDownFill } from 'react-icons/bs';
 import { useDispatch } from 'react-redux';
 import { createDiagnostic } from '../../../redux/cars/operations';
 import { useState } from 'react';
+import { BiSolidMessageDetail } from 'react-icons/bi';
 
-export default function SavedSparesPart({ nodes, completed }) {
+export default function SavedSparesPart({
+  nodes,
+  completed,
+  audioURL,
+  photosFromDiag,
+  completedDiag,
+  setOpenAudio,
+  setOpenPhotos,
+  setCheckComment,
+  comment,
+}) {
   const [expandedMap, setExpandedMap] = useState({});
 
   const handleAccordionToggle = (categoryId, nodeId) => (event, isExpanded) => {
@@ -22,15 +33,42 @@ export default function SavedSparesPart({ nodes, completed }) {
     // setCategoryForDetailsPart(isExpanded ? name : '');
   };
 
+  console.log('completedDiag', completedDiag);
+
   return (
     <>
       {completed && (
         <div className={css.btnBoxCompleted}>
-          <div className={css.circle}>
+          <div
+            className={`${css.circle} ${
+              completedDiag?.audio_files?.length > 0 && css.circleFilled
+            }`}
+            onClick={() => {
+              if (completedDiag?.audio_files?.length === 0) return;
+              setOpenAudio(true);
+            }}
+          >
             <BsFillMicFill className={css.icon} />
           </div>
-          <div className={css.circle}>
+          <div
+            className={`${css.circle} ${
+              completedDiag?.photo_files?.length > 0 && css.circleFilled
+            }`}
+            onClick={() => {
+              if (completedDiag?.photo_files?.length === 0) return;
+              setOpenPhotos(true);
+              setOpenAudio(false);
+            }}
+          >
             <BsCameraFill className={css.icon} />
+          </div>
+          <div
+            className={`${css.circle} ${
+              completedDiag?.general_comment && css.circleFilled
+            }`}
+            onClick={() => setCheckComment(true)}
+          >
+            <BiSolidMessageDetail className={css.icon} />
           </div>
         </div>
       )}
@@ -122,11 +160,30 @@ export default function SavedSparesPart({ nodes, completed }) {
                 <p className={css.nodeName}>{node.node_name}</p>
                 {index === 0 && (
                   <div className={css.btnBox}>
-                    <div className={css.circle}>
+                    <div
+                      className={`${css.circle} ${
+                        audioURL && css.circleFilled
+                      }`}
+                      onClick={() => setOpenAudio(true)}
+                    >
                       <BsFillMicFill className={css.icon} />
                     </div>
-                    <div className={css.circle}>
+                    <div
+                      className={`${css.circle} ${
+                        photosFromDiag?.length > 0 && css.circleFilled
+                      }`}
+                      onClick={() => {
+                        setOpenPhotos(true);
+                        setOpenAudio(false);
+                      }}
+                    >
                       <BsCameraFill className={css.icon} />
+                    </div>
+                    <div
+                      className={`${css.circle} ${comment && css.circleFilled}`}
+                      onClick={() => setCheckComment(true)}
+                    >
+                      <BiSolidMessageDetail className={css.icon} />
                     </div>
                   </div>
                 )}

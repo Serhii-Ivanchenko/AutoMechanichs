@@ -26,9 +26,17 @@ import Filter from './Filter/Filter';
 // import AddCarPhoto from '../AddCarPhoto/AddCarPhoto';
 import PhotoCapturePage from '../../pages/PhotoCapturePage/PhotoCapturePage';
 import AudioRecorder from '../AudioRecorder/AudioRecorder';
+import Modal from '../Modal/Modal';
+import ModalForComments from '../ModalForComments/ModalForComments';
+import Photos from '../RepairScreen/Photos/Photos';
+import LoaderSvg from '../Loader/LoaderSvg';
 
 export default function DiagnosticScreen() {
-  const [chosenPoints, setChosenPoints] = useState([]);
+  const togglePoints = useSelector(selectNodesAndPartsForDiagnostics) || [];
+
+  const [chosenPoints, setChosenPoints] = useState(
+    togglePoints?.map(point => ({ id: point.id, label: point.name }))
+  );
   const [categoryForDetailsPart, setCategoryForDetailsPart] = useState('');
   const [subcatOpen, setSubcatOpen] = useState(false);
   const [openDetails, setOpenDetails] = useState(null);
@@ -42,6 +50,17 @@ export default function DiagnosticScreen() {
   const navigate = useNavigate();
   const { carId } = useParams();
   const [openCamera, setOpenCamera] = useState(false);
+  const [openPhotoComp, setOpenPhotoComp] = useState(false);
+  const [audioURL, setAudioURL] = useState(null);
+  const [photosFromDiag, setPhotosFromDiag] = useState([]);
+  const [openComment, setOpenComment] = useState(false);
+  const [comment, setComment] = useState('');
+  const [openAudio, setOpenAudio] = useState(false);
+  const [openPhotos, setOpenPhotos] = useState(false);
+  const [checkComment, setCheckComment] = useState(false);
+
+  console.log('audioURL', audioURL);
+
   // console.log('carId', carId);
 
   const cars = useSelector(selectCars);
@@ -57,8 +76,6 @@ export default function DiagnosticScreen() {
     dispatch(getNodesAndParts());
   }, [dispatch]);
 
-  const togglePoints = useSelector(selectNodesAndPartsForDiagnostics);
-
   const handleCloseSavedScreen = () => {
     setSavedSparesPartOpen(false);
     setSubcatOpen(true);
@@ -72,6 +89,20 @@ export default function DiagnosticScreen() {
       togglePoints?.map(point => ({ id: point.id, label: point.name }))
     );
   }, [togglePoints]);
+
+  console.log('chosenPoints', chosenPoints);
+
+  // useEffect(() => {
+  //   if (togglePoints?.length) {
+  //     setChosenPoints(
+  //       togglePoints.map(point => ({ id: point.id, label: point.name }))
+  //     );
+  //   }
+  // }, [togglePoints]);
+
+  // if (!togglePoints?.length) {
+  //   return null; // або <Skeleton />, або просто нічого
+  // }
 
   const handleCheckboxChange = (event, id, label) => {
     setChosenPoints(prevPoints => {
@@ -276,32 +307,82 @@ export default function DiagnosticScreen() {
     })
     .filter(Boolean);
 
-  // console.log("dataToSend", nodes);
-  const dataToSend = {
+  // Трансформація аудіо в base64
+
+  // fetch(audioURL)
+  //   .then(response => response.blob())
+  //   .then(blob => {
+  //     // Читаємо blob як Data URL (base64)
+  //     const reader = new FileReader();
+  //     reader.onloadend = function () {
+  //       const base64data = reader.result;
+  //       console.log(base64data); // Ось тут твоє аудіо у форматі base64
+  //     };
+  //     reader.readAsDataURL(blob);
+  //   })
+  //   .catch(error => console.error('Помилка завантаження Blob:', error));
+
+  // // console.log("dataToSend", nodes);
+  const dataForSavedParts = {
     car_id: carId,
     mechanic_id: 1,
+    audio_file: audioURL,
+    photo_files: [],
     nodes: nodesToCreateDiag,
   };
 
   // console.log('dataToSend', dataToSend);
 
-  const handleCreateDiag = () => {
-    dispatch(createDiagnostic(dataToSend))
-      .unwrap()
-      .then(() => {
-        dispatch(getAllCars({ date, mechanic_id: 1 })).then(() => {
-          console.log('Діагностика успішно створена');
-          toast.success('Діагностика успішно створена', {
-            position: 'top-center',
-            duration: 3000,
-            style: {
-              background: 'var(--bg-input)',
-              color: 'var(--white)',
-            },
-          });
-          navigate('/main');
+  const handleCreateDiag = async () => {
+    // Форматування аудіо
+    try {
+      let base64data = null;
+
+      if (audioURL) {
+        const response = await fetch(audioURL);
+        const blob = await response.blob();
+
+        base64data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
         });
+      }
+
+      const dataToSend = {
+        car_id: carId,
+        mechanic_id: 1,
+        audios: audioURL ? [base64data] : [],
+        photos: photosFromDiag,
+        general_comment: comment,
+        nodes: nodesToCreateDiag,
+      };
+      console.log('dataToSend', dataToSend);
+
+      await dispatch(createDiagnostic(dataToSend))
+        .unwrap()
+        .then(() => {
+          dispatch(getAllCars({ date, mechanic_id: 1 }));
+        });
+
+      console.log('Діагностика успішно створена');
+      toast.success('Діагностика успішно створена', {
+        position: 'top-center',
+        duration: 3000,
+        style: {
+          background: 'var(--bg-input)',
+          color: 'var(--white)',
+        },
       });
+      navigate('/main');
+    } catch (error) {
+      console.error('Помилка при створенні діагностики:', error);
+      toast.error('Помилка створення діагностики', {
+        position: 'top-center',
+        duration: 3000,
+      });
+    }
   };
 
   // console.log('chosenPoints', chosenPoints);
@@ -352,13 +433,34 @@ export default function DiagnosticScreen() {
       {particularCar?.status === 'complete' ? (
         <SavedSparesPart />
       ) : savedSparesPartOpen ? (
-        <SavedSparesPart nodes={nodes} dataToSend={dataToSend} />
+        openPhotos ? (
+          <Photos
+            photos={photosFromDiag}
+            setCheckPhotos={setOpenPhotos}
+            completedDoc={false}
+          />
+        ) : (
+          <SavedSparesPart
+            nodes={nodes}
+            dataToSend={dataForSavedParts}
+            audioURL={audioURL}
+            photosFromDiag={photosFromDiag}
+            setOpenAudio={setOpenAudio}
+            setOpenPhotos={setOpenPhotos}
+            setCheckComment={setCheckComment}
+            comment={comment}
+          />
+        )
       ) : subcatOpen ? (
-        openCamera ? (
+        openPhotoComp ? (
           <PhotoCapturePage
             diag={true}
             carId={carId}
             setOpenCamera={setOpenCamera}
+            setPhotosFromWorksPart={setPhotosFromDiag}
+            photosFromWorksPart={photosFromDiag}
+            openCameraWorkPart={openCamera}
+            setOpenPhotoComp={setOpenPhotoComp}
           />
         ) : (
           <>
@@ -385,6 +487,8 @@ export default function DiagnosticScreen() {
             </ul>
           </>
         )
+      ) : chosenPoints.length === 0 ? (
+        <LoaderSvg />
       ) : (
         <TogglePoints
           togglePoints={togglePoints}
@@ -393,9 +497,17 @@ export default function DiagnosticScreen() {
         />
       )}
 
-      {!openCamera &&
-        (recordAudio ? (
-          <AudioRecorder setRecordAudio={setRecordAudio} />
+      {!openPhotoComp &&
+        !openPhotos &&
+        (recordAudio || openAudio ? (
+          <AudioRecorder
+            setRecordAudio={setRecordAudio}
+            audioURL={audioURL}
+            setAudioURL={setAudioURL}
+            completedDoc={openAudio}
+            setOpenAudio={setOpenAudio}
+            diag={true}
+          />
         ) : (
           <BottomPart
             back={
@@ -420,8 +532,34 @@ export default function DiagnosticScreen() {
             handleCreateDiag={() => handleCreateDiag()}
             setOpenCamera={setOpenCamera}
             setRecordAudio={setRecordAudio}
+            audioURL={audioURL}
+            photosFromWorksPart={photosFromDiag}
+            setOpenComment={setOpenComment}
+            comment={comment}
+            setOpenPhotoComp={setOpenPhotoComp}
+            diag={true}
+            // photosFromDiag={photosFromDiag}
           />
         ))}
+
+      {(openComment || checkComment) && (
+        <Modal
+          isOpen={openComment || checkComment}
+          onClose={() => {
+            setOpenComment(false);
+            setCheckComment(false);
+          }}
+        >
+          <ModalForComments
+            onClose={() => {
+              setOpenComment(false);
+              setCheckComment(false);
+            }}
+            setComment={setComment}
+            comment={comment}
+          />
+        </Modal>
+      )}
     </div>
   );
 }
