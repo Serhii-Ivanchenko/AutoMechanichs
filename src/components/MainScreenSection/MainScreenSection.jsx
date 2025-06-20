@@ -114,7 +114,13 @@ export default function MainScreenSection({ array1, array2, wage }) {
           <BsBoxArrowLeft className={css.iconExit} />
         </button>
         <BiSolidMessageDetail className={css.iconMessage} />
-        <p className={css.wage}>+ {balance?.today_earned ?? '----'}</p>
+        <p className={css.wage}>
+          +{' '}
+          {carsDoneForParticularDay.reduce(
+            (sum, car) => sum + Math.trunc(car.total_work_earnings),
+            0
+          )}
+        </p>
       </div>
       {/* </>
       )} */}

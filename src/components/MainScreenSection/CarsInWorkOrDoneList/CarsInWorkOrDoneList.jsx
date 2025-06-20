@@ -97,7 +97,7 @@ export default function CarsInWorkOrDoneList({ done, list }) {
                     </div>
                   </div>
                   <p className={`${css.salary} ${done ? css.salaryDone : ''}`}>
-                    {item.salary}
+                    {Math.trunc(item.total_work_earnings)}
                   </p>
                 </div>
               </Link>
