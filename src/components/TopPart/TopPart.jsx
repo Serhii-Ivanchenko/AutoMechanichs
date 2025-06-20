@@ -36,7 +36,7 @@ export default function TopPart({ wage, amountPossible }) {
         <div className={css.salaryPoint}>
           <p className={css.paleText}>Можлива ЗП</p>
           <p className={css.amountPossible}>
-            {balance?.potential_earned ?? '----'}
+            {Math.trunc(balance?.potential_earned) ?? '----'}
           </p>
         </div>
       </div>
