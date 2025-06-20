@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   createNewCar,
   getAllCars,
+  getMileageOrVinFromPhoto,
   recognizeLicensePlate,
   updateCar,
 } from '../../redux/cars/operations';
@@ -24,6 +25,7 @@ import {
   // selectCarId,
   selectCarInfo,
   selectCars,
+  selectIsMileageOrVinLoading,
   selectIsRecognitionLoading,
 } from '../../redux/cars/selectors';
 import LoaderSvg from '../Loader/LoaderSvg.jsx';
@@ -60,19 +62,21 @@ export default function AddCarScreen() {
 
   const carInfo = useSelector(selectCarInfo);
   const isRecognitionLoading = useSelector(selectIsRecognitionLoading);
+  const isMileageOrVinLoading = useSelector(selectIsMileageOrVinLoading);
   // const newCarId = useSelector(selectCarId);
 
   const cars = useSelector(selectCars);
   const params = useParams();
   const carId = params?.carId;
-  console.log('carInfo', carInfo);
-  // console.log('cars', cars);
-  console.log('carId', carId);
 
   const canvasRef = useRef(null);
   const [cameraOn, setCameraOn] = useState(false);
+  const [cameraMileageOn, setCameraMileageOn] = useState(false);
+  const [cameraVinOn, setCameraVinOn] = useState(false);
   const [videoStream, setVideoStream] = useState(null);
   const [photo, setPhoto] = useState(null);
+  const [vinPhoto, setVinPhoto] = useState(null);
+  const [mileagePhoto, setMileagePhoto] = useState(null);
 
   const originalDataRef = useRef({});
 
@@ -96,7 +100,7 @@ export default function AddCarScreen() {
     }
   }, [yearPopupOpen]);
 
-  const startCamera = async () => {
+  const startCamera = async setCameraState => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' },
@@ -105,20 +109,27 @@ export default function AddCarScreen() {
         videoRef.current.srcObject = stream;
       }
       setVideoStream(stream);
-      setCameraOn(true);
+      setCameraState(true);
     } catch (err) {
       console.error('Ошибка при доступе к камере', err);
     }
   };
 
   const stopCamera = () => {
-    setCameraOn(false);
+    if (!cameraOn && !cameraMileageOn && !cameraVinOn) return;
+    if (cameraOn) {
+      setCameraOn(false);
+    } else if (cameraMileageOn) {
+      setCameraMileageOn(false);
+    } else {
+      setCameraVinOn(false);
+    }
     setVideoStream(null);
     const tracks = videoRef.current?.srcObject?.getTracks();
     tracks?.forEach(track => track.stop());
   };
 
-  const takePhoto = setState => {
+  const takePhoto = async (setPhotoState, type) => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -127,21 +138,41 @@ export default function AddCarScreen() {
     ctx.drawImage(video, 0, 0);
     const dataUrl = canvas.toDataURL('image/jpeg');
     // setPhoto(dataUrl);
-    setState(dataUrl);
+    setPhotoState(dataUrl);
     stopCamera();
+    const base64Photo = dataUrl;
+    if (type === 'photo') {
+      return;
+    } else if (type === 'mileage') {
+      dispatch(getMileageOrVinFromPhoto({ image_base64: base64Photo }))
+        .unwrap()
+        .then(result => {
+          if (result.odometer !== null) {
+            setMileage(result.odometer);
+          }
+        })
+        .catch(err => console.log('mileagePhotoErr', err));
+    } else {
+      dispatch(getMileageOrVinFromPhoto({ image_base64: base64Photo }))
+        .unwrap()
+        .then(result => {
+          if (result.vin !== null) {
+            setVin(result.vin);
+          }
+        })
+        .catch(err => console.log('mileagePhotoErr', err));
+    }
   };
 
-  const handleClick = setState => {
-    if (!cameraOn) {
-      startCamera();
+  const handleClick = (setPhotoState, cameraState, setCameraState, type) => {
+    if (!cameraState) {
+      startCamera(setCameraState);
     } else {
-      takePhoto(setState);
+      takePhoto(setPhotoState, type);
     }
   };
 
   const displayedCar = cars?.find(car => Number(car?.car_id) === Number(carId));
-
-  console.log('displayedCar', displayedCar);
 
   useEffect(() => {
     if (!carId || cars?.length === 0) return;
@@ -318,6 +349,26 @@ export default function AddCarScreen() {
 
     const photoToSend = dataURLtoBlob(photo);
     dispatch(recognizeLicensePlate(photoToSend));
+    // } else if (photoType === mileagePhoto) {
+    //   // const photoToSend = dataURLtoBlob(mileagePhoto);
+    //   dispatch(getMileageOrVinFromPhoto(mileagePhoto))
+    //     .unwrap()
+    //     .then(result => {
+    //       if (result.odometer !== null) {
+    //         setMileage(result.odometer);
+    //       }
+    //     })
+    //     .catch(err => console.log('mileagePhotoErr', err));
+    // } else {
+    //   dispatch(getMileageOrVinFromPhoto(vinPhoto))
+    //     .unwrap()
+    //     .then(result => {
+    //       if (result.vin !== null) {
+    //         setMileage(result.vin);
+    //       }
+    //     })
+    //     .catch(err => console.log('mileagePhotoErr', err));
+    // }
   };
 
   const onCheckmarkBtnClick = () => {
@@ -475,14 +526,70 @@ export default function AddCarScreen() {
     }
   };
 
-  return isRecognitionLoading ? (
+  return isRecognitionLoading || isMileageOrVinLoading ? (
     <LoaderSvg />
   ) : (
     <>
       <div className={`${css.wrapper} ${videoStream ? css.cameraOn : ''}`}>
-        {videoStream ? (
+        {cameraOn && (
           <video ref={videoRef} autoPlay playsInline className={css.video} />
-        ) : (
+        )}
+        {cameraMileageOn && (
+          <>
+            <video ref={videoRef} autoPlay playsInline className={css.video} />
+            <div className={css.mileageWrapper}>
+              <SlSpeedometer className={css.mileageIcon} />
+              <input
+                className={css.mileage}
+                type="text"
+                value={mileage}
+                onChange={e => {
+                  setMileage(e.target.value);
+                }}
+                placeholder="123000"
+              />
+
+              <p className={css.mileageText}>км</p>
+
+              <BsCameraFill
+                className={css.cameraVinIcon}
+                onClick={() =>
+                  handleClick(
+                    setMileagePhoto,
+                    cameraMileageOn,
+                    setCameraMileageOn,
+                    'mileage'
+                  )
+                }
+              />
+            </div>
+          </>
+        )}
+        {cameraVinOn && (
+          <>
+            <video ref={videoRef} autoPlay playsInline className={css.video} />
+            <div className={`${css.mileageWrapper} ${css.vinWrapper}`}>
+              <input
+                className={css.mileage}
+                type="text"
+                value={vin}
+                onChange={e => {
+                  setVin(e.target.value);
+                  validate(e.target.value);
+                }}
+                placeholder="vin"
+              />
+              <BsCameraFill
+                className={css.cameraVinIcon}
+                onClick={() =>
+                  handleClick(setVinPhoto, cameraVinOn, setCameraVinOn, 'vin')
+                }
+              />
+              {vinError && <p className={css.error}>{vinError}</p>}
+            </div>
+          </>
+        )}
+        {!cameraOn && !cameraMileageOn && !cameraVinOn && (
           <>
             <div className={css.carPhoto}>
               {photo ? (
@@ -700,25 +807,43 @@ export default function AddCarScreen() {
 
                 <p className={css.mileageText}>км</p>
 
-                <BsCameraFill className={css.cameraVinIcon} />
+                <BsCameraFill
+                  className={css.cameraVinIcon}
+                  onClick={() =>
+                    handleClick(
+                      setMileagePhoto,
+                      cameraMileageOn,
+                      setCameraMileageOn,
+                      'mileage'
+                    )
+                  }
+                />
               </div>
-              <input
-                className={css.vin}
-                type="text"
-                value={vin}
-                onChange={e => {
-                  setVin(e.target.value);
-                  validate(e.target.value);
-                }}
-                placeholder="vin"
-              />
-              {vinError && <p className={css.error}>{vinError}</p>}
+              <div className={`${css.mileageWrapper} ${css.vinWrapper}`}>
+                <input
+                  className={css.mileage}
+                  type="text"
+                  value={vin}
+                  onChange={e => {
+                    setVin(e.target.value);
+                    validate(e.target.value);
+                  }}
+                  placeholder="vin"
+                />
+                <BsCameraFill
+                  className={css.cameraVinIcon}
+                  onClick={() =>
+                    handleClick(setVinPhoto, cameraVinOn, setCameraVinOn, 'vin')
+                  }
+                />
+                {vinError && <p className={css.error}>{vinError}</p>}
+              </div>
             </div>
           </>
         )}
       </div>
       <div className={`${css.btnsWrapper} ${cameraOn ? css.isCameraOn : ''}`}>
-        {!cameraOn ? (
+        {!cameraOn && !cameraMileageOn && !cameraVinOn ? (
           <IoMdClose
             className={`${css.cancelBtn} ${css.cross}`}
             onClick={onCloseBtnClick}
@@ -731,15 +856,20 @@ export default function AddCarScreen() {
 
         <div>
           <canvas ref={canvasRef} style={{ display: 'none' }} />
-          <button
-            type="button"
-            className={css.cameraBtn}
-            onClick={() => handleClick(setPhoto)}
-          >
-            <BsCameraFill className={css.cameraIcon} />
-          </button>
+          {!cameraMileageOn && !cameraVinOn && (
+            <button
+              type="button"
+              className={css.cameraBtn}
+              onClick={() =>
+                handleClick(setPhoto, cameraOn, setCameraOn, 'photo')
+              }
+            >
+              <BsCameraFill className={css.cameraIcon} />
+            </button>
+          )}
         </div>
         {!cameraOn &&
+        !cameraMileageOn &&
         chosenMake?.make &&
         chosenModel?.model_name &&
         chosenYear &&

@@ -1,5 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { axiosInstance, axiosInstancePhotos } from '../../services/api.js';
+import {
+  axiosInstance,
+  axiosInstancePhotos,
+  axiosInstanceVinAndMileage,
+} from '../../services/api.js';
 
 // Get list of all cars per day
 export const getAllCars = createAsyncThunk(
@@ -247,7 +251,7 @@ export const createNewCar = createAsyncThunk(
       const response = await axiosInstance.post(`/mb/save_car/`, carData, {
         headers: {
           'company-id': serviceId,
-          "X-Api-Key": "YA7NxysJ",
+          'X-Api-Key': 'YA7NxysJ',
         },
       });
       console.log('createNewCar', response.data);
@@ -334,12 +338,15 @@ export const updateCar = createAsyncThunk(
 export const getMileageOrVinFromPhoto = createAsyncThunk(
   'cars/getMileageOrVinFromPhoto',
   async (photo, thunkAPI) => {
+    console.log('photo', photo);
+
     try {
-      const response = await axiosInstancePhotos.post(
+      const response = await axiosInstanceVinAndMileage.post(
         '/mb/ocr_vin_odometer/',
         photo,
         {
           headers: {
+            'X-Api-Key': 'YA7NxysJ',
             'Content-Type': 'application/json',
           },
         }
@@ -383,5 +390,3 @@ export const uploadMedia = createAsyncThunk(
     }
   }
 );
-
-
