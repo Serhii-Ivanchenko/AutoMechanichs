@@ -29,6 +29,8 @@ export default function PhotoCapturePage({
   const [checkPhotos, setCheckPhotos] = useState(false);
   const cars = useSelector(selectCars);
 
+  // console.log('photos', photos);
+
   const params = useParams();
   const carId = params?.carId;
 
@@ -40,7 +42,10 @@ export default function PhotoCapturePage({
   const setPhotosToDisplay = diag ? setPhotosFromWorksPart : setPhotos;
   const openedCamera = diag ? openCameraWorkPart : isCameraOpen;
 
-  // console.log('photos', photos);
+  console.log('photos', photos);
+  console.log('photosFromWorksPart', photosFromWorksPart);
+  console.log('photosToDisplay', photosToDisplay);
+
   // console.log('displayedCar', displayedCar);
 
   useEffect(() => {
@@ -187,7 +192,7 @@ export default function PhotoCapturePage({
           />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
-      ) : !displayedCar ? (
+      ) : displayedCar?.cars_photo?.length === 0 ? (
         photosToDisplay.length > 0 ? (
           <div className={css.photoSectionWrapper}>
             {photosToDisplay?.map((src, index) => (
@@ -286,7 +291,7 @@ export default function PhotoCapturePage({
             // }}
           >
             <img
-              src={photoPreview}
+              src={photosToDisplay[photosToDisplay.length - 1]}
               alt="photo preview"
               className={css.photoPreview}
               onError={e => {
