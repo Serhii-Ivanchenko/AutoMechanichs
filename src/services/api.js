@@ -17,7 +17,7 @@ export const axiosInstancePhotos = axios.create({
   baseURL: 'https://plate.assist.cam/',
 });
 
-// Axios instance for Vin and Mileage recognition
-export const axiosInstanceVinAndMileage = axios.create({
-  baseURL: 'https://aps.assist.cam/',
-});
+// // Axios instance for Vin and Mileage recognition
+// export const axiosInstanceVinAndMileage = axios.create({
+//   baseURL: 'https://aps.assist.cam/',
+// });
