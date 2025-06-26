@@ -43,6 +43,11 @@ const carsSlice = createSlice({
       state.isRecognitionLoading = false;
       state.error = null;
     },
+    deleteMileageOrVin: state => {
+      state.mileageOrVin = {};
+      state.isMileageOrVinLoading = false;
+      state.error = null;
+    },
     clearDiag: state => {
       state.diagnostic = {};
     },
@@ -231,6 +236,7 @@ export const {
   setChosenDate,
   clearChosenDate,
   deleteCarInfo,
+  deleteMileageOrVin,
   clearDiag,
   clearRepair,
 } = carsSlice.actions;

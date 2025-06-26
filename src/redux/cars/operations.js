@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   axiosInstance,
   axiosInstancePhotos,
-  axiosInstanceVinAndMileage,
+  // axiosInstanceVinAndMileage,
 } from '../../services/api.js';
 
 // Get list of all cars per day
@@ -341,7 +341,7 @@ export const getMileageOrVinFromPhoto = createAsyncThunk(
     console.log('photo', photo);
 
     try {
-      const response = await axiosInstanceVinAndMileage.post(
+      const response = await axiosInstance.post(
         '/mb/ocr_vin_odometer/',
         photo,
         {

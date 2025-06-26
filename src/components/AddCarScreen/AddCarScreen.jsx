@@ -27,11 +27,12 @@ import {
   selectCars,
   selectIsMileageOrVinLoading,
   selectIsRecognitionLoading,
+  selectMileageOrVin,
 } from '../../redux/cars/selectors';
 import LoaderSvg from '../Loader/LoaderSvg.jsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { deleteCarInfo } from '../../redux/cars/slice.js';
+import { deleteCarInfo, deleteMileageOrVin } from '../../redux/cars/slice.js';
 import { selectUser } from '../../redux/auth/selectors.js';
 
 export default function AddCarScreen() {
@@ -62,9 +63,11 @@ export default function AddCarScreen() {
   const yearInputRef = useRef(null);
 
   const carInfo = useSelector(selectCarInfo);
+  const mileageOrVin = useSelector(selectMileageOrVin);
   const isRecognitionLoading = useSelector(selectIsRecognitionLoading);
   const isMileageOrVinLoading = useSelector(selectIsMileageOrVinLoading);
   // const newCarId = useSelector(selectCarId);
+  console.log('mileageOrVin', mileageOrVin);
 
   const cars = useSelector(selectCars);
   const params = useParams();
@@ -175,7 +178,24 @@ export default function AddCarScreen() {
     }
   };
 
+  const handleCameraBtnClick = () => {
+    if (cameraVinOn) {
+      handleClick(setVinPhoto, cameraVinOn, setCameraVinOn, 'vin');
+    } else if (cameraMileageOn) {
+      handleClick(
+        setMileagePhoto,
+        cameraMileageOn,
+        setCameraMileageOn,
+        'mileage'
+      );
+    } else {
+      handleClick(setPhoto, cameraOn, setCameraOn, 'photo');
+    }
+  };
+
   const displayedCar = cars?.find(car => Number(car?.car_id) === Number(carId));
+  console.log('chosenMake', chosenMake);
+  console.log('chosenModel', chosenModel);
 
   useEffect(() => {
     if (!carId || cars?.length === 0) return;
@@ -190,6 +210,8 @@ export default function AddCarScreen() {
     );
 
     const existedPhoto = `https://aps.assist.cam/auto/${displayedCar?.plate}.jpg`;
+    console.log('existedModel', existedModel);
+    console.log('existedMake', existedMake);
 
     setChosenMake({ id: existedMake?.id, make: existedMake?.make || '' });
 
@@ -237,6 +259,32 @@ export default function AddCarScreen() {
       model_name: existedModel?.model_name || '',
     });
   }, [carInfo]);
+
+  useEffect(() => {
+    if (
+      !mileageOrVin ||
+      Object.keys(mileageOrVin).length === 0 ||
+      mileageOrVin.odometer !== null
+    )
+      return;
+
+    setChosenYear(mileageOrVin?.year);
+
+    const existedMake = carData?.find(
+      car =>
+        car?.make?.toLocaleLowerCase() === mileageOrVin?.make?.toLowerCase()
+    );
+    setChosenMake({ id: existedMake?.id, make: existedMake?.make || '' });
+
+    const existedModel = existedMake?.models?.find(
+      model =>
+        model?.model_name?.toLowerCase() === mileageOrVin?.model?.toLowerCase()
+    );
+    setChosenModel({
+      id: existedModel?.id,
+      model_name: existedModel?.model_name || '',
+    });
+  }, [mileageOrVin]);
 
   const makeInputClick = e => {
     e.stopPropagation();
@@ -352,26 +400,6 @@ export default function AddCarScreen() {
 
     const photoToSend = dataURLtoBlob(photo);
     dispatch(recognizeLicensePlate(photoToSend));
-    // } else if (photoType === mileagePhoto) {
-    //   // const photoToSend = dataURLtoBlob(mileagePhoto);
-    //   dispatch(getMileageOrVinFromPhoto(mileagePhoto))
-    //     .unwrap()
-    //     .then(result => {
-    //       if (result.odometer !== null) {
-    //         setMileage(result.odometer);
-    //       }
-    //     })
-    //     .catch(err => console.log('mileagePhotoErr', err));
-    // } else {
-    //   dispatch(getMileageOrVinFromPhoto(vinPhoto))
-    //     .unwrap()
-    //     .then(result => {
-    //       if (result.vin !== null) {
-    //         setMileage(result.vin);
-    //       }
-    //     })
-    //     .catch(err => console.log('mileagePhotoErr', err));
-    // }
   };
 
   const onCheckmarkBtnClick = () => {
@@ -506,6 +534,7 @@ export default function AddCarScreen() {
 
   const onCloseBtnClick = () => {
     dispatch(deleteCarInfo());
+    dispatch(deleteMileageOrVin());
     navigate(`/main`);
   };
 
@@ -535,10 +564,10 @@ export default function AddCarScreen() {
   ) : (
     <>
       <div className={`${css.wrapper} ${videoStream ? css.cameraOn : ''}`}>
-        {cameraOn && (
+        {(cameraOn || cameraMileageOn || cameraVinOn) && (
           <video ref={videoRef} autoPlay playsInline className={css.video} />
         )}
-        {cameraMileageOn && (
+        {/* {cameraMileageOn && (
           <>
             <video ref={videoRef} autoPlay playsInline className={css.video} />
             <div className={css.mileageWrapper}>
@@ -587,12 +616,13 @@ export default function AddCarScreen() {
                 className={css.cameraVinIcon}
                 onClick={() =>
                   handleClick(setVinPhoto, cameraVinOn, setCameraVinOn, 'vin')
+                  
                 }
               />
               {vinError && <p className={css.error}>{vinError}</p>}
             </div>
           </>
-        )}
+        )} */}
         {!cameraOn && !cameraMileageOn && !cameraVinOn && (
           <>
             <div className={css.carPhoto}>
@@ -814,12 +844,13 @@ export default function AddCarScreen() {
                 <BsCameraFill
                   className={css.cameraVinIcon}
                   onClick={() =>
-                    handleClick(
-                      setMileagePhoto,
-                      cameraMileageOn,
-                      setCameraMileageOn,
-                      'mileage'
-                    )
+                    // handleClick(
+                    //   setMileagePhoto,
+                    //   cameraMileageOn,
+                    //   setCameraMileageOn,
+                    //   'mileage'
+                    // )
+                    startCamera(setCameraMileageOn)
                   }
                 />
               </div>
@@ -837,7 +868,8 @@ export default function AddCarScreen() {
                 <BsCameraFill
                   className={css.cameraVinIcon}
                   onClick={() =>
-                    handleClick(setVinPhoto, cameraVinOn, setCameraVinOn, 'vin')
+                    // handleClick(setVinPhoto, cameraVinOn, setCameraVinOn, 'vin')
+                    startCamera(setCameraVinOn)
                   }
                 />
                 {vinError && <p className={css.error}>{vinError}</p>}
@@ -860,17 +892,15 @@ export default function AddCarScreen() {
 
         <div>
           <canvas ref={canvasRef} style={{ display: 'none' }} />
-          {!cameraMileageOn && !cameraVinOn && (
-            <button
-              type="button"
-              className={css.cameraBtn}
-              onClick={() =>
-                handleClick(setPhoto, cameraOn, setCameraOn, 'photo')
-              }
-            >
-              <BsCameraFill className={css.cameraIcon} />
-            </button>
-          )}
+          {/* {!cameraMileageOn && !cameraVinOn && ( */}
+          <button
+            type="button"
+            className={css.cameraBtn}
+            onClick={handleCameraBtnClick}
+          >
+            <BsCameraFill className={css.cameraIcon} />
+          </button>
+          {/* // )} */}
         </div>
         {!cameraOn &&
         !cameraMileageOn &&
