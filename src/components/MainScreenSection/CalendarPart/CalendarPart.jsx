@@ -70,7 +70,7 @@ export default function CalendarPart() {
 
     // const data = {
     //   date,
-    //   mechanic_id: 1,
+    //   mechanic_id: 1, // Заміни на реальний ID механіка
     // };
 
     // console.log('date', date);

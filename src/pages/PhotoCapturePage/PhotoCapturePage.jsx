@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllCars, uploadCarPhotos } from '../../redux/cars/operations';
 import { selectCars } from '../../redux/cars/selectors';
 import autoPhoto from '../../assets/images/absentAutoImg.webp';
+import { selectUser } from '../../redux/auth/selectors.js';
 
 export default function PhotoCapturePage({
   diag,
@@ -28,6 +29,8 @@ export default function PhotoCapturePage({
   const [photoPreview, setPhotoPreview] = useState('');
   const [checkPhotos, setCheckPhotos] = useState(false);
   const cars = useSelector(selectCars);
+  const userData = useSelector(selectUser);
+  const mechanicId = userData?.id;
 
   // console.log('photos', photos);
 
@@ -159,7 +162,10 @@ export default function PhotoCapturePage({
               color: 'var(--white)FFF',
             },
           });
-          dispatch(getAllCars({ date: formattedDate, mechanic_id: 1 }));
+          dispatch(
+            getAllCars({ date: formattedDate, mechanic_id: mechanicId })
+          );
+          // dispatch(getAllCars({ date: formattedDate, mechanic_id: 1 }));
           displayedCar?.status === 'repair'
             ? navigate(`/car/${carId}/repair`)
             : navigate(`/car/${carId}/diagnostics`);

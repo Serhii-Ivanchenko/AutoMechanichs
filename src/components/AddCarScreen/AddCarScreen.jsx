@@ -32,6 +32,7 @@ import LoaderSvg from '../Loader/LoaderSvg.jsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { deleteCarInfo } from '../../redux/cars/slice.js';
+import { selectUser } from '../../redux/auth/selectors.js';
 
 export default function AddCarScreen() {
   const [chosenMake, setChosenMake] = useState({});
@@ -68,6 +69,8 @@ export default function AddCarScreen() {
   const cars = useSelector(selectCars);
   const params = useParams();
   const carId = params?.carId;
+  const userData = useSelector(selectUser);
+  const mechanicId = userData?.id;
 
   const canvasRef = useRef(null);
   const [cameraOn, setCameraOn] = useState(false);
@@ -478,7 +481,8 @@ export default function AddCarScreen() {
             dispatch(
               getAllCars({
                 date: new Date().toLocaleString('sv').split(' ')[0],
-                mechanic_id: 1,
+                mechanic_id: mechanicId,
+                // mechanic_id: 1,
               })
             );
             navigate(`/car/${result.car_id}/photos`);

@@ -62,6 +62,8 @@ export default function App() {
   const isRefreshing = useSelector(selectIsRefreshing);
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const user = useSelector(selectUser);
+  const mechanicId = user?.id;
+
   // const [isAuthChecked, setIsAuthChecked] = useState(false);
   const location = useLocation();
   // console.log('isLoggedIn', isLoggedIn);
@@ -87,7 +89,8 @@ export default function App() {
   useEffect(() => {
     const data = {
       date: day || storedDate,
-      mechanic_id: 1,
+      mechanic_id: mechanicId,
+      // mechanic_id: 1,
     };
     console.log('data', data);
 
@@ -95,7 +98,10 @@ export default function App() {
   }, [dispatch, day, storedDate]);
 
   useEffect(() => {
-    dispatch(getMechanicBalance(user?.id));
+    if (!mechanicId) {
+      return;
+    }
+    dispatch(getMechanicBalance(mechanicId));
   }, [dispatch]);
 
   // const wage = array2.reduce((sum, i) => sum + Number(i.salary || 0), 0);

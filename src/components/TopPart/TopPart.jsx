@@ -27,16 +27,18 @@ export default function TopPart({ wage, amountPossible }) {
       <div className={css.salaryInfoBox}>
         <div className={css.salaryPoint}>
           <p className={css.paleText}>Нараховано</p>
-          <p className={css.amount}>{balance?.total_earned ?? '----'}</p>
+          <p className={css.amount}>{balance?.total_earned ?? '0'}</p>
         </div>
         <div className={css.salaryPoint}>
           <p className={css.paleText}>Сьогодні</p>
-          <p className={css.amount}>+ {balance?.today_earned ?? '----'}</p>
+          <p className={css.amount}>+ {balance?.today_earned ?? '0'}</p>
         </div>
         <div className={css.salaryPoint}>
           <p className={css.paleText}>Можлива ЗП</p>
           <p className={css.amountPossible}>
-            {Math.trunc(balance?.potential_earned) ?? '----'}
+            {Number.isFinite(balance?.potential_earned)
+              ? Math.trunc(balance.potential_earned)
+              : '0'}
           </p>
         </div>
       </div>

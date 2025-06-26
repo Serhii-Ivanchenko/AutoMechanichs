@@ -23,17 +23,17 @@ export default function LoginPage() {
   const userData = useSelector(selectUser);
   const formattedDate = new Date().toISOString().split('T')[0];
 
-  const [mechanicId, setMechanicId] = useState();
+  // const [mechanicId, setMechanicId] = useState();
 
-  console.log('userData', userData);
-  console.log('formattedDate', formattedDate);
-  console.log('mechanicId', mechanicId);
+  // console.log('userData', userData);
+  // console.log('formattedDate', formattedDate);
+  // console.log('mechanicId', mechanicId);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    setMechanicId(userData?.id);
-  }, [userData]);
+  // useEffect(() => {
+  //   setMechanicId(userData?.id);
+  // }, [userData]);
 
   const onButtonEyeClick = () => {
     setIsPasswordShown(!isPasswordShown);
@@ -47,19 +47,22 @@ export default function LoginPage() {
       .then(() => {
         dispatch(getUserData())
           .unwrap()
-          .then(() => {
-            // dispatch(getMechanicBalance(mechanicId));
-            // dispatch(
-            //   getAllCars({ date: formattedDate, mechanic_id: mechanicId })
-            // );
-            dispatch(getMechanicBalance(1));
+          .then((response) => {
+            console.log('response', response);
+            const mechanicId = response.id;
+            console.log('mechanicId', mechanicId);
+            dispatch(getMechanicBalance(mechanicId));
             dispatch(
-              formattedDate &&
-                getAllCars({
-                  date: formattedDate,
-                  mechanic_id: 1,
-                })
+              getAllCars({ date: formattedDate, mechanic_id: mechanicId })
             );
+            // dispatch(getMechanicBalance(1));
+            // dispatch(
+            //   formattedDate &&
+            //     getAllCars({
+            //       date: formattedDate,
+            //       mechanic_id: 1,
+            //     })
+            // );
             toast.success('Welcome to CRMMech', {
               position: 'top-center',
               duration: 3000,

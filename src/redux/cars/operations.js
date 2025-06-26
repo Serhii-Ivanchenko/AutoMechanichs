@@ -19,7 +19,7 @@ export const getAllCars = createAsyncThunk(
           mechanic_id,
         },
         headers: {
-          'X-Api-Key': 'YA7NxysJ',
+          // 'X-Api-Key': 'YA7NxysJ',
           'company-id': serviceId,
         },
       });
@@ -251,7 +251,7 @@ export const createNewCar = createAsyncThunk(
       const response = await axiosInstance.post(`/mb/save_car/`, carData, {
         headers: {
           'company-id': serviceId,
-          'X-Api-Key': 'YA7NxysJ',
+          // 'X-Api-Key': 'YA7NxysJ',
         },
       });
       console.log('createNewCar', response.data);
@@ -346,7 +346,7 @@ export const getMileageOrVinFromPhoto = createAsyncThunk(
         photo,
         {
           headers: {
-            'X-Api-Key': 'YA7NxysJ',
+            // 'X-Api-Key': 'YA7NxysJ',
             'Content-Type': 'application/json',
           },
         }

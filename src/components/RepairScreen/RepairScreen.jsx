@@ -34,6 +34,7 @@ import ModalForComments from '../ModalForComments/ModalForComments.jsx';
 import Photos from './Photos/Photos.jsx';
 import ModalForListOfRecordings from '../ModalForListOfRecordings/ModalForListOfRecordings.jsx';
 import LoaderSvg from '../Loader/LoaderSvg.jsx';
+import { selectUser } from '../../redux/auth/selectors.js';
 
 export default function RepairScreen() {
   // const togglePoints = newTree?.nodes;
@@ -49,6 +50,8 @@ export default function RepairScreen() {
   const [statusParts, setStatusParts] = useState([]);
   const [statusServices, setStatusServices] = useState([]);
   const [completedRepair, setCompletedRepair] = useState(false);
+  const userData = useSelector(selectUser);
+  const mechanicId = userData?.id;
 
   // Audios
   const [recordAudio, setRecordAudio] = useState(false);
@@ -204,7 +207,8 @@ export default function RepairScreen() {
             },
           });
           dispatch(clearRepair());
-          dispatch(getAllCars({ date, mechanic_id: 1 }));
+          dispatch(getAllCars({ date, mechanic_id: mechanicId }));
+          // dispatch(getAllCars({ date, mechanic_id: 1 }));
           navigate('/main');
         });
     } catch (error) {

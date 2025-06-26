@@ -30,6 +30,7 @@ import Modal from '../Modal/Modal';
 import ModalForComments from '../ModalForComments/ModalForComments';
 import Photos from '../RepairScreen/Photos/Photos';
 import LoaderSvg from '../Loader/LoaderSvg';
+import { selectUser } from '../../redux/auth/selectors.js';
 
 export default function DiagnosticScreen() {
   const togglePoints = useSelector(selectNodesAndPartsForDiagnostics) || [];
@@ -58,6 +59,9 @@ export default function DiagnosticScreen() {
   const [openAudio, setOpenAudio] = useState(false);
   const [openPhotos, setOpenPhotos] = useState(false);
   const [checkComment, setCheckComment] = useState(false);
+  const userData = useSelector(selectUser);
+  const mechanicId = userData?.id;
+
 
   console.log('audioURL', audioURL);
 
@@ -325,7 +329,8 @@ export default function DiagnosticScreen() {
   // // console.log("dataToSend", nodes);
   const dataForSavedParts = {
     car_id: carId,
-    mechanic_id: 1,
+    mechanic_id: mechanicId,
+    // mechanic_id: 1,
     audio_file: audioURL,
     photo_files: [],
     nodes: nodesToCreateDiag,
@@ -352,7 +357,8 @@ export default function DiagnosticScreen() {
 
       const dataToSend = {
         car_id: carId,
-        mechanic_id: 1,
+        mechanic_id: mechanicId,
+        // mechanic_id: 1,
         audios: audioURL ? [base64data] : [],
         photos: photosFromDiag,
         general_comment: comment,
@@ -363,7 +369,8 @@ export default function DiagnosticScreen() {
       await dispatch(createDiagnostic(dataToSend))
         .unwrap()
         .then(() => {
-          dispatch(getAllCars({ date, mechanic_id: 1 }));
+          dispatch(getAllCars({ date, mechanic_id: mechanicId }));
+          // dispatch(getAllCars({ date, mechanic_id: 1 }));
         });
 
       console.log('Діагностика успішно створена');
