@@ -37,7 +37,7 @@
   justify-content: center;
   height: 100%;
   font-size: 30px;
-  color: var(--main-gray)
+  color: var(--main-gray);
 }
 
 .photoSectionWrapper::-webkit-scrollbar {
@@ -194,9 +194,10 @@
   height: 8.706vh;
   /* width: clamp(70px, 8.706vh, 100px); */
   /* height: auto; */
-  border-radius: 14px;
+  border-radius: 10px;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   overflow: hidden;
+  cursor: pointer;
 }
 
 .emptyDiv {
@@ -212,9 +213,9 @@
 
 .photoQuantity {
   position: absolute;
-  width: 29px;
-  height: 29px;
-  border-radius: 52px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   background: var(--red);
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   display: flex;
@@ -222,4 +223,27 @@
   justify-content: center;
   right: 0;
   top: 0;
+  
+  font-size: 15px;
+}
+
+.approveIconWrapper {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 0;
+  bottom: 0;
+  overflow: hidden;
+  background-color: var(--green-btn-normal);
+}
+
+.approveIcon {
+  width: 20px;
+  height: 20px;
+  fill: white;
 }

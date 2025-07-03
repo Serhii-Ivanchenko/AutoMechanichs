@@ -9,6 +9,7 @@ import { getAllCars, uploadCarPhotos } from '../../redux/cars/operations';
 import { selectCars } from '../../redux/cars/selectors';
 import autoPhoto from '../../assets/images/absentAutoImg.webp';
 import { selectUser } from '../../redux/auth/selectors.js';
+import { use } from 'react';
 
 export default function PhotoCapturePage({
   diag,
@@ -26,7 +27,8 @@ export default function PhotoCapturePage({
   const [stream, setStream] = useState(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [photos, setPhotos] = useState([]);
-  const [photoPreview, setPhotoPreview] = useState('');
+  const [photosToDisplay, setPhotosToDisplay] = useState([]);
+  // const [photoPreview, setPhotoPreview] = useState('');
   const [checkPhotos, setCheckPhotos] = useState(false);
   const cars = useSelector(selectCars);
   const userData = useSelector(selectUser);
@@ -41,15 +43,15 @@ export default function PhotoCapturePage({
   const navigate = useNavigate();
 
   const displayedCar = cars?.find(car => Number(car?.car_id === Number(carId)));
-  const photosToDisplay = diag ? photosFromWorksPart : photos;
-  const setPhotosToDisplay = diag ? setPhotosFromWorksPart : setPhotos;
+  // const photosToDisplay = diag ? photosFromWorksPart : photos;
+  // const setPhotosToDisplay = diag ? setPhotosFromWorksPart : setPhotos;
   const openedCamera = diag ? openCameraWorkPart : isCameraOpen;
 
-  console.log('photos', photos);
-  console.log('photosFromWorksPart', photosFromWorksPart);
-  console.log('photosToDisplay', photosToDisplay);
+  // console.log('photos', photos);
+  // console.log('photosFromWorksPart', photosFromWorksPart);
+  // console.log('photosToDisplay', photosToDisplay);
 
-  // console.log('displayedCar', displayedCar);
+  console.log('displayedCar', displayedCar);
 
   useEffect(() => {
     const openCamera = async () => {
@@ -101,7 +103,8 @@ export default function PhotoCapturePage({
       } else {
         setPhotosFromWorksPart(prev => [...prev, photoData]);
       }
-      setPhotoPreview(photoData);
+
+      // setPhotoPreview(photoData);
     }
   };
 
@@ -121,6 +124,18 @@ export default function PhotoCapturePage({
         setOpenPhotoComp(false);
       }
     }
+    diag ? setPhotosFromWorksPart([]) : setPhotos([]);
+  };
+
+  const onPreviewPhotoClick = () => {
+    if (!diag) {
+      setPhotosToDisplay(prev => [...prev, ...photos]);
+      setPhotos([]);
+    } else {
+      setPhotosToDisplay(prev => [...prev, ...photosFromWorksPart]);
+      setPhotosFromWorksPart([]);
+    }
+    handleCloseCamera();
   };
 
   const handlePhotoDelete = index => {
@@ -138,7 +153,7 @@ export default function PhotoCapturePage({
       }
       setOpenCamera(false);
       setOpenPhotoComp(false);
-    } else if (photos?.length === 0) {
+    } else if (photosToDisplay?.length === 0) {
       displayedCar?.status === 'repair'
         ? navigate(`/car/${carId}/repair`)
         : navigate(`/car/${carId}/diagnostics`);
@@ -146,7 +161,7 @@ export default function PhotoCapturePage({
       const carData = {
         car_id: carId,
         photos: {
-          photos_base64: photos,
+          photos_base64: photosToDisplay,
         },
       };
       console.log(carData);
@@ -199,7 +214,7 @@ export default function PhotoCapturePage({
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
       ) : displayedCar?.cars_photo?.length === 0 ? (
-        photosToDisplay.length > 0 ? (
+        photosToDisplay?.length > 0 ? (
           <div className={css.photoSectionWrapper}>
             {photosToDisplay?.map((src, index) => (
               <div key={index} className={css.photoWrapper}>
@@ -288,16 +303,17 @@ export default function PhotoCapturePage({
             onClick={onCheckmarkBtnClick}
           />
         ) : // {/* </Link> */}
-        photosToDisplay.length > 0 ? (
+        photos?.length > 0 || photosFromWorksPart?.length > 0 ? (
           <div
             className={css.photoPreviewWrapper}
-            // onClick={() => {
-            //   diag ? setCheckPhotos(true) : '';
-            //   setOpenCamera(false);
-            // }}
+            onClick={onPreviewPhotoClick}
           >
             <img
-              src={photosToDisplay[photosToDisplay.length - 1]}
+              src={
+                !diag
+                  ? photos[photos.length - 1]
+                  : photosFromWorksPart[photosFromWorksPart.length - 1]
+              }
               alt="photo preview"
               className={css.photoPreview}
               onError={e => {
@@ -305,7 +321,12 @@ export default function PhotoCapturePage({
                 e.target.src = autoPhoto;
               }}
             />
-            <p className={css.photoQuantity}>{photosToDisplay?.length}</p>
+            <p className={css.photoQuantity}>
+              {photos?.length || photosFromWorksPart?.length}
+            </p>
+            <p className={css.approveIconWrapper}>
+              <IoMdCheckmark className={`${css.approveIcon} ${css.check}`} />
+            </p>
           </div>
         ) : (
           <div className={css.emptyDiv}></div>
