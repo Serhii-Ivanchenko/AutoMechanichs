@@ -59,7 +59,6 @@ export default function RepairScreen() {
   const [audios, setAudios] = useState([]);
   const [audioLocalURLs, setAudioLocalURLs] = useState([]);
   const [currentBlob, setCurrentBlob] = useState(null);
-  const [checkPhotos, setCheckPhotos] = useState(false);
   const [modalWithRecordings, setModalWithRecordings] = useState(false);
 
   // Photos
@@ -67,6 +66,8 @@ export default function RepairScreen() {
   const [openPhotoComp, setOpenPhotoComp] = useState(false);
   const [photosFromRepair, setPhotosFromRepair] = useState([]);
   const [savedRepairPhotos, setSavedRepairPhotos] = useState([]);
+  const [savedPhotos, setSavedPhotos] = useState([]);
+  const [checkPhotos, setCheckPhotos] = useState(false);
 
   // Comments
   const [openComment, setOpenComment] = useState(false);
@@ -224,7 +225,7 @@ export default function RepairScreen() {
     const carData = {
       car_id: carId,
       photos: {
-        photos_base64: photosFromRepair,
+        photos_base64: savedPhotos,
       },
     };
     const data = await dispatch(uploadCarPhotos(carData)).unwrap();
@@ -444,6 +445,8 @@ export default function RepairScreen() {
           setPhotosFromWorksPart={setPhotosFromRepair}
           photosFromWorksPart={photosFromRepair}
           handleSavePhotos={handleSavePhotos}
+          setSavedPhotos={setSavedPhotos}
+          savedPhotos={savedPhotos}
         />
       ) : checkPhotos ? (
         <Photos
@@ -451,6 +454,7 @@ export default function RepairScreen() {
             savedRepairPhotos.length > 0 ? savedRepairPhotos : repair?.photos
           }
           setCheckPhotos={setCheckPhotos}
+          setSavedPhotos={setSavedPhotos}
         />
       ) : (
         <PartsForRepair
@@ -462,7 +466,7 @@ export default function RepairScreen() {
           statusServices={statusServices}
           completedRepair={completedRepair}
           audioURL={audios?.length > 0}
-          photosFromRepair={photosFromRepair}
+          photosFromRepair={savedPhotos}
           repair={repair}
           setCheckPhotos={setCheckPhotos}
           setCheckComment={setCheckComment}
@@ -540,7 +544,7 @@ export default function RepairScreen() {
             setRecordAudio={setRecordAudio}
             setOpenCamera={setOpenCamera}
             setOpenPhotoComp={setOpenPhotoComp}
-            photosFromWorksPart={photosFromRepair}
+            photosFromWorksPart={savedPhotos}
             audioURL={audioURL}
             setOpenComment={setOpenComment}
             comment={comment}

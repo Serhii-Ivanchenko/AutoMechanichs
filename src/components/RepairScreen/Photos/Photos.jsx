@@ -3,9 +3,14 @@ import { IoMdClose } from 'react-icons/io';
 import { BsTrash } from 'react-icons/bs';
 import { FaArrowLeft } from 'react-icons/fa';
 
-export default function Photos({ photos, setCheckPhotos, completedDoc }) {
+export default function Photos({
+  photos,
+  setSavedPhotos,
+  setCheckPhotos,
+  completedDoc,
+}) {
   const handlePhotoDelete = index => {
-    // setPhotos(prev => prev.filter((item, idx) => idx !== index));
+    setSavedPhotos(prev => prev.filter((item, idx) => idx !== index));
   };
 
   return (
