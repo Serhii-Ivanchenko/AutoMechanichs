@@ -48,7 +48,7 @@ export default function PhotoCapturePage({
   const openedCamera = diag ? openCameraWorkPart : isCameraOpen;
 
   // console.log('photos', photos);
-  // console.log('photosFromWorksPart', photosFromWorksPart);
+  console.log('photosFromWorksPart', photosFromWorksPart);
   // console.log('photosToDisplay', photosToDisplay);
 
   console.log('displayedCar', displayedCar);
@@ -124,16 +124,16 @@ export default function PhotoCapturePage({
         setOpenPhotoComp(false);
       }
     }
-    diag ? setPhotosFromWorksPart([]) : setPhotos([]);
+    setPhotos([]);
   };
 
   const onPreviewPhotoClick = () => {
     if (!diag) {
       setPhotosToDisplay(prev => [...prev, ...photos]);
       setPhotos([]);
-    } else {
+    } else if (diag) {
       setPhotosToDisplay(prev => [...prev, ...photosFromWorksPart]);
-      setPhotosFromWorksPart([]);
+      setPhotosFromWorksPart(prev => [...prev, ...photosFromWorksPart]);
     }
     handleCloseCamera();
   };
