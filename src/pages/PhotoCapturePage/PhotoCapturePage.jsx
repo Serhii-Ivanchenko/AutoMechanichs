@@ -277,6 +277,7 @@ export default function PhotoCapturePage({
                 //   setOpenCamera(true);
                 // } else {
                 setOpenPhotoComp(false);
+                setSavedPhotos([]);
                 // }
               }}
             >
