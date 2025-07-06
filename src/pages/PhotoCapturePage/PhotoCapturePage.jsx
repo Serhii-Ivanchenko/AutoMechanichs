@@ -21,13 +21,17 @@ export default function PhotoCapturePage({
   repair,
   openCameraWorkPart,
   setOpenPhotoComp,
+  setSavedPhotos,
+  savedPhotos,
 }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [photos, setPhotos] = useState([]);
-  const [photosToDisplay, setPhotosToDisplay] = useState([]);
+  const [photosToDisplay, setPhotosToDisplay] = useState(
+    diag ? savedPhotos : []
+  );
   // const [photoPreview, setPhotoPreview] = useState('');
   const [checkPhotos, setCheckPhotos] = useState(false);
   const cars = useSelector(selectCars);
@@ -48,7 +52,7 @@ export default function PhotoCapturePage({
   const openedCamera = diag ? openCameraWorkPart : isCameraOpen;
 
   // console.log('photos', photos);
-  // console.log('photosFromWorksPart', photosFromWorksPart);
+  console.log('photosFromWorksPart', photosFromWorksPart);
   // console.log('photosToDisplay', photosToDisplay);
 
   console.log('displayedCar', displayedCar);
@@ -131,12 +135,18 @@ export default function PhotoCapturePage({
     if (!diag) {
       setPhotosToDisplay(prev => [...prev, ...photos]);
       setPhotos([]);
-    } else {
+    } else if (diag) {
       setPhotosToDisplay(prev => [...prev, ...photosFromWorksPart]);
       setPhotosFromWorksPart([]);
     }
     handleCloseCamera();
   };
+
+  useEffect(() => {
+    if (diag) {
+      setSavedPhotos(photosToDisplay);
+    }
+  }, [photosToDisplay]);
 
   const handlePhotoDelete = index => {
     setPhotosToDisplay(prev => prev.filter((item, idx) => idx !== index));
@@ -198,7 +208,7 @@ export default function PhotoCapturePage({
         });
     }
   };
-  // console.log('photosToDisplay', photosToDisplay);
+  console.log('photosToDisplay', photosToDisplay);
   // console.log('photos', photos);
   // console.log('displayedCar', displayedCar);
   return (
@@ -267,6 +277,7 @@ export default function PhotoCapturePage({
                 //   setOpenCamera(true);
                 // } else {
                 setOpenPhotoComp(false);
+                setSavedPhotos([]);
                 // }
               }}
             >

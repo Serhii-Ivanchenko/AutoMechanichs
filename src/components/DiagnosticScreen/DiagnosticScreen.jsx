@@ -54,6 +54,7 @@ export default function DiagnosticScreen() {
   const [openPhotoComp, setOpenPhotoComp] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
   const [photosFromDiag, setPhotosFromDiag] = useState([]);
+  const [savedPhotos, setSavedPhotos] = useState([]);
   const [openComment, setOpenComment] = useState(false);
   const [comment, setComment] = useState('');
   const [openAudio, setOpenAudio] = useState(false);
@@ -61,7 +62,6 @@ export default function DiagnosticScreen() {
   const [checkComment, setCheckComment] = useState(false);
   const userData = useSelector(selectUser);
   const mechanicId = userData?.id;
-
 
   console.log('audioURL', audioURL);
 
@@ -360,7 +360,7 @@ export default function DiagnosticScreen() {
         mechanic_id: mechanicId,
         // mechanic_id: 1,
         audios: audioURL ? [base64data] : [],
-        photos: photosFromDiag,
+        photos: savedPhotos,
         general_comment: comment,
         nodes: nodesToCreateDiag,
       };
@@ -442,7 +442,8 @@ export default function DiagnosticScreen() {
       ) : savedSparesPartOpen ? (
         openPhotos ? (
           <Photos
-            photos={photosFromDiag}
+            photos={savedPhotos}
+            setSavedPhotos={setSavedPhotos}
             setCheckPhotos={setOpenPhotos}
             completedDoc={false}
           />
@@ -451,7 +452,7 @@ export default function DiagnosticScreen() {
             nodes={nodes}
             dataToSend={dataForSavedParts}
             audioURL={audioURL}
-            photosFromDiag={photosFromDiag}
+            photosFromDiag={savedPhotos}
             setOpenAudio={setOpenAudio}
             setOpenPhotos={setOpenPhotos}
             setCheckComment={setCheckComment}
@@ -468,6 +469,8 @@ export default function DiagnosticScreen() {
             photosFromWorksPart={photosFromDiag}
             openCameraWorkPart={openCamera}
             setOpenPhotoComp={setOpenPhotoComp}
+            setSavedPhotos={setSavedPhotos}
+            savedPhotos={savedPhotos}
           />
         ) : (
           <>
@@ -540,7 +543,7 @@ export default function DiagnosticScreen() {
             setOpenCamera={setOpenCamera}
             setRecordAudio={setRecordAudio}
             audioURL={audioURL}
-            photosFromWorksPart={photosFromDiag}
+            photosFromWorksPart={savedPhotos}
             setOpenComment={setOpenComment}
             comment={comment}
             setOpenPhotoComp={setOpenPhotoComp}
