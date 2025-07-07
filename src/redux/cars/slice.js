@@ -72,7 +72,11 @@ const carsSlice = createSlice({
       })
       .addCase(recognizeLicensePlate.fulfilled, (state, action) => {
         state.isRecognitionLoading = false;
-        state.carInfo = action.payload.car_info;
+        if (!action.payload.car_info) {
+          state.carInfo.license_plate = action.payload.license_plate;
+        } else {
+          state.carInfo = action.payload.car_info;
+        }
       })
       .addCase(recognizeLicensePlate.rejected, (state, action) => {
         state.isRecognitionLoading = false;

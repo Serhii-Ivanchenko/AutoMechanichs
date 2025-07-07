@@ -194,8 +194,10 @@ export default function AddCarScreen() {
   };
 
   const displayedCar = cars?.find(car => Number(car?.car_id) === Number(carId));
-  console.log('chosenMake', chosenMake);
-  console.log('chosenModel', chosenModel);
+  // console.log('chosenMake', chosenMake);
+  // console.log('chosenModel', chosenModel);
+  // console.log('displayedCar', displayedCar);
+  // console.log('carinfo', carInfo);
 
   useEffect(() => {
     if (!carId || cars?.length === 0) return;
@@ -399,7 +401,13 @@ export default function AddCarScreen() {
     };
 
     const photoToSend = dataURLtoBlob(photo);
-    dispatch(recognizeLicensePlate(photoToSend));
+    dispatch(recognizeLicensePlate(photoToSend))
+      .unwrap()
+      .then(res => {
+        res.message
+          ? toast.error(res.message)
+          : toast.success('Авто розпізнано');
+      });
   };
 
   const onCheckmarkBtnClick = () => {
