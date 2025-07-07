@@ -1,13 +1,15 @@
 import { RxCross1 } from 'react-icons/rx';
 import { BsCheckLg } from 'react-icons/bs';
 import css from './BottomPart.module.css';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { BsFillMicFill } from 'react-icons/bs';
 import { BsCameraFill } from 'react-icons/bs';
 import { BiSolidMessageDetail } from 'react-icons/bi';
 import { FaArrowLeft } from 'react-icons/fa';
 import { FaArrowRight } from 'react-icons/fa';
 import { TiHome } from 'react-icons/ti';
+import { useDispatch } from 'react-redux';
+import { deleteCarInfo } from '../../redux/cars/slice';
 
 export default function BottomPart({
   back,
@@ -31,6 +33,14 @@ export default function BottomPart({
   diag,
 }) {
   const isDisabled = chosenPoints?.length === 0;
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const onHomeBtnClick = () => {
+    dispatch(deleteCarInfo());
+    navigate(`/main`);
+  };
 
   return (
     <div
@@ -84,9 +94,9 @@ export default function BottomPart({
           </div>
         </>
       ) : (
-        <NavLink to="/main" className={css.home}>
+        <button className={css.home} onClick={onHomeBtnClick}>
           <TiHome className={css.icon} />
-        </NavLink>
+        </button>
       )}
       {/* 
       categ ? (
