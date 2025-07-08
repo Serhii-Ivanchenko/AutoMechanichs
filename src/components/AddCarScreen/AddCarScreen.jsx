@@ -555,6 +555,7 @@ export default function AddCarScreen() {
                 // mechanic_id: 1,
               })
             );
+            dispatch(deleteCarInfo());
             navigate(`/car/${result.car_id}/photos`);
           } else {
             console.error('ID не знайдено:', result);
