@@ -48,6 +48,11 @@ const carsSlice = createSlice({
       state.isMileageOrVinLoading = false;
       state.error = null;
     },
+    deleteNewCar: state => {
+      state.isSavingCarLoading = false;
+      state.error = null;
+      state.newCar = {};
+    },
     clearDiag: state => {
       state.diagnostic = {};
     },
@@ -243,6 +248,7 @@ export const {
   deleteMileageOrVin,
   clearDiag,
   clearRepair,
+  deleteNewCar,
 } = carsSlice.actions;
 
 export default carsSlice.reducer;
