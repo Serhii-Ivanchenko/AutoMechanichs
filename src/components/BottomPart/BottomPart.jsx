@@ -9,7 +9,7 @@ import { FaArrowLeft } from 'react-icons/fa';
 import { FaArrowRight } from 'react-icons/fa';
 import { TiHome } from 'react-icons/ti';
 import { useDispatch } from 'react-redux';
-import { deleteCarInfo } from '../../redux/cars/slice';
+import { deleteCarInfo, deleteNewCar } from '../../redux/cars/slice';
 
 export default function BottomPart({
   back,
@@ -39,6 +39,7 @@ export default function BottomPart({
 
   const onHomeBtnClick = () => {
     dispatch(deleteCarInfo());
+    dispatch(deleteNewCar());
     navigate(`/main`);
   };
 
