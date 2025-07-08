@@ -28,11 +28,16 @@ import {
   selectIsMileageOrVinLoading,
   selectIsRecognitionLoading,
   selectMileageOrVin,
+  selectNewCar,
 } from '../../redux/cars/selectors';
 import LoaderSvg from '../Loader/LoaderSvg.jsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { deleteCarInfo, deleteMileageOrVin } from '../../redux/cars/slice.js';
+import {
+  deleteCarInfo,
+  deleteMileageOrVin,
+  deleteNewCar,
+} from '../../redux/cars/slice.js';
 import { selectUser } from '../../redux/auth/selectors.js';
 
 export default function AddCarScreen() {
@@ -66,8 +71,7 @@ export default function AddCarScreen() {
   const mileageOrVin = useSelector(selectMileageOrVin);
   const isRecognitionLoading = useSelector(selectIsRecognitionLoading);
   const isMileageOrVinLoading = useSelector(selectIsMileageOrVinLoading);
-  // const newCarId = useSelector(selectCarId);
-  console.log('mileageOrVin', mileageOrVin);
+  const newCarInfo = useSelector(selectNewCar);
 
   const cars = useSelector(selectCars);
   const params = useParams();
@@ -194,50 +198,80 @@ export default function AddCarScreen() {
   };
 
   const displayedCar = cars?.find(car => Number(car?.car_id) === Number(carId));
-  // console.log('chosenMake', chosenMake);
-  // console.log('chosenModel', chosenModel);
-  // console.log('displayedCar', displayedCar);
-  // console.log('carinfo', carInfo);
 
   useEffect(() => {
-    if (!carId || cars?.length === 0) return;
+    if (Object.keys(newCarInfo).length !== 0 && carId) {
+      const existedMake = carData?.find(
+        car => car?.make?.toLowerCase() === newCarInfo?.make.toLowerCase()
+      );
 
-    const existedMake = carData?.find(
-      car => car?.make?.toLocaleLowerCase() === displayedCar?.make.toLowerCase()
-    );
+      const existedModel = existedMake?.models?.find(
+        model =>
+          model?.model_name?.toLowerCase() === newCarInfo?.model?.toLowerCase()
+      );
 
-    const existedModel = existedMake?.models?.find(
-      model =>
-        model?.model_name?.toLowerCase() === displayedCar?.model?.toLowerCase()
-    );
+      const existedPhoto = `https://aps.assist.cam/auto/${newCarInfo?.license_plate}.jpg`;
 
-    const existedPhoto = `https://aps.assist.cam/auto/${displayedCar?.plate}.jpg`;
-    console.log('existedModel', existedModel);
-    console.log('existedMake', existedMake);
+      setChosenMake({ id: existedMake?.id, make: existedMake?.make || '' });
+      setChosenModel({
+        id: existedModel?.id,
+        model_name: existedModel?.model_name || '',
+      });
 
-    setChosenMake({ id: existedMake?.id, make: existedMake?.make || '' });
+      setChosenYear(newCarInfo?.year);
+      setMileage(Number(newCarInfo?.mileage));
+      setPlate(newCarInfo?.license_plate);
+      setVin(newCarInfo?.vin);
+      setPhoto(existedPhoto);
 
-    setChosenModel({
-      id: existedModel?.id,
-      model_name: existedModel?.model_name || '',
-    });
+      originalDataRef.current = {
+        carMake: newCarInfo?.make,
+        carModel: newCarInfo?.model,
+        carYear: newCarInfo?.year,
+        carMileage: Number(newCarInfo?.mileage),
+        carPlate: newCarInfo?.license_plate,
+        carVin: newCarInfo?.vin,
+        carPhoto: existedPhoto,
+      };
+    } else if (!carId || cars?.length === 0) return;
+    else if (Object.keys(newCarInfo).length === 0 && carId) {
+      const existedMake = carData?.find(
+        car =>
+          car?.make?.toLowerCase() === displayedCar?.make.toLowerCase()
+      );
 
-    setChosenYear(displayedCar?.year);
-    setMileage(Number(displayedCar?.mileage));
-    setPlate(displayedCar?.plate);
-    setVin(displayedCar?.vin);
-    setPhoto(existedPhoto);
+      const existedModel = existedMake?.models?.find(
+        model =>
+          model?.model_name?.toLowerCase() ===
+          displayedCar?.model?.toLowerCase()
+      );
 
-    originalDataRef.current = {
-      carMake: existedMake?.make,
-      carModel: existedModel?.model_name,
-      carYear: displayedCar?.year,
-      carMileage: Number(displayedCar?.mileage),
-      carPlate: displayedCar?.plate,
-      carVin: displayedCar?.vin,
-      carPhoto: existedPhoto,
-    };
-  }, [carId, displayedCar]);
+      const existedPhoto = `https://aps.assist.cam/auto/${displayedCar?.plate}.jpg`;
+
+      setChosenMake({ id: existedMake?.id, make: existedMake?.make || '' });
+
+      setChosenModel({
+        id: existedModel?.id,
+        model_name: existedModel?.model_name || '',
+      });
+
+      setChosenYear(displayedCar?.year);
+      setMileage(Number(displayedCar?.mileage));
+      setPlate(displayedCar?.plate);
+      setVin(displayedCar?.vin);
+      setPhoto(existedPhoto);
+
+      originalDataRef.current = {
+        carMake: existedMake?.make,
+        carModel: existedModel?.model_name,
+        carYear: displayedCar?.year,
+        carMileage: Number(displayedCar?.mileage),
+        carPlate: displayedCar?.plate,
+        carVin: displayedCar?.vin,
+        carPhoto: existedPhoto,
+      };
+    }
+  }, [carId, displayedCar, newCarInfo]);
 
   useEffect(() => {
     if (!carInfo || Object.keys(carInfo).length === 0) return;
@@ -248,7 +282,7 @@ export default function AddCarScreen() {
     setMileage(carInfo?.mileage || null);
 
     const existedMake = carData?.find(
-      car => car?.make?.toLocaleLowerCase() === carInfo?.make?.toLowerCase()
+      car => car?.make?.toLowerCase() === carInfo?.make?.toLowerCase()
     );
     setChosenMake({ id: existedMake?.id, make: existedMake?.make || '' });
 
@@ -274,7 +308,7 @@ export default function AddCarScreen() {
 
     const existedMake = carData?.find(
       car =>
-        car?.make?.toLocaleLowerCase() === mileageOrVin?.make?.toLowerCase()
+        car?.make?.toLowerCase() === mileageOrVin?.make?.toLowerCase()
     );
     setChosenMake({ id: existedMake?.id, make: existedMake?.make || '' });
 
@@ -352,8 +386,8 @@ export default function AddCarScreen() {
     );
     const selectedCarModel = existedMake?.models.find(
       car =>
-        chosenModel?.model_name?.toLocaleLowerCase() ===
-        car.model_name.toLocaleLowerCase()
+        chosenModel?.model_name?.toLowerCase() ===
+        car.model_name.toLowerCase()
     );
 
     const selectedCarModelConstructionInterval =
@@ -542,6 +576,7 @@ export default function AddCarScreen() {
 
   const onCloseBtnClick = () => {
     dispatch(deleteCarInfo());
+    dispatch(deleteNewCar());
     dispatch(deleteMileageOrVin());
     navigate(`/main`);
   };
